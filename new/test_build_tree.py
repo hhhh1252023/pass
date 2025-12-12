@@ -2,6 +2,7 @@
 
 import logging
 import math
+import time
 from enum import IntEnum
 from typing import List, Optional
 
@@ -123,7 +124,7 @@ def build_tree_kernel_efficient(
         positions = torch.empty(
             (bs * num_verify_tokens,), device=device, dtype=torch.long
         )
-
+    start_time = time.time()
     (
         positions,
         retrive_index,
@@ -143,31 +144,25 @@ def build_tree_kernel_efficient(
         tree_mask_mode,
         bs,
     )
-    print(f"{tree_mask=}")
-    print(f"{position=}")
-    print(f"{retrive_index=}")
-    print(f"{retrive_next_token=}")
-    print(f"{retrive_next_sibling=}")
-        
-    try:
-        import sgl_kernel_npu
 
-        torch.ops.npu.build_tree_kernel_efficient(
-            parent_list,
-            top_scores_index,
-            seq_lens,
-            tree_mask,
-            positions,
-            retrive_index,
-            retrive_next_token,
-            retrive_next_sibling,
-            topk,
-            spec_steps,
-            num_verify_tokens,
-            tree_mask_mode,
-        )
+    fused_time = time.time() - start_time
+    print(f'native_tree_time is {fused_time})
     
-
+    start_time = time.time()    
+    torch.ops.npu.build_tree_kernel_efficient( 
+        parent_list,
+        top_scores_index,
+        seq_lens,
+        tree_mask,
+        positions,
+        retrive_index,
+        retrive_next_token,
+        retrive_next_sibling,
+        topk,
+        spec_steps,
+        num_verify_tokens,
+        tree_mask_mode,  
+    )
     return (
         tree_mask,
         positions,
@@ -176,6 +171,8 @@ def build_tree_kernel_efficient(
         retrive_next_sibling,
         draft_tokens,
     )
+    fused_time = time.time() - start_time
+    print(f'kernel_tree_time is {fused_time})
 
 
 def test_build_tree_kernel_efficient():
