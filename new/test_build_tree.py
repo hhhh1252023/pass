@@ -124,6 +124,31 @@ def build_tree_kernel_efficient(
             (bs * num_verify_tokens,), device=device, dtype=torch.long
         )
 
+    (
+        positions,
+        retrive_index,
+        retrive_next_token,
+        retrive_next_sibling,
+        tree_mask,
+    ) = build_tree_efficient_native(
+        parent_list,
+        top_scores_index,
+        seq_lens,
+        tree_mask,
+        retrive_index,
+        retrive_next_token,
+        retrive_next_sibling,
+        topk,
+        num_verify_tokens,
+        tree_mask_mode,
+        bs,
+    )
+    print(f"{tree_mask=}")
+    print(f"{position=}")
+    print(f"{retrive_index=}")
+    print(f"{retrive_next_token=}")
+    print(f"{retrive_next_sibling=}")
+        
     try:
         import sgl_kernel_npu
 
@@ -141,26 +166,7 @@ def build_tree_kernel_efficient(
             num_verify_tokens,
             tree_mask_mode,
         )
-    except ImportError:
-        (
-            positions,
-            retrive_index,
-            retrive_next_token,
-            retrive_next_sibling,
-            tree_mask,
-        ) = build_tree_efficient_native(
-            parent_list,
-            top_scores_index,
-            seq_lens,
-            tree_mask,
-            retrive_index,
-            retrive_next_token,
-            retrive_next_sibling,
-            topk,
-            num_verify_tokens,
-            tree_mask_mode,
-            bs,
-        )
+    
 
     return (
         tree_mask,
