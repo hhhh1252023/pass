@@ -113,7 +113,7 @@ def run_command(cmd, shell=True):
         print(f"command error: {e}")
         return None
 
-def run_bench_serving(host, port, dataset_name="random", dataset_path="", request_rate=8.0, max_concurrency=8, num_prompts=32, input_len=1024, output_len=1024,
+def run_bench_serving(host, port, dataset_name="random", dataset_path="", request_rate=8.0, max_concurrency=8, num_prompts=32, input_len=3500, output_len=1500,
                       random_range_ratio=1.0):
     command = (f"python3 -m sglang.bench_serving --backend sglang --host {host} --port {port} --dataset-name {dataset_name} --dataset-path {dataset_path} --request-rate {request_rate} "
                f"--max-concurrency {max_concurrency} --num-prompts {num_prompts} --random-input-len {input_len} "
@@ -122,13 +122,13 @@ def run_bench_serving(host, port, dataset_name="random", dataset_path="", reques
     metrics = run_command(f"{command} | tee ./bench_log.txt")
     return metrics
 
-class TestLTSQwen332B(CustomTestCase):
+class TestLTSQwen3235B(CustomTestCase):
     model = QWEN3_235B_MODEL_PATH
     dataset_name = "random"
     dataset_path = "/tmp/ShareGPT_V3_unfiltered_cleaned_split.json"  # the path of test dataset
     other_args = QWEN3_235B_OTHER_ARGS
     timeout = DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH * 10
-    envs = QWEN3_32B_ENVS
+    envs = QWEN3_235B_ENVS
     request_rate = 5.5
     max_concurrency = 480
     num_prompts = int(max_concurrency) * 4
