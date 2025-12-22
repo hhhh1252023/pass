@@ -44,7 +44,7 @@ QWEN3_32B_OTHER_ARGS = [
         "--max-running-requests",
         "78",
         "--context-length",
-        "8192",
+        "65536",
         "--enable-hierarchical-cache",
         "--hicache-write-policy",
         "write_through",
