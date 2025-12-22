@@ -94,6 +94,16 @@ def run_bench_serving(host, port, dataset_name="random", dataset_path="", reques
     metrics = run_command(f"{command} | tee ./bench_log.txt")
     return metrics
 
+def run_single_long_seq_test(host, port, input_len, output_len, seq_type):
+    # 核心参数：仅1条请求、单并发、固定长度
+    command = (f"python3 -m sglang.bench_serving --backend sglang --host {host} --port {port} --dataset-name random "
+               f"--request-rate 0 --max-concurrency 1 --num-prompts 1 "
+               f"--random-input-len {input_len} --random-output-len {output_len} "
+               f"--random-range-ratio 0.0")
+    print(f"{seq_type} single long sequence test command:{command}")
+    metrics = run_command(f"{command} | tee ./single_long_seq_{seq_type}_log.txt")
+    return metrics
+
 class TestLTSQwen332B(CustomTestCase):
     model = QWEN3_32B_MODEL_PATH
     dataset_name = "random"
@@ -113,6 +123,27 @@ class TestLTSQwen332B(CustomTestCase):
     accuracy = 0.80
 
     print("Nic name: {}".format(NIC_NAME))
+
+    long_seq_configs = {
+        "16k+1k": {
+            "input_len": 16384,
+            "output_len": 1024,
+            "ttft_threshold": 30000,   # 16k输入TTFT阈值（ms）
+            "tpot_threshold": 150      # 16k输入TPOT阈值（ms）
+        },
+        "32k+1k": {
+            "input_len": 32768,
+            "output_len": 1024,
+            "ttft_threshold": 50000,   # 32k输入TTFT阈值（ms）
+            "tpot_threshold": 200      # 32k输入TPOT阈值（ms）
+        },
+        "64k+1k": {
+            "input_len": 65536,
+            "output_len": 1024,
+            "ttft_threshold": 80000,   # 64k输入TTFT阈值（ms）
+            "tpot_threshold": 300      # 64k输入TPOT阈值（ms）
+        }
+    }
 
     @classmethod
     def setUpClass(cls):
@@ -170,6 +201,41 @@ class TestLTSQwen332B(CustomTestCase):
             self.output_token_throughput,
         )
 
+    def run_all_long_seq_verify(self):
+        _, host, port = self.base_url.split(":")
+        host = host[2:]
+        for seq_type, config in self.long_seq_configs.items():
+            print(f"\n========== Start {seq_type} single long sequence test ==========")
+            metrics = run_single_long_seq_test(
+                host=host,
+                port=port,
+                input_len=config["input_len"],
+                output_len=config["output_len"],
+                seq_type=seq_type
+            )
+            print(f"{seq_type} metrics: {metrics}")
+            log_file = f"./single_long_seq_{seq_type}_log.txt"
+            res_ttft = run_command(f"cat {log_file} | grep 'Mean TTFT' | awk '{{print $4}}'")
+            res_tpot = run_command(f"cat {log_file} | grep 'Mean TPOT' | awk '{{print $4}}'")
+            res_error = run_command(f"cat {log_file} | grep 'Error'")
+            res_ttft = res_ttft.strip() if res_ttft else "0"
+            res_tpot = res_tpot.strip() if res_tpot else "0"
+            self.assertLessEqual(
+                float(res_ttft),
+                config["ttft_threshold"],
+                f"{seq_type} TTFT {res_ttft}ms exceeds threshold {config['ttft_threshold']}ms"
+            )
+            self.assertLessEqual(
+                float(res_tpot),
+                config["tpot_threshold"],
+                f"{seq_type} TPOT {res_tpot}ms exceeds threshold {config['tpot_threshold']}ms"
+            )
+            self.assertEqual(
+                res_error, "",
+                f"{seq_type} request failed with error: {res_error}"
+            )
+            print(f"========== {seq_type} single long sequence test PASSED ==========\n")
+
     def run_gsm8k(self):
         args = SimpleNamespace(
             num_shots=5,
@@ -195,6 +261,7 @@ class TestLTSQwen332B(CustomTestCase):
             print(f"=============={time_str_1}  Execute the {i}-th long-term stability test==============")
             self.run_throughput()
             self.run_gsm8k()
+            self.run_all_long_seq_verify()
 
 
 if __name__ == "__main__":
