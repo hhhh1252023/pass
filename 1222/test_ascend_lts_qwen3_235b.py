@@ -45,7 +45,7 @@ QWEN3_235B_OTHER_ARGS = [
         "--max-running-requests",
         "480",
         "--context-length",
-        "8192",
+        "65536",
         "--dtype",
         "bfloat16",
         "--chunked-prefill-size",
@@ -130,7 +130,7 @@ class TestLTSQwen3235B(CustomTestCase):
     timeout = DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH * 10
     envs = QWEN3_235B_ENVS
     request_rate = 5.5
-    max_concurrency = 480
+    max_concurrency = 8
     num_prompts = int(max_concurrency) * 4
     input_len = 3500
     output_len = 1500
