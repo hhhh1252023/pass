@@ -132,8 +132,8 @@ class TestLTSQwen332B(CustomTestCase):
     request_rate = 5.5
     max_concurrency = 480
     num_prompts = int(max_concurrency) * 4
-    input_len = 2048
-    output_len = 2048
+    input_len = 3500
+    output_len = 1500
     random_range_ratio = 0.5
     ttft = 10000
     tpot = 50
