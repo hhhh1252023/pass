@@ -39,7 +39,9 @@ export TASK_QUEUE_ENABLE=0
 
 
 # D节点
-python -m sglang.launch_server --model-path ${MODEL_PATH} --disaggregation-mode prefill \
+python -m sglang.launch_server --model-path ${MODEL_PATH} --disaggregation-mode decode \
+--host 192.168.0.102 --port 8001 --trust-remote-code \
+--nnodes 1 \
 --tp-size 16 \
 --dp-size 16 \
 --mem-fraction-static 0.8 \
