@@ -1,0 +1,26 @@
+{
+    "KBHit":false,
+    "binFileName":"te_fused_op_sub_sub_sub_mul_mul_add_sub_mul_1bd1bcb201bfe494136c57c7c5f58fe9469cef215b8220c0d54ebade45e82731",
+    "binFileSuffix":".o",
+    "blockDim":1,
+    "coreType":"VectorCore",
+    "deterministic":"ignore",
+    "intercoreSync":0,
+    "kernelName":"te_fused_op_sub_sub_sub_mul_mul_add_sub_mul_1bd1bcb201bfe494136c57c7c5f58fe9469cef215b8220c0d54ebade45e82731__kernel0",
+    "magic":"RT_DEV_BINARY_MAGIC_ELF_AIVEC",
+    "memoryStamping":[],
+    "opParaSize":0,
+    "parameters":[
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    ],
+    "sha256":"02d012131d4541a2603f2230d463267c9248de0fcd01cfaa3a5f9685074907c4"
+}

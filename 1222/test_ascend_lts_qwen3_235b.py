@@ -28,8 +28,8 @@ def get_nic_name():
 NIC_NAME = "lo" if get_nic_name() == None else get_nic_name()
 
 # QWEN3_32B_MODEL_PATH = "/root/.cache/modelscope/hub/models/aleoyang/Qwen3-32B-w8a8-MindIE"
-QWEN3_235B_MODEL_PATH = "/root/.cache/modelscope/hub/models/vllm-ascend/Qwen3-235B-A22B-W8A8"  #
-QWEN3_235B_A22B_EAGLE_MODEL_PATH = "/root/.cache/modelscope/hub/models/Qwen/Qwen3-235B-A22B-Eagle3"
+QWEN3_235B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/vllm-ascend/Qwen3-235B-A22B-W8A8"  #
+QWEN3_235B_A22B_EAGLE_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen/Qwen3-235B-A22B-Eagle3"
 QWEN3_235B_OTHER_ARGS = [
         "--trust-remote-code",
         "--nnodes",
@@ -49,21 +49,21 @@ QWEN3_235B_OTHER_ARGS = [
         "--dtype",
         "bfloat16",
         "--chunked-prefill-size",
-        "-1",
+        "32768",
         "--max-prefill-tokens",
         "16384",
         "--speculative-draft-model-quantization",
         "unquant",
         "--speculative-algorithm",
-        "EAGLE3",
+        "NEXTN",
         "--speculative-draft-model-path",
         QWEN3_235B_A22B_EAGLE_MODEL_PATH,
         "--speculative-num-steps",
-        "3",
+        "1",
         "--speculative-eagle-topk",
         "1",
         "--speculative-num-draft-tokens",
-        "4",
+        "1",
         "--disable-radix-cache",
         "--moe-a2a-backend",
         "deepep",
@@ -100,6 +100,7 @@ QWEN3_235B_ENVS = {
     "SGLANG_ENABLE_SPEC_V2": "1",
     "SGLANG_SCHEDULER_DECREASE_PREFILL_IDLE": "1",
     "ENABLE_PROFILING": "1",
+    "SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN": "1",
 }
 
 

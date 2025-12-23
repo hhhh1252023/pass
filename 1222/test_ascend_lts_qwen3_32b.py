@@ -28,7 +28,7 @@ def get_nic_name():
 NIC_NAME = "lo" if get_nic_name() == None else get_nic_name()
 
 # QWEN3_32B_MODEL_PATH = "/root/.cache/modelscope/hub/models/aleoyang/Qwen3-32B-w8a8-MindIE"
-QWEN3_32B_MODEL_PATH = "/home/weights/Qwen3-32B-Int8"  #
+QWEN3_32B_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/aleoyang/Qwen3-32B-w8a8-MindIE"  #
 QWEN3_32B_OTHER_ARGS = [
         "--trust-remote-code",
         "--nnodes",
@@ -44,7 +44,8 @@ QWEN3_32B_OTHER_ARGS = [
         "--max-running-requests",
         "78",
         "--context-length",
-        "65536",
+        #"65536",
+        "40960",
         "--enable-hierarchical-cache",
         "--hicache-write-policy",
         "write_through",
@@ -72,6 +73,7 @@ QWEN3_32B_ENVS = {
     "HCCL_SOCKET_IFNAME": NIC_NAME,
     "GLOO_SOCKET_IFNAME": NIC_NAME,
     "HCCL_OP_EXPANSION_MODE": "AIV",
+    "SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN": "1",
 }
 
 
