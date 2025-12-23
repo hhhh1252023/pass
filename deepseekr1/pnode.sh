@@ -8,7 +8,7 @@ source ${cann_path}/../../nnal/atb/set_env.sh
 source ${cann_path}/opp/vendors/customize/bin/set_env.bash
 export ASCEND_HOME_PATH=${cann_path}
 
-
+MODEL_PATH= 
 echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 sysctl -w vm.swappiness=0
 sysctl -w kernel.numa_balancing=0
@@ -39,12 +39,25 @@ export PYTHONPATH=$PWD/python/:$PYTHONPATH
 
 # P节点
 python -m sglang.launch_server --model-path ${MODEL_PATH} --disaggregation-mode prefill \
---host ${P_IP[$i]} --port 8000 --disaggregation-bootstrap-port 8995 --trust-remote-code \
---nnodes 2 --node-rank $i --tp-size 16 --dp-size 16  --mem-fraction-static 0.6 \
+--host  --port 8000 --disaggregation-bootstrap-port 8995 --trust-remote-code \
+--nnodes 1 \
+--node-rank 0 \
+--disaggregation-mode prefill \
+--tp-size 16 \
+--mem-fraction-static 0.6 \
+--quantization modelslim \
+--max-running-requests 8 \
+--context-length 8192 \
 --disable-radix-cache \
---ep-dispatch-algorithm static \
---attention-backend ascend --device npu --quantization w8a8_int8 --disaggregation-transfer-backend ascend \
---max-running-requests 128 --chunked-prefill-size 114688 --max-prefill-tokens 458880 \
---disable-overlap-schedule  --enable-dp-attention --tokenizer-worker-num 4 \
---moe-a2a-backend deepep --deepep-mode normal --dtype bfloat16 \
---dist-init-addr ${P_IP[0]}:5000
+--chunked-prefill-size 32768 \
+--max-prefill-tokens 28680 \
+--moe-a2a-backend deepep \
+--deepep-mode normal \
+--speculative-algorithm NEXTN \
+--speculative-num-steps 1 \
+--speculative-eagle-topk 1 \
+--speculative-num-draft-tokens 2 \
+--dp-size 2 \
+--enable-dp-attention \
+--disable-shared-experts-fusion \
+--dtype bfloat16 \
