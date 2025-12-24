@@ -1,0 +1,18 @@
+echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_goveror
+sysctl -w vm.swappiness=0
+sysctl -w kernel.numa_balancing=0
+sysctl -w kernel.sched_migration_cost_ns=500000000
+export SGLANG_SET_CPU_AFFINITY=1
+export PYTHONPATH=/home/syy/Sglang/0801/sglang_npu/python:$PYTHONPATH
+export GLOO_SOCKET_IFNAME=enp23s0f3
+export HCCL_SOCKET_IFNAME=enp23s0f3
+export HCCL_BUFFSIZE=600
+source /usr/local/Ascend/ascend-toolkit/set_env.sh
+export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+export TASK_QUEUE_ENABLE=2
+export ENBALE_PROFILING=0
+export ASCEND_MF_STORE_URL="tcp://192.168.0.124:24666"
+export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=48
+
+USE_VLLM_CUSTOM_ALLREDUCE=1 python -m sglang.launch_server --model-path /home/qdl/dsv --disaggregation-ib-device mlx5_0,mlx5_1 --disaggregation-mode decode --host 192.168.0.102 --port 8001 --trust-remote-code --nnodes 1 --node-rank 0 --tp-size 16 --dp-size 2 --mem-fraction-static 0.7 --max-running-requests 48 --attention -backend ascend --device npu --quantization w8a8_int8 --enable-deepep-moe --enable-dp-attention --deepep-mode low_latency --enable-dp-lm-head --moe-dense-tp-size
+1 --disaggregation-transfer-backend ascend
