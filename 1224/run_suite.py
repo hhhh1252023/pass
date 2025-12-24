@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 
 # 恢复原始 import 路径（仅导入 ci_utils 中的核心类/函数）
-from ci_utils import TestFile, run_unittest_files, CIRegistry
+from ci_utils import TestFile, run_unittest_files
 
 # 仅保留 Ascend 测试套件
 suite_ascend = {
