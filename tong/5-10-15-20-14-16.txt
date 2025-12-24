@@ -15,3 +15,22 @@ curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: applic
 
 # 6. 字符长度26
 curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: application/json' --data '{"text":"a b c d e f g h i j k l m n o p q","sampling_params":{"temperature":0,"max_new_tokens":10}}'
+
+# 先手动等10秒，再依次执行：
+# 1. 长度10
+curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: application/json' --data '{"text":"a b c d e f","sampling_params":{"temperature":0,"max_new_tokens":10}}'
+
+# 2. 长度20
+curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: application/json' --data '{"text":"a b c d e f g h i j k l","sampling_params":{"temperature":0,"max_new_tokens":10}}'
+
+# 3. 长度30
+curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: application/json' --data '{"text":"a b c d e f g h i j k l m n o p q r s t","sampling_params":{"temperature":0,"max_new_tokens":10}}'
+
+# 4. 长度40
+curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: application/json' --data '{"text":"a b c d e f g h i j k l m n o p q r s t u v w x y z a b c d","sampling_params":{"temperature":0,"max_new_tokens":10}}'
+
+# 5. 长度45
+curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: application/json' --data '{"text":"a b c d e f g h i j k l m n o p q r s t u v w x y z a b c d e f g h i","sampling_params":{"temperature":0,"max_new_tokens":10}}'
+
+# 6. 长度57
+curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: application/json' --data '{"text":"a b c d e f g h i j k l m n o p q r s t u v w x y z a b c d e f g h i j k l m n o p q r s t u v w x y z a b c d e f g","sampling_params":{"temperature":0,"max_new_tokens":10}}'
