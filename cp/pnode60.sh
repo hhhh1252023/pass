@@ -55,7 +55,7 @@ export GLOO_SOCKET_IFNAME="enp23s0f3"
 --max-running-requests 16 \
 --moe-a2a-backend deepep \
 --deepep-mode auto \
---quantization w8a8_int8 \
+--quantization modelslim \
 --disaggregation-transfer-backend ascend \
 --disaggregation-mode prefill \
 --disable-cuda-graph \
