@@ -1,0 +1,17 @@
+# 1. 字符长度5
+curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: application/json' --data '{"text":"a b c d","sampling_params":{"temperature":0,"max_new_tokens":10}}'
+
+# 2. 字符长度10
+curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: application/json' --data '{"text":"a b c d e f","sampling_params":{"temperature":0,"max_new_tokens":10}}'
+
+# 3. 字符长度15
+curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: application/json' --data '{"text":"a b c d e f g h i","sampling_params":{"temperature":0,"max_new_tokens":10}}'
+
+# 4. 字符长度20
+curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: application/json' --data '{"text":"a b c d e f g h i j k l","sampling_params":{"temperature":0,"max_new_tokens":10}}'
+
+# 5. 字符长度24
+curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: application/json' --data '{"text":"a b c d e f g h i j k l m n o","sampling_params":{"temperature":0,"max_new_tokens":10}}'
+
+# 6. 字符长度26
+curl --location 'http://127.0.0.1:30000/generate' --header 'Content-Type: application/json' --data '{"text":"a b c d e f g h i j k l m n o p q","sampling_params":{"temperature":0,"max_new_tokens":10}}'
