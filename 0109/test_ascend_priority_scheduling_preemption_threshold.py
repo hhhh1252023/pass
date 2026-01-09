@@ -20,37 +20,44 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
     
     @classmethod
     def setUpClass(cls):
-        # 配置模型路径和基础URL
+        # 配置模型路径（适配昇腾环境，替换为本地有效路径）
         cls.model = "/root/.cache/modelscope/hub/models/LLM-Research/Llama-3.2-1B-Instruct"
         cls.base_url = DEFAULT_URL_FOR_TEST
         
-        # 打开日志文件
+        # 初始化日志文件
         cls.stdout = open(STDOUT_FILENAME, "w")
         cls.stderr = open(STDERR_FILENAME, "w")
         
-        # 启动服务，核心配置优先级调度和抢占阈值
+        # 启动服务，核心配置优先级调度和抢占阈值（适配昇腾环境）
         cls.process = popen_launch_server(
             cls.model,
             cls.base_url,
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=(
-                "--max-running-requests", "1", 
-                "--max-queued-requests", "10", 
-                "--enable-priority-scheduling",
-                "--priority-scheduling-preemption-threshold", "5",
-                "--disable-cuda-graph",
-                "--attention-backend", "ascend",
-                "--tp-size", "1",
-                "--mem-fraction-static", "0.8"
+                "--max-running-requests", "1",  # 单运行位，确保抢占逻辑可观测
+                "--max-queued-requests", "10",  # 足够队列容量，避免请求被拒绝
+                "--enable-priority-scheduling",  # 开启优先级调度（必需）
+                "--priority-scheduling-preemption-threshold", "5",  # 配置抢占阈值5
+                "--enable-preemptive-scheduling",  # 显式开启抢占功能（关键，确保阈值生效）
+                "--disable-cuda-graph",  # 昇腾环境不支持CUDA Graph
+                "--attention-backend", "ascend",  # 适配昇腾注意力后端
+                "--tp-size", "1",  # 单机单卡配置（根据实际卡数调整）
+                "--mem-fraction-static", "0.8",  # 昇腾内存配置，避免OOM
+                "--max-batch-size", "8"  # 适配昇腾批处理能力
             ),
             return_stdout_stderr=(cls.stdout, cls.stderr),
         )
     
     @classmethod
     def tearDownClass(cls):
-        # 清理进程和日志文件
-        kill_process_tree(cls.process.pid)
-        _verify_running_queued_requests(1, 10)  # 验证运行/排队请求数不超限
+        # 安全清理进程
+        if hasattr(cls, "process") and cls.process:
+            kill_process_tree(cls.process.pid)
+        
+        # 验证运行/排队请求数不超限
+        _verify_running_queued_requests(1, 10)
+        
+        # 清理日志文件
         cls.stdout.close()
         cls.stderr.close()
         if os.path.exists(STDOUT_FILENAME):
@@ -59,85 +66,97 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
             os.remove(STDERR_FILENAME)
     
     def test_preemption_threshold_execution_order(self):
-    """核心测试：提交A(2)→C(10)→B(5)，验证执行顺序 C>A>B 且所有请求成功"""
-    # 步骤1：先提交作业A（优先级2），让其进入运行状态（放大token数，确保运行时间足够长）
-    request_a = {
-        "priority": 2,
-        "sampling_params": {"max_new_tokens": 2000}  # 放大token数，确保被C抢占
-    }
-    # 异步发送作业A，不等待完成
-    loop = asyncio.new_event_loop()  # 显式创建loop，便于后续关闭
-    asyncio.set_event_loop(loop)
-    task_a = loop.create_task(
-        send_concurrent_generate_requests_with_custom_params(
-            self.base_url, [request_a]
+        """核心测试：提交A(2)→C(10)→B(5)，验证执行顺序 C>A>B 且所有请求成功"""
+        # 步骤1：先提交作业A（优先级2），让其进入运行状态（放大token数，确保被C抢占）
+        request_a = {
+            "priority": 2,
+            "sampling_params": {"max_new_tokens": 2000}  # 大token数，确保运行时间足够长
+        }
+        
+        # 显式创建事件循环，避免资源泄露
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
+        # 异步发送作业A，不等待完成（占用运行位）
+        task_a = loop.create_task(
+            send_concurrent_generate_requests_with_custom_params(
+                self.base_url, [request_a]
+            )
         )
-    )
-    # 等待2秒，确保作业A已完全启动并占用运行位（延长等待时间）
-    loop.run_until_complete(asyncio.sleep(2))
-    
-    # 步骤2：串行发送作业C（10）和作业B（5）（先C后B，确保C先被服务端接收）
-    # 2.1 发送作业C（优先级10，满足抢占阈值）
-    request_c = {
-        "priority": 10,
-        "sampling_params": {"max_new_tokens": 100}
-    }
-    responses_c = loop.run_until_complete(
-        send_concurrent_generate_requests_with_custom_params(
-            self.base_url, [request_c]
+        
+        # 等待2秒，确保作业A已完全启动并占用运行位（延长等待，避免抢占逻辑未触发）
+        loop.run_until_complete(asyncio.sleep(2))
+        
+        # 步骤2：串行发送作业C（10）和作业B（5）（先C后B，确保调度顺序）
+        # 2.1 发送作业C（优先级10，与A差值8≥5，满足抢占阈值）
+        request_c = {
+            "priority": 10,
+            "sampling_params": {"max_new_tokens": 100}  # 小token数，快速完成
+        }
+        responses_c = loop.run_until_complete(
+            send_concurrent_generate_requests_with_custom_params(
+                self.base_url, [request_c]
+            )
         )
-    )
-    
-    # 2.2 等待0.5秒，确保C已开始执行并抢占A，再发送作业B（优先级5）
-    loop.run_until_complete(asyncio.sleep(0.5))
-    request_b = {
-        "priority": 5,
-        "sampling_params": {"max_new_tokens": 100}
-    }
-    responses_b = loop.run_until_complete(
-        send_concurrent_generate_requests_with_custom_params(
-            self.base_url, [request_b]
+        
+        # 2.2 等待0.5秒，确保C已开始执行并抢占A，再发送作业B（优先级5）
+        loop.run_until_complete(asyncio.sleep(0.5))
+        request_b = {
+            "priority": 5,
+            "sampling_params": {"max_new_tokens": 100}  # 小token数，排队等待
+        }
+        responses_b = loop.run_until_complete(
+            send_concurrent_generate_requests_with_custom_params(
+                self.base_url, [request_b]
+            )
         )
-    )
-    
-    # 步骤3：等待作业A完成，获取所有响应
-    responses_a = loop.run_until_complete(task_a)
-    
-    # 步骤4：合并所有响应（明确对应关系：A、C、B）
-    all_responses = responses_a + responses_c + responses_b
-    loop.close()
-    
-    # 步骤5：验证所有请求均处理成功（状态码200，无错误）
-    expected_status = [(200, None)] * 3  # 3个请求均成功
-    e2e_latencies = []
-    _verify_generate_responses(all_responses, expected_status, e2e_latencies)
-    
-    # 步骤6：验证执行顺序（C > A > B），明确索引对应：0=A，1=C，2=B
-    latency_a = e2e_latencies[0]
-    latency_c = e2e_latencies[1]
-    latency_b = e2e_latencies[2]
-    
-    # 核心断言：C最先完成（耗时最短），其次是A，最后是B
-    assert latency_c < latency_a < latency_b, \
-        f"执行顺序不符合预期！预期 C<A<B，实际耗时：C={latency_c}, A={latency_a}, B={latency_b}"
+        
+        # 步骤3：等待作业A完成，获取所有响应
+        responses_a = loop.run_until_complete(task_a)
+        
+        # 步骤4：合并所有响应（明确对应关系：A → C → B）
+        all_responses = responses_a + responses_c + responses_b
+        
+        # 关闭事件循环，消除 "unclosed event loop" 资源警告
+        loop.close()
+        
+        # 步骤5：验证所有请求均处理成功（状态码200，无错误信息）
+        expected_status = [(200, None)] * 3  # 3个请求均预期成功
+        e2e_latencies = []
+        _verify_generate_responses(all_responses, expected_status, e2e_latencies)
+        
+        # 步骤6：验证执行顺序（C > A > B），明确索引对应：0=A，1=C，2=B
+        latency_a = e2e_latencies[0]
+        latency_c = e2e_latencies[1]
+        latency_b = e2e_latencies[2]
+        
+        # 核心断言：C最先完成（耗时最短），其次是A，最后是B
+        assert latency_c < latency_a < latency_b, \
+            f"执行顺序不符合预期！预期 C<A<B，实际耗时：C={latency_c}, A={latency_a}, B={latency_b}"
 
+# 辅助验证函数：验证响应状态并收集端到端耗时
 def _verify_generate_responses(
     responses: Tuple[int, Any, float],
     expected_code_and_error: Tuple[int, Any],
     e2e_latencies: List[Optional[float]],
 ):
+    e2e_latencies.clear()  # 清空列表，避免残留数据干扰
     for got, expected in zip(responses, expected_code_and_error):
+        # 拆分响应数据（状态码 + 响应体）
         got_status, got_json = got
         expected_status, expected_err = expected
         
-        # 验证状态码200
+        # 验证状态码是否为200
         assert got_status == expected_status, \
-            f"请求处理失败：预期状态码200，实际{got_status}，响应：{got_json}"
+            f"请求处理失败：预期状态码{expected_status}，实际{got_status}，响应：{got_json}"
         
-        # 验证无错误信息
+        # 验证响应无错误信息（仅针对200状态）
         if got_status == 200:
-            assert "error" not in got_json, f"请求返回错误信息：{got_json.get('error')}"
-            # 收集端到端耗时
+            assert "error" not in got_json, f"请求返回错误信息：{got_json.get('error', '未知错误')}"
+            
+            # 验证并收集端到端耗时（确保字段存在）
+            assert "meta_info" in got_json, "响应缺少必要字段 'meta_info'"
+            assert "e2e_latency" in got_json["meta_info"], "响应缺少必要字段 'e2e_latency'"
             e2e_latencies.append(got_json["meta_info"]["e2e_latency"])
         else:
             e2e_latencies.append(None)
@@ -146,22 +165,30 @@ def _verify_generate_responses(
 def _verify_running_queued_requests(
     max_running_requests: int, max_queued_requests: int
 ):
+    # 定义日志匹配模式
     rr_pattern = re.compile(r"#running-req:\s*(\d+)")
     qr_pattern = re.compile(r"#queue-req:\s*(\d+)")
     
+    # 若日志文件不存在，直接返回
     if not os.path.exists(STDERR_FILENAME):
         return
     
-    with open(STDERR_FILENAME, "r") as f:
+    # 读取日志并验证请求数
+    with open(STDERR_FILENAME, "r", encoding="utf-8") as f:
         for line in f:
+            # 验证运行请求数
             rr_match = rr_pattern.search(line)
             if rr_match:
-                assert int(rr_match.group(1)) <= max_running_requests, \
-                    f"运行请求数超限：{rr_match.group(1)} > {max_running_requests}"
+                running_req_count = int(rr_match.group(1))
+                assert running_req_count <= max_running_requests, \
+                    f"运行请求数超限：当前{running_req_count} > 上限{max_running_requests}"
+            
+            # 验证排队请求数
             qr_match = qr_pattern.search(line)
             if qr_match:
-                assert int(qr_match.group(1)) <= max_queued_requests, \
-                    f"排队请求数超限：{qr_match.group(1)} > {max_queued_requests}"
+                queued_req_count = int(qr_match.group(1))
+                assert queued_req_count <= max_queued_requests, \
+                    f"排队请求数超限：当前{queued_req_count} > 上限{max_queued_requests}"
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main()  # 详细输出测试日志，便于排查问题
