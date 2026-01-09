@@ -34,14 +34,14 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
             cls.base_url,
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=(
-                "--max-running-requests", "1",  # 单运行位，确保抢占逻辑可观测
-                "--max-queued-requests", "10",  # 足够队列容量，避免请求被拒绝
-                "--enable-priority-scheduling",  # 开启优先级调度（必需）
-                "--priority-scheduling-preemption-threshold", "5",  # 配置抢占阈值5
-                "--disable-cuda-graph",  # 昇腾环境不支持CUDA Graph
-                "--attention-backend", "ascend",  # 适配昇腾注意力后端
-                "--tp-size", "1",  # 单机单卡配置（根据实际卡数调整）
-                "--mem-fraction-static", "0.8",  # 昇腾内存配置，避免OOM
+                "--max-running-requests", "1",
+                "--max-queued-requests", "10",
+                "--enable-priority-scheduling",
+                "--priority-scheduling-preemption-threshold", "5",
+                "--disable-cuda-graph",
+                "--attention-backend", "ascend",
+                "--tp-size", "1",
+                "--mem-fraction-static", "0.8",
             ),
             return_stdout_stderr=(cls.stdout, cls.stderr),
         )
@@ -64,14 +64,12 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
             os.remove(STDERR_FILENAME)
     
     def test_preemption_threshold_execution_order(self):
-        """核心测试：提交A(2)→C(10)→B(5)，验证执行顺序 C>A>B 且所有请求成功"""
         # 步骤1：先提交作业A（优先级2），让其进入运行状态（放大token数，确保被C抢占）
         request_a = {
             "priority": 2,
             "sampling_params": {"max_new_tokens": 2000}  # 大token数，确保运行时间足够长
         }
         
-        # 显式创建事件循环，避免资源泄露
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         
@@ -85,20 +83,7 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
         # 等待2秒，确保作业A已完全启动并占用运行位（延长等待，避免抢占逻辑未触发）
         loop.run_until_complete(asyncio.sleep(2))
         
-        # 步骤2：串行发送作业C（10）和作业B（5）（先C后B，确保调度顺序）
-        # 2.1 发送作业C（优先级10，与A差值8≥5，满足抢占阈值）
-        request_c = {
-            "priority": 10,
-            "sampling_params": {"max_new_tokens": 100}  # 小token数，快速完成
-        }
-        responses_c = loop.run_until_complete(
-            send_concurrent_generate_requests_with_custom_params(
-                self.base_url, [request_c]
-            )
-        )
-        
-        # 2.2 等待0.5秒，确保C已开始执行并抢占A，再发送作业B（优先级5）
-        loop.run_until_complete(asyncio.sleep(0.5))
+        # 步骤2：串行发送作业C（10）和作业B（5）（
         request_b = {
             "priority": 5,
             "sampling_params": {"max_new_tokens": 100}  # 小token数，排队等待
@@ -109,10 +94,21 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
             )
         )
         
+        request_c = {
+            "priority": 10,
+            "sampling_params": {"max_new_tokens": 100}  # 小token数，快速完成
+        }
+        responses_c = loop.run_until_complete(
+            send_concurrent_generate_requests_with_custom_params(
+                self.base_url, [request_c]
+            )
+        )
+        
+
+        
         # 步骤3：等待作业A完成，获取所有响应
         responses_a = loop.run_until_complete(task_a)
         
-        # 步骤4：合并所有响应（明确对应关系：A → C → B）
         all_responses = responses_a + responses_c + responses_b
         
         # 关闭事件循环，消除 "unclosed event loop" 资源警告
@@ -128,7 +124,6 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
         latency_c = e2e_latencies[1]
         latency_b = e2e_latencies[2]
         
-        # 核心断言：C最先完成（耗时最短），其次是A，最后是B
         assert latency_c < latency_a < latency_b, \
             f"执行顺序不符合预期！预期 C<A<B，实际耗时：C={latency_c}, A={latency_a}, B={latency_b}"
 
@@ -171,7 +166,6 @@ def _verify_running_queued_requests(
     if not os.path.exists(STDERR_FILENAME):
         return
     
-    # 读取日志并验证请求数
     with open(STDERR_FILENAME, "r", encoding="utf-8") as f:
         for line in f:
             # 验证运行请求数
@@ -189,4 +183,4 @@ def _verify_running_queued_requests(
                     f"排队请求数超限：当前{queued_req_count} > 上限{max_queued_requests}"
 
 if __name__ == "__main__":
-    unittest.main()  # 详细输出测试日志，便于排查问题
+    unittest.main()
