@@ -34,7 +34,10 @@ class TestAscendApi(CustomTestCase):
         kill_process_tree(cls.process.pid)
 
     def test_api_generate_from_file(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/generate_from_file")
+        with open('/home/test_embeds_qwen3.json', 'r') as f:
+            file = {'file': f}  
+            response = requests.post(f"{DEFAULT_URL_FOR_TEST}/generate_from_file", files=file)  
+            print(res.text)
         self.assertEqual(response.status_code, 200)
         print(response.json())
 
