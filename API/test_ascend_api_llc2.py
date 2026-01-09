@@ -36,6 +36,28 @@ class TestAscendApi(CustomTestCase):
     def tearDownClass(cls):
         kill_process_tree(cls.process.pid)
 
+     def test_api_configure_logging(self):
+        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/configure_logging")
+        response = requests.post(
+            f"{DEFAULT_URL_FOR_TEST}/configure_logging",
+            json={
+                "log_requests": "True",
+                "log_requests": true, 
+                "log_requests_level": 3, 
+                "dump_requests_folder":  "/home/l30079981/test/dump_requests_folder",
+                "dump_requests_threshold": 3, 
+                "crash_dump_folder": "/home/l30079981/test/crash_dump_folder"
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        print(response.json())
+        self.assertEqual(response.json()['log_requests'], True)
+        self.assertEqual(response.json()['log_requests_level'], "3")
+        self.assertEqual(response.json()['dump_requests_folder'], "/home/l30079981/test/dump_requests_folder")
+        self.assertEqual(response.json()['dump_requests_threshold'], 3)
+        self.assertEqual(response.json()['crash_dump_folder'], "/home/l30079981/test/crash_dump_folder")
+
+
     def test_api_clear_hicache_storage_backend(self):
         response = requests.get(f"{DEFAULT_URL_FOR_TEST}/clear_hicache_storage_backend")
         self.assertEqual(response.status_code, 200)
@@ -43,7 +65,12 @@ class TestAscendApi(CustomTestCase):
         self.assertEqual(response.json(), "Hierarchical cache storage backend cleared.")
 
     def test_api_set_internal_state(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/set_internal_state")
+        response = requests.POST(
+            f"{DEFAULT_URL_FOR_TEST}/set_internal_state",
+            json={
+                "server_args": {"pp_max_micro_batch_size": 8}
+            },
+        )
         self.assertEqual(response.status_code, 200)
         print(response.json())
         self.assertEqual(response.json(), "Hierarchical cache storage backend cleared.")
@@ -54,15 +81,20 @@ class TestAscendApi(CustomTestCase):
             f"{DEFAULT_URL_FOR_TEST}/configure_logging",
             json={
                 "log_requests": "True",
+                "log_requests": true, 
+                "log_requests_level": 3, 
+                "dump_requests_folder":  "/home/l30079981/test/dump_requests_folder",
+                "dump_requests_threshold": 3, 
+                "crash_dump_folder": "/home/l30079981/test/crash_dump_folder"
             },
         )
         self.assertEqual(response.status_code, 200)
         print(response.json())
-        self.assertEqual(response.json()['log_requests'], self.model)
-        self.assertEqual(response.json()['log_requests_level'][0]['object'], "model")
-        self.assertEqual(response.json()['dump_requests_folder'][0]['owned_by'], "sglang")
-        self.assertEqual(response.json()['dump_requests_threshold'][0]['root'], self.model)
-        self.assertEqual(response.json()['crash_dump_folder'][0]['max_model_len'], 131072)
+        self.assertEqual(response.json()['log_requests'], True)
+        self.assertEqual(response.json()['log_requests_level'], "3")
+        self.assertEqual(response.json()['dump_requests_folder'], "/home/l30079981/test/dump_requests_folder")
+        self.assertEqual(response.json()['dump_requests_threshold'], 3)
+        self.assertEqual(response.json()['crash_dump_folder'], "/home/l30079981/test/crash_dump_folder")
 
 if __name__ == "__main__":
 
