@@ -36,26 +36,17 @@ class TestAscendApi(CustomTestCase):
     def tearDownClass(cls):
         kill_process_tree(cls.process.pid)
 
-     def test_api_configure_logging(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/configure_logging")
+     def test_api_encode(self):
         response = requests.post(
-            f"{DEFAULT_URL_FOR_TEST}/configure_logging",
+            f"{DEFAULT_URL_FOR_TEST}/encode",
             json={
                 "log_requests": "True",
-                "log_requests": true, 
-                "log_requests_level": 3, 
-                "dump_requests_folder":  "/home/l30079981/test/dump_requests_folder",
-                "dump_requests_threshold": 3, 
-                "crash_dump_folder": "/home/l30079981/test/crash_dump_folder"
+                "rid": 1, 
             },
         )
         self.assertEqual(response.status_code, 200)
         print(response.json())
-        self.assertEqual(response.json()['log_requests'], True)
-        self.assertEqual(response.json()['log_requests_level'], "3")
-        self.assertEqual(response.json()['dump_requests_folder'], "/home/l30079981/test/dump_requests_folder")
-        self.assertEqual(response.json()['dump_requests_threshold'], 3)
-        self.assertEqual(response.json()['crash_dump_folder'], "/home/l30079981/test/crash_dump_folder")
+        self.assertEqual(response.json()['rid'], 1)
 
 
     def test_api_clear_hicache_storage_backend(self):
