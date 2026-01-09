@@ -2,7 +2,7 @@ import asyncio
 import os
 import re
 import unittest
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Dict
 
 from sglang.srt.utils import kill_process_tree
 from sglang.test.test_utils import (
@@ -25,8 +25,8 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
         cls.base_url = DEFAULT_URL_FOR_TEST
         
         # 初始化日志文件
-        cls.stdout = open(STDOUT_FILENAME, "w")
-        cls.stderr = open(STDERR_FILENAME, "w")
+        cls.stdout = open(STDOUT_FILENAME, "w", encoding="utf-8")
+        cls.stderr = open(STDERR_FILENAME, "w", encoding="utf-8")
         
         # 启动服务，核心配置优先级调度和抢占阈值（适配昇腾环境）
         cls.process = popen_launch_server(
@@ -58,16 +58,34 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
         # 清理日志文件
         cls.stdout.close()
         cls.stderr.close()
-        if os.path.exists(STDOUT_FILENAME):
-            os.remove(STDOUT_FILENAME)
-        if os.path.exists(STDERR_FILENAME):
-            os.remove(STDERR_FILENAME)
+        
+        for filename in [STDOUT_FILENAME, STDERR_FILENAME]:
+            if os.path.exists(filename):
+                os.remove(filename)
     
     def test_preemption_threshold_execution_order(self):
-        # 步骤1：先提交作业A（优先级2），让其进入运行状态（放大token数，确保被C抢占）
+        # 步骤1：定义3个请求，添加唯一标识（request_id）和优先级，方便后续关联响应
+        request_configs = {
+            "A": {"priority": 2, "max_new_tokens": 2000, "request_id": "A"},
+            "B": {"priority": 5, "max_new_tokens": 100, "request_id": "B"},
+            "C": {"priority": 10, "max_new_tokens": 100, "request_id": "C"},
+        }
+        
+        # 构造请求参数（携带request_id，让响应能关联原始请求）
         request_a = {
-            "priority": 2,
-            "sampling_params": {"max_new_tokens": 2000}  # 大token数，确保运行时间足够长
+            "priority": request_configs["A"]["priority"],
+            "sampling_params": {"max_new_tokens": request_configs["A"]["max_new_tokens"]},
+            "extra_params": {"request_id": request_configs["A"]["request_id"]}  # 附加唯一标识
+        }
+        request_b = {
+            "priority": request_configs["B"]["priority"],
+            "sampling_params": {"max_new_tokens": request_configs["B"]["max_new_tokens"]},
+            "extra_params": {"request_id": request_configs["B"]["request_id"]}
+        }
+        request_c = {
+            "priority": request_configs["C"]["priority"],
+            "sampling_params": {"max_new_tokens": request_configs["C"]["max_new_tokens"]},
+            "extra_params": {"request_id": request_configs["C"]["request_id"]}
         }
         
         loop = asyncio.new_event_loop()
@@ -80,67 +98,73 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
             )
         )
         
-        # 等待1秒，确保作业A已完全启动并占用运行位（延长等待，避免抢占逻辑未触发）
-        loop.run_until_complete(asyncio.sleep(0.5))
+        # 延长等待时间，确保作业A已完全启动并占用运行位（提升测试稳定性）
+        loop.run_until_complete(asyncio.sleep(1.0))
         
-        request_b = {
-            "priority": 5,
-            "sampling_params": {"max_new_tokens": 100}  # 小token数，排队等待
-        }
+        # 发送作业B（排队等待）
         responses_b = loop.run_until_complete(
             send_concurrent_generate_requests_with_custom_params(
                 self.base_url, [request_b]
             )
         )
         loop.run_until_complete(asyncio.sleep(0.5))
-        request_c = {
-            "priority": 10,
-            "sampling_params": {"max_new_tokens": 100}  # 小token数，快速完成
-        }
+        
+        # 发送作业C（抢占A的运行位）
         responses_c = loop.run_until_complete(
             send_concurrent_generate_requests_with_custom_params(
                 self.base_url, [request_c]
             )
         )
         
-        
-        
-
-        
         # 步骤3：等待作业A完成，获取所有响应
         responses_a = loop.run_until_complete(task_a)
         
+        # 收集所有响应
         all_responses = responses_a + responses_b + responses_c
+        
+        # 步骤4：验证所有请求均处理成功，并收集带唯一标识的耗时
+        expected_status = [(200, None)] * len(all_responses)
+        e2e_latencies: List[float] = []
+        _verify_generate_responses(all_responses, expected_status, e2e_latencies)
+        
+        # 步骤5：关联响应与原始请求，提取每个请求的实际耗时
+        request_latencies: Dict[str, float] = {}
+        for resp, latency in zip(all_responses, e2e_latencies):
+            _, resp_json = resp
+            # 提取唯一标识，关联原始请求
+            request_id = resp_json.get("extra_params", {}).get("request_id", None)
+            assert request_id in ["A", "B", "C"], f"无法识别的请求ID：{request_id}"
+            request_latencies[request_id] = latency
+        
+        # 步骤6：验证执行顺序（C < A < B）
+        latency_a = request_latencies["A"]
+        latency_b = request_latencies["B"]
+        latency_c = request_latencies["C"]
+        
+        assert latency_c < latency_a, f"C的耗时应小于A！实际：C={latency_c}, A={latency_a}"
+        assert latency_a < latency_b, f"A的耗时应小于B！实际：A={latency_a}, B={latency_b}"
+        assert latency_c < latency_a < latency_b, \
+            f"执行顺序不符合预期！预期 C<A<B，实际耗时：C={latency_c}, A={latency_a}, B={latency_b}"
         
         # 关闭事件循环，消除 "unclosed event loop" 资源警告
         loop.close()
-        
-        # 步骤5：验证所有请求均处理成功（状态码200，无错误信息）
-        expected_status = [(200, None)] * 3  # 3个请求均预期成功
-        e2e_latencies = []
-        _verify_generate_responses(all_responses, expected_status, e2e_latencies)
-        
-        # 步骤6：明确索引对应
-        latency_a = e2e_latencies[0]
-        latency_b = e2e_latencies[1]
-        latency_c = e2e_latencies[2]
-        
-        assert latency_c < latency_a < latency_b, \
-            f"执行顺序不符合预期！预期 C<A<B，实际耗时：C={latency_c}, A={latency_a}, B={latency_b}"
 
-# 辅助验证函数：验证响应状态并收集端到端耗时
+# 辅助验证函数：验证响应状态并收集端到端耗时（修复类型注解不匹配问题）
 def _verify_generate_responses(
-    responses: Tuple[int, Any, float],
-    expected_code_and_error: Tuple[int, Any],
+    responses: List[Tuple[int, Any]],  # 修复：列表类型，每个元素是(状态码, 响应体)
+    expected_code_and_error: List[Tuple[int, Optional[Any]]],  # 修复：列表类型，支持可选错误
     e2e_latencies: List[Optional[float]],
 ):
     e2e_latencies.clear()  # 清空列表，避免残留数据干扰
+    assert len(responses) == len(expected_code_and_error), \
+        f"响应数量与预期不符！实际{len(responses)}，预期{len(expected_code_and_error)}"
+    
     for got, expected in zip(responses, expected_code_and_error):
         # 拆分响应数据（状态码 + 响应体）
         got_status, got_json = got
         expected_status, expected_err = expected
         
-        # 验证状态码是否为200
+        # 验证状态码是否符合预期
         assert got_status == expected_status, \
             f"请求处理失败：预期状态码{expected_status}，实际{got_status}，响应：{got_json}"
         
