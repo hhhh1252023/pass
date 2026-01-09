@@ -41,6 +41,12 @@ class TestAscendApi(CustomTestCase):
         self.assertEqual(response.status_code, 200)
         print(response.json())
 
+    def test_api_abort_request(self):
+        response = requests.post(f"{DEFAULT_URL_FOR_TEST}/abort_request",, json={'rid': '123', 'mode': "in_place"})
+        #self.assertEqual(response.status_code, 200)
+        print(f'{response.status_code = }') 
+        print(response.json())
+
     def test_api_pause_generation(self):
         response = requests.post(f"{DEFAULT_URL_FOR_TEST}/pause_generation",, json={'rid': '123', 'mode': "in_place"})
         #self.assertEqual(response.status_code, 200)
