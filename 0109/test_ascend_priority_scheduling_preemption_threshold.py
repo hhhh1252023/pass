@@ -15,6 +15,9 @@ from sglang.test.test_utils import (
     send_concurrent_generate_requests_with_custom_params,
 )
 
+# 定义正则表达式，用于从prompt中提取request_id
+REQUEST_ID_PATTERN = re.compile(r"\[REQUEST_ID:([A-C])\]")
+
 class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
     """验证 --priority-scheduling-preemption-threshold=5 的调度逻辑：执行顺序 C(10) > A(2) > B(5)"""
     
@@ -64,29 +67,37 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
                 os.remove(filename)
     
     def test_preemption_threshold_execution_order(self):
-        # 步骤1：定义3个请求，添加唯一标识（request_id）和优先级，方便后续关联响应
+        # 步骤1：定义3个请求，添加唯一标识（request_id），嵌入到prompt中
         request_configs = {
             "A": {"priority": 2, "max_new_tokens": 2000, "request_id": "A"},
             "B": {"priority": 5, "max_new_tokens": 100, "request_id": "B"},
             "C": {"priority": 10, "max_new_tokens": 100, "request_id": "C"},
         }
         
-        # 构造请求参数（携带request_id，让响应能关联原始请求）
-        request_a = {
-            "priority": request_configs["A"]["priority"],
-            "sampling_params": {"max_new_tokens": request_configs["A"]["max_new_tokens"]},
-            "extra_params": {"request_id": request_configs["A"]["request_id"]}  # 附加唯一标识
-        }
-        request_b = {
-            "priority": request_configs["B"]["priority"],
-            "sampling_params": {"max_new_tokens": request_configs["B"]["max_new_tokens"]},
-            "extra_params": {"request_id": request_configs["B"]["request_id"]}
-        }
-        request_c = {
-            "priority": request_configs["C"]["priority"],
-            "sampling_params": {"max_new_tokens": request_configs["C"]["max_new_tokens"]},
-            "extra_params": {"request_id": request_configs["C"]["request_id"]}
-        }
+        # 构造请求参数：将request_id嵌入到prompt中（SGLang支持，响应会保留prompt）
+        def build_request(request_id: str, priority: int, max_new_tokens: int):
+            prompt = f"[REQUEST_ID:{request_id}] 请完成一个简单的文本生成任务（仅用于测试优先级调度，无需返回复杂内容）。"
+            return {
+                "priority": priority,
+                "prompt": prompt,  # 核心：传递包含唯一标识的prompt
+                "sampling_params": {"max_new_tokens": max_new_tokens}
+            }
+        
+        request_a = build_request(
+            request_configs["A"]["request_id"],
+            request_configs["A"]["priority"],
+            request_configs["A"]["max_new_tokens"]
+        )
+        request_b = build_request(
+            request_configs["B"]["request_id"],
+            request_configs["B"]["priority"],
+            request_configs["B"]["max_new_tokens"]
+        )
+        request_c = build_request(
+            request_configs["C"]["request_id"],
+            request_configs["C"]["priority"],
+            request_configs["C"]["max_new_tokens"]
+        )
         
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -127,12 +138,21 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
         e2e_latencies: List[float] = []
         _verify_generate_responses(all_responses, expected_status, e2e_latencies)
         
-        # 步骤5：关联响应与原始请求，提取每个请求的实际耗时
+        # 步骤5：从响应的prompt中提取request_id，关联原始请求与耗时
         request_latencies: Dict[str, float] = {}
         for resp, latency in zip(all_responses, e2e_latencies):
             _, resp_json = resp
-            # 提取唯一标识，关联原始请求
-            request_id = resp_json.get("extra_params", {}).get("request_id", None)
+            
+            # 提取prompt字段（SGLang响应会保留请求的prompt）
+            assert "prompt" in resp_json, f"响应缺少必要字段 'prompt'，响应内容：{resp_json}"
+            prompt = resp_json["prompt"]
+            
+            # 用正则提取request_id
+            match = REQUEST_ID_PATTERN.search(prompt)
+            assert match, f"无法从prompt中提取request_id，prompt内容：{prompt}"
+            request_id = match.group(1)
+            
+            # 验证提取的request_id合法性
             assert request_id in ["A", "B", "C"], f"无法识别的请求ID：{request_id}"
             request_latencies[request_id] = latency
         
@@ -151,8 +171,8 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
 
 # 辅助验证函数：验证响应状态并收集端到端耗时（修复类型注解不匹配问题）
 def _verify_generate_responses(
-    responses: List[Tuple[int, Any]],  # 修复：列表类型，每个元素是(状态码, 响应体)
-    expected_code_and_error: List[Tuple[int, Optional[Any]]],  # 修复：列表类型，支持可选错误
+    responses: List[Tuple[int, Any]],
+    expected_code_and_error: List[Tuple[int, Optional[Any]]],
     e2e_latencies: List[Optional[float]],
 ):
     e2e_latencies.clear()  # 清空列表，避免残留数据干扰
