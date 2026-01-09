@@ -83,8 +83,16 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
         # 等待1秒，确保作业A已完全启动并占用运行位（延长等待，避免抢占逻辑未触发）
         loop.run_until_complete(asyncio.sleep(1))
         
-        
-        
+        request_b = {
+            "priority": 5,
+            "sampling_params": {"max_new_tokens": 100}  # 小token数，排队等待
+        }
+        responses_b = loop.run_until_complete(
+            send_concurrent_generate_requests_with_custom_params(
+                self.base_url, [request_b]
+            )
+        )
+        loop.run_until_complete(asyncio.sleep(0.5))
         request_c = {
             "priority": 10,
             "sampling_params": {"max_new_tokens": 100}  # 小token数，快速完成
@@ -95,22 +103,14 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
             )
         )
         
-        request_b = {
-            "priority": 5,
-            "sampling_params": {"max_new_tokens": 100}  # 小token数，排队等待
-        }
-        responses_b = loop.run_until_complete(
-            send_concurrent_generate_requests_with_custom_params(
-                self.base_url, [request_b]
-            )
-        )
+        
         
 
         
         # 步骤3：等待作业A完成，获取所有响应
         responses_a = loop.run_until_complete(task_a)
         
-        all_responses = responses_a + responses_c + responses_b
+        all_responses = responses_a + responses_b + responses_c
         
         # 关闭事件循环，消除 "unclosed event loop" 资源警告
         loop.close()
@@ -120,10 +120,10 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
         e2e_latencies = []
         _verify_generate_responses(all_responses, expected_status, e2e_latencies)
         
-        # 步骤6：验证执行顺序（C > A > B），明确索引对应：0=A，1=C，2=B
+        # 步骤6：明确索引对应
         latency_a = e2e_latencies[0]
-        latency_c = e2e_latencies[1]
-        latency_b = e2e_latencies[2]
+        latency_b = e2e_latencies[1]
+        latency_c = e2e_latencies[2]
         
         assert latency_c < latency_a < latency_b, \
             f"执行顺序不符合预期！预期 C<A<B，实际耗时：C={latency_c}, A={latency_a}, B={latency_b}"
