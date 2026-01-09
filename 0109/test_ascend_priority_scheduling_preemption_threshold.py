@@ -81,18 +81,10 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
         )
         
         # 等待2秒，确保作业A已完全启动并占用运行位（延长等待，避免抢占逻辑未触发）
-        loop.run_until_complete(asyncio.sleep(2))
+        loop.run_until_complete(asyncio.sleep(1))
         
         # 步骤2：串行发送作业C（10）和作业B（5）（
-        request_b = {
-            "priority": 5,
-            "sampling_params": {"max_new_tokens": 100}  # 小token数，排队等待
-        }
-        responses_b = loop.run_until_complete(
-            send_concurrent_generate_requests_with_custom_params(
-                self.base_url, [request_b]
-            )
-        )
+        
         
         request_c = {
             "priority": 10,
@@ -101,6 +93,16 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
         responses_c = loop.run_until_complete(
             send_concurrent_generate_requests_with_custom_params(
                 self.base_url, [request_c]
+            )
+        )
+        
+        request_b = {
+            "priority": 5,
+            "sampling_params": {"max_new_tokens": 100}  # 小token数，排队等待
+        }
+        responses_b = loop.run_until_complete(
+            send_concurrent_generate_requests_with_custom_params(
+                self.base_url, [request_b]
             )
         )
         
