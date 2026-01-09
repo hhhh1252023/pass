@@ -33,6 +33,11 @@ class TestAscendApi(CustomTestCase):
     def tearDownClass(cls):
         kill_process_tree(cls.process.pid)
 
+    def test_api_generate_from_file(self):
+        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/generate_from_file")
+        self.assertEqual(response.status_code, 200)
+        print(response.json())
+
     def test_api_pause_generation(self):
         response = requests.post(f"{DEFAULT_URL_FOR_TEST}/pause_generation",, json={'rid': '123', 'mode': "in_place"})
         #self.assertEqual(response.status_code, 200)
