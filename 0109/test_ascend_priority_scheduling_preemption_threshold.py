@@ -63,26 +63,26 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
         # 步骤1：先提交作业A（优先级2），让其进入运行状态（长期占用运行位）
         request_a = {
             "priority": 2,
-            "sampling_params": {"max_new_tokens": 500}  # 大token数，确保运行时间足够长，便于被抢占
+            "sampling_params": {"max_new_tokens": 500}  # 大token数，确保运行时间足够长
         }
-        # 异步发送作业A，不等待完成（模拟「运行时」提交其他作业）
+        # 异步发送作业A，不等待完成（移除无效参数 delay_between_requests）
         loop = asyncio.get_event_loop()
         task_a = loop.create_task(
             send_concurrent_generate_requests_with_custom_params(
-                self.base_url, [request_a], delay_between_requests=0
+                self.base_url, [request_a]
             )
         )
         # 等待1秒，确保作业A已启动并占用运行位
         asyncio.sleep(1)
         
-        # 步骤2：提交作业B（5）和作业C（10）（模拟A运行时提交）
+        # 步骤2：提交作业B（5）和作业C（10）（移除无效参数 delay_between_requests）
         requests_b_c = [
             {"priority": 5, "sampling_params": {"max_new_tokens": 100}},  # 作业B
             {"priority": 10, "sampling_params": {"max_new_tokens": 100}}  # 作业C
         ]
         responses_b_c = asyncio.run(
             send_concurrent_generate_requests_with_custom_params(
-                self.base_url, requests_b_c, delay_between_requests=0.1
+                self.base_url, requests_b_c
             )
         )
         
