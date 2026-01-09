@@ -34,14 +34,14 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
             cls.base_url,
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=(
-                "--max-running-requests", "1",  # 单运行位，确保抢占逻辑可观测
-                "--max-queued-requests", "10",  # 足够队列容量，避免请求被拒绝
-                "--enable-priority-scheduling",  # 开启优先级调度（必需）
-                "--priority-scheduling-preemption-threshold", "5",  # 配置抢占阈值5
+                "--max-running-requests", "1", 
+                "--max-queued-requests", "10", 
+                "--enable-priority-scheduling",
+                "--priority-scheduling-preemption-threshold", "5",
                 "--disable-cuda-graph",
-                "--attention-backend", "ascend",  # 适配昇腾环境
-                "--tp-size", "1",  # 单机单卡配置
-                "--mem-fraction-static", "0.8"  # 昇腾内存配置
+                "--attention-backend", "ascend",
+                "--tp-size", "1",
+                "--mem-fraction-static", "0.8"
             ),
             return_stdout_stderr=(cls.stdout, cls.stderr),
         )
@@ -59,54 +59,68 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
             os.remove(STDERR_FILENAME)
     
     def test_preemption_threshold_execution_order(self):
-        """核心测试：提交A(2)→B(5)→C(10)，验证执行顺序 C>A>B 且所有请求成功"""
-        # 步骤1：先提交作业A（优先级2），让其进入运行状态（长期占用运行位）
-        request_a = {
-            "priority": 2,
-            "sampling_params": {"max_new_tokens": 500}  # 大token数，确保运行时间足够长
-        }
-        # 异步发送作业A，不等待完成（移除无效参数 delay_between_requests）
-        loop = asyncio.get_event_loop()
-        task_a = loop.create_task(
-            send_concurrent_generate_requests_with_custom_params(
-                self.base_url, [request_a]
-            )
+    """核心测试：提交A(2)→C(10)→B(5)，验证执行顺序 C>A>B 且所有请求成功"""
+    # 步骤1：先提交作业A（优先级2），让其进入运行状态（放大token数，确保运行时间足够长）
+    request_a = {
+        "priority": 2,
+        "sampling_params": {"max_new_tokens": 2000}  # 放大token数，确保被C抢占
+    }
+    # 异步发送作业A，不等待完成
+    loop = asyncio.new_event_loop()  # 显式创建loop，便于后续关闭
+    asyncio.set_event_loop(loop)
+    task_a = loop.create_task(
+        send_concurrent_generate_requests_with_custom_params(
+            self.base_url, [request_a]
         )
-        # 等待1秒，确保作业A已启动并占用运行位
-        asyncio.sleep(1)
-        
-        # 步骤2：提交作业B（5）和作业C（10）（移除无效参数 delay_between_requests）
-        requests_b_c = [
-            {"priority": 5, "sampling_params": {"max_new_tokens": 100}},  # 作业B
-            {"priority": 10, "sampling_params": {"max_new_tokens": 100}}  # 作业C
-        ]
-        responses_b_c = asyncio.run(
-            send_concurrent_generate_requests_with_custom_params(
-                self.base_url, requests_b_c
-            )
+    )
+    # 等待2秒，确保作业A已完全启动并占用运行位（延长等待时间）
+    loop.run_until_complete(asyncio.sleep(2))
+    
+    # 步骤2：串行发送作业C（10）和作业B（5）（先C后B，确保C先被服务端接收）
+    # 2.1 发送作业C（优先级10，满足抢占阈值）
+    request_c = {
+        "priority": 10,
+        "sampling_params": {"max_new_tokens": 100}
+    }
+    responses_c = loop.run_until_complete(
+        send_concurrent_generate_requests_with_custom_params(
+            self.base_url, [request_c]
         )
-        
-        # 步骤3：等待作业A完成，获取所有响应
-        responses_a = loop.run_until_complete(task_a)
-        # 合并所有响应（A + B + C）
-        all_responses = responses_a + responses_b_c
-        
-        # 步骤4：验证所有请求均处理成功（状态码200，无错误）
-        expected_status = [(200, None)] * 3  # 3个请求均成功
-        e2e_latencies = []
-        _verify_generate_responses(all_responses, expected_status, e2e_latencies)
-        
-        # 步骤5：验证执行顺序（C > A > B）
-        # 提取各作业耗时（索引对应：0=A，1=B，2=C）
-        latency_a = e2e_latencies[0]
-        latency_b = e2e_latencies[1]
-        latency_c = e2e_latencies[2]
-        
-        # 核心断言：C最先完成（耗时最短），其次是A，最后是B
-        assert latency_c < latency_a < latency_b, \
-            f"执行顺序不符合预期！预期 C<A<B，实际耗时：C={latency_c}, A={latency_a}, B={latency_b}"
+    )
+    
+    # 2.2 等待0.5秒，确保C已开始执行并抢占A，再发送作业B（优先级5）
+    loop.run_until_complete(asyncio.sleep(0.5))
+    request_b = {
+        "priority": 5,
+        "sampling_params": {"max_new_tokens": 100}
+    }
+    responses_b = loop.run_until_complete(
+        send_concurrent_generate_requests_with_custom_params(
+            self.base_url, [request_b]
+        )
+    )
+    
+    # 步骤3：等待作业A完成，获取所有响应
+    responses_a = loop.run_until_complete(task_a)
+    
+    # 步骤4：合并所有响应（明确对应关系：A、C、B）
+    all_responses = responses_a + responses_c + responses_b
+    loop.close()
+    
+    # 步骤5：验证所有请求均处理成功（状态码200，无错误）
+    expected_status = [(200, None)] * 3  # 3个请求均成功
+    e2e_latencies = []
+    _verify_generate_responses(all_responses, expected_status, e2e_latencies)
+    
+    # 步骤6：验证执行顺序（C > A > B），明确索引对应：0=A，1=C，2=B
+    latency_a = e2e_latencies[0]
+    latency_c = e2e_latencies[1]
+    latency_b = e2e_latencies[2]
+    
+    # 核心断言：C最先完成（耗时最短），其次是A，最后是B
+    assert latency_c < latency_a < latency_b, \
+        f"执行顺序不符合预期！预期 C<A<B，实际耗时：C={latency_c}, A={latency_a}, B={latency_b}"
 
-# 辅助验证函数：验证响应状态并收集耗时
 def _verify_generate_responses(
     responses: Tuple[int, Any, float],
     expected_code_and_error: Tuple[int, Any],
