@@ -81,7 +81,7 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
         )
         
         # 等待1秒，确保作业A已完全启动并占用运行位（延长等待，避免抢占逻辑未触发）
-        loop.run_until_complete(asyncio.sleep(1))
+        loop.run_until_complete(asyncio.sleep(0.5))
         
         request_b = {
             "priority": 5,
