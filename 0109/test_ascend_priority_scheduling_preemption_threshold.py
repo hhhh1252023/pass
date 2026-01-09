@@ -38,12 +38,10 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
                 "--max-queued-requests", "10",  # 足够队列容量，避免请求被拒绝
                 "--enable-priority-scheduling",  # 开启优先级调度（必需）
                 "--priority-scheduling-preemption-threshold", "5",  # 配置抢占阈值5
-                "--enable-preemptive-scheduling",  # 显式开启抢占功能（关键，确保阈值生效）
                 "--disable-cuda-graph",  # 昇腾环境不支持CUDA Graph
                 "--attention-backend", "ascend",  # 适配昇腾注意力后端
                 "--tp-size", "1",  # 单机单卡配置（根据实际卡数调整）
                 "--mem-fraction-static", "0.8",  # 昇腾内存配置，避免OOM
-                "--max-batch-size", "8"  # 适配昇腾批处理能力
             ),
             return_stdout_stderr=(cls.stdout, cls.stderr),
         )
