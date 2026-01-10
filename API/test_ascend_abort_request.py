@@ -18,7 +18,7 @@ response = []
 def send_requests(url, **kwargs):
     data = json.dumps(kwargs)
     response = requests.post('http://127.0.0.1:2345' + url, json=data)
-    responses.append(response)
+    response.append(response)
 
 class TestAscendApi(CustomTestCase):
     @classmethod
@@ -49,7 +49,7 @@ class TestAscendApi(CustomTestCase):
         thread1.join()
         thread2.join()
         #self.assertEqual(response.status_code, 200)
-        print(f'{response.status_code = }') 
+        #print(f'{response.status_code = }') 
         print(response.json())
 
 
