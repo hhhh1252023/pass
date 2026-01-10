@@ -38,7 +38,7 @@ class TestAscendApi(CustomTestCase):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
-                "rid": '123'
+                "rid": '123',
                 "text": "The capital of France is",
                 "sampling_params": {
                     "temperature": 0,
@@ -46,7 +46,7 @@ class TestAscendApi(CustomTestCase):
                 },
             },
         )
-        response = requests.post(f"{DEFAULT_URL_FOR_TEST}/abort_request", json={'rid': '123', 'http_worker_ipc': "abc", 'abort_all': True, 'finished_reason': "test_abort", 'abort_message': "---------AAA---"})
+        response = requests.post(f"{DEFAULT_URL_FOR_TEST}/abort_request", json={'rid': '123', 'finished_reason': "test_abort", 'abort_message': "---------AAA---"})
         self.assertEqual(response.status_code, 200)
         print(f'{response.status_code = }') 
         print(response.json())
