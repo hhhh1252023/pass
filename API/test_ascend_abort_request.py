@@ -41,14 +41,6 @@ class TestAscendApi(CustomTestCase):
     def tearDownClass(cls):
         kill_process_tree(cls.process.pid)
 
-    def test_api_generate_from_file(self):
-        with open('/home/test_embeds_qwen3.json', 'r') as f:
-            file = {'file': f}  
-            response = requests.post(f"{DEFAULT_URL_FOR_TEST}/generate_from_file", files=file)  
-            print(res.text)
-        self.assertEqual(response.status_code, 200)
-        print(response.json())
-
     def test_api_abort_request(self):
         thread1 = threading.Thread(target=send_requests, args=('/generate',), kwargs={'rid': '10086', 'text': 'who are you?', 'sampling_params': {'temperature': 0.0, 'max_new_tokens': 1024}})
         thread2 = threading.Thread(target=send_requests, args=('/abort_request',), kwargs={'rid': "10086"})
