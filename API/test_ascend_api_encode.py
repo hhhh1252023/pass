@@ -60,7 +60,7 @@ class TestAscendApi(CustomTestCase):
             f"{DEFAULT_URL_FOR_TEST}/encode",
             json={
                 "rid": 1,
-                "input_ids": 
+                "input_ids": [101, 7592, 2088, 102],
                 "sampling_params": {
                     "temperature": 0,
                     "max_new_tokens": 200,    
