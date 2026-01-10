@@ -45,7 +45,7 @@ class TestAscendApi(CustomTestCase):
                 "sampling_params": {
                     "temperature": 0,
                     "max_new_tokens": 200,
-                    "top_p": 1,
+                    "top_p": 1
                 },
                 
             },
@@ -63,7 +63,7 @@ class TestAscendApi(CustomTestCase):
                 "input_ids": [101, 7592, 2088, 102],
                 "sampling_params": {
                     "temperature": 0,
-                    "max_new_tokens": 200,    
+                    "max_new_tokens": 200    
                 },
                 
             },
@@ -81,7 +81,7 @@ class TestAscendApi(CustomTestCase):
                 "image_data": "https://miaobi-lite.bj.bcebos.com/miaobi/5mao/b%27b2Ny6K%2BG5Yir5Luj56CBXzE3MzQ2MzcyNjAuMzgxNDk5NQ%3D%3D%27/0.png"
                 "sampling_params": {
                     "temperature": 0,
-                    "max_new_tokens": 200,    
+                    "max_new_tokens": 200    
                 },
                 
             },
