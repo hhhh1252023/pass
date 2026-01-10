@@ -33,22 +33,37 @@ class TestAscendApi(CustomTestCase):
     def tearDownClass(cls):
         kill_process_tree(cls.process.pid)
 
-    def test_api_generate_from_file(self):
-        with open('/home/test_embeds_qwen3.json', 'r') as f:
-            file = {'file': f}  
-            response = requests.post(f"{DEFAULT_URL_FOR_TEST}/generate_from_file", files=file)  
-            print(res.text)
-        self.assertEqual(response.status_code, 200)
-        print(response.json())
 
-    def test_api_abort_request(self):
-        response = requests.post(f"{DEFAULT_URL_FOR_TEST}/abort_request",, json={'rid': '123', 'mode': "in_place"})
-        #self.assertEqual(response.status_code, 200)
+    def test_api_01_abort_request(self):
+        response = requests.post(
+            f"{DEFAULT_URL_FOR_TEST}/generate",
+            json={
+                "rid": '123'
+                "text": "The capital of France is",
+                "sampling_params": {
+                    "temperature": 0,
+                    "max_new_tokens": 32,
+                },
+            },
+        )
+        response = requests.post(f"{DEFAULT_URL_FOR_TEST}/abort_request", json={'rid': '123', 'http_worker_ipc': "abc", 'abort_all': True, 'finished_reason': "test_abort", 'abort_message': "---------AAA---"})
+        self.assertEqual(response.status_code, 200)
         print(f'{response.status_code = }') 
         print(response.json())
 
-    def test_api_pause_generation(self):
-        response = requests.post(f"{DEFAULT_URL_FOR_TEST}/pause_generation",, json={'rid': '123', 'mode': "in_place"})
+    def test_api_02_pause_generation(self):
+        response = requests.post(
+            f"{DEFAULT_URL_FOR_TEST}/generate",
+            json={
+                "rid": '123'
+                "text": "The capital of France is",
+                "sampling_params": {
+                    "temperature": 0,
+                    "max_new_tokens": 32,
+                },
+            },
+        )
+        response = requests.post(f"{DEFAULT_URL_FOR_TEST}/pause_generation", json={'rid': '123', 'http_worker_ipc': "abc", 'mode': "in_place"})
         #self.assertEqual(response.status_code, 200)
         print(f'{response.status_code = }') 
         print(response.json())
@@ -56,8 +71,19 @@ class TestAscendApi(CustomTestCase):
         #self.assertEqual(response.json()['http_worker_ipc'], None)
         #self.assertEqual(response.json()['mode'], "abort")
 
-    def test_api_continue_generation(self):
-        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/continue_generation")
+    def test_api_03_continue_generation(self):
+        response = requests.post(
+            f"{DEFAULT_URL_FOR_TEST}/generate",
+            json={
+                "rid": '123'
+                "text": "The capital of France is",
+                "sampling_params": {
+                    "temperature": 0,
+                    "max_new_tokens": 32,
+                },
+            },
+        )
+        response = requests.get(f"{DEFAULT_URL_FOR_TEST}/continue_generation", json={'rid': '123', 'http_worker_ipc': "abc"})
         self.assertEqual(response.status_code, 200)
         print(response.json())
         #self.assertEqual(response.json()['rid'], None)
