@@ -14,11 +14,11 @@ from sglang.test.test_utils import (
     popen_launch_server,
 )
 DEFAULT_URL_FOR_TEST="http://127.0.0.1:2345"
-response = []
+responses = []
 def send_requests(url, **kwargs):
     data = json.dumps(kwargs)
     response = requests.post('http://127.0.0.1:2345' + url, json=data)
-    response.append(response)
+    responses.append(response)
 
 class TestAscendApi(CustomTestCase):
     @classmethod
@@ -50,7 +50,7 @@ class TestAscendApi(CustomTestCase):
         thread2.join()
         #self.assertEqual(response.status_code, 200)
         #print(f'{response.status_code = }') 
-        print(response)
+        print(responses)
 
 
 if __name__ == "__main__":
