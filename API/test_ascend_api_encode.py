@@ -40,7 +40,7 @@ class TestAscendApi(CustomTestCase):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/encode",
             json={
-                "rid": 1,
+                "rid": 2,
                 "text": "what is the capital of France",
                 "sampling_params": {
                     "temperature": 0,
@@ -52,7 +52,7 @@ class TestAscendApi(CustomTestCase):
         )
         self.assertEqual(response.status_code, 200)
         print(response.json())
-        self.assertEqual(response.json()['rid'], 1)
+        self.assertEqual(response.json()['rid'], 2)
         self.assertEqual(response.json()['sampling_params']['temperature'], 0)
 
     def test_api_encode_02(self):
@@ -77,7 +77,7 @@ class TestAscendApi(CustomTestCase):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/encode",
             json={
-                "rid": 1,
+                "rid": 3,
                 "image_data": "https://miaobi-lite.bj.bcebos.com/miaobi/5mao/b%27b2Ny6K%2BG5Yir5Luj56CBXzE3MzQ2MzcyNjAuMzgxNDk5NQ%3D%3D%27/0.png"
                 "sampling_params": {
                     "temperature": 0,
@@ -88,7 +88,7 @@ class TestAscendApi(CustomTestCase):
         )
         self.assertEqual(response.status_code, 200)
         print(response.json())
-        self.assertEqual(response.json()['rid'], 1)
+        self.assertEqual(response.json()['rid'], 3)
         self.assertEqual(response.json()['sampling_params']['temperature'], 0)
         
 
