@@ -49,7 +49,8 @@ class TestAscendApi(CustomTestCase):
         thread1.join()
         thread2.join()
         #self.assertEqual(response.status_code, 200)
-        #print(f'{response.status_code = }') 
+        #print(f'{response.status_code = }')
+        print(responses[0].json())
         print(responses[1].json())
 
 
