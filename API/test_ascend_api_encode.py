@@ -15,7 +15,7 @@ from sglang.test.test_utils import (
 class TestAscendApi(CustomTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.model = "/root/.cache/modelscope/hub/models/Qwen/Qwen3-Embedding-8B"
+        cls.model = "/root/.cache/modelscope/hub/models/Alibaba-NLP/gme-Qwen2-VL-2B-Instruct"
         other_args = (
             [
                 "--attention-backend",
