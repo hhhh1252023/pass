@@ -50,7 +50,7 @@ class TestAscendApi(CustomTestCase):
         thread2.join()
         #self.assertEqual(response.status_code, 200)
         #print(f'{response.status_code = }') 
-        print(response.json())
+        print(response)
 
 
 if __name__ == "__main__":
