@@ -127,6 +127,73 @@ class TestPrioritySchedulingPreemptionThreshold(CustomTestCase):
         latency_b = e2e_latencies[2]
         
         # 核心断言：C最先完成，其次是A，最后是B
+        assert latency_c < latency_b < latency_a, \
+            f"执行顺序不符合预期！预期 C<B<A，实际耗时：C={latency_c}, A={latency_a}, B={latency_b}"
+
+    def test_preemption_threshold_execution_order_exa(self):
+        # 步骤1：先提交作业A（优先级2），让其进入运行状态（放大token数，确保被C抢占）
+        request_a = {
+            "priority": 2,
+            "sampling_params": {"max_new_tokens": 2000}  # 大token数，确保运行时间足够长
+        }
+        
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
+        # 异步发送作业A，不等待完成（占用运行位）
+        task_a = loop.create_task(
+            send_concurrent_generate_requests_with_custom_params(
+                self.base_url, [request_a]
+            )
+        )
+        
+        # 等待2秒，确保作业A已完全启动并占用运行位（延长等待，避免抢占逻辑未触发）
+        loop.run_until_complete(asyncio.sleep(2))
+        
+        # 步骤2：调整发送顺序：先C（10）后B（5），并添加间隔，确保C优先抢占
+        # 2.1 先发送高优先级的C（10），满足与A的差值≥5，触发抢占
+        request_c = {
+            "priority": 10,
+            "sampling_params": {"max_new_tokens": 100}  # 小token数，快速完成
+        }
+        responses_c = loop.run_until_complete(
+            send_concurrent_generate_requests_with_custom_params(
+                self.base_url, [request_c]
+            )
+        )
+        
+        # 2.2 等待0.5秒，确保C已完成并释放运行位，再发送B（2），避免干扰
+        loop.run_until_complete(asyncio.sleep(0.5))
+        request_b = {
+            "priority": 2,
+            "sampling_params": {"max_new_tokens": 100}  # 小token数，排队等待
+        }
+        responses_b = loop.run_until_complete(
+            send_concurrent_generate_requests_with_custom_params(
+                self.base_url, [request_b]
+            )
+        )
+        
+        # 步骤3：等待作业A完成，获取所有响应
+        responses_a = loop.run_until_complete(task_a)
+        
+        # 步骤4：修正响应合并顺序（A→C→B），与发送顺序一致，确保索引对应正确
+        all_responses = responses_a + responses_c + responses_b
+        
+        # 关闭事件循环，消除 "unclosed event loop" 资源警告
+        loop.close()
+        
+        # 步骤5：验证所有请求均处理成功（状态码200，无错误信息）
+        expected_status = [(200, None)] * 3  # 3个请求均预期成功
+        e2e_latencies = []
+        _verify_generate_responses(all_responses, expected_status, e2e_latencies)
+        
+        # 步骤6：明确索引对应（与合并顺序一致）
+        latency_a = e2e_latencies[0]
+        latency_c = e2e_latencies[1]
+        latency_b = e2e_latencies[2]
+        
+        # 核心断言：C最先完成，其次是A，最后是B
         assert latency_c < latency_a < latency_b, \
             f"执行顺序不符合预期！预期 C<A<B，实际耗时：C={latency_c}, A={latency_a}, B={latency_b}"
 
@@ -186,4 +253,4 @@ def _verify_running_queued_requests(
                     f"排队请求数超限：当前{queued_req_count} > 上限{max_queued_requests}"
 
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    unittest.main()
