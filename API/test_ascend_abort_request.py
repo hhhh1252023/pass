@@ -13,11 +13,11 @@ from sglang.test.test_utils import (
     CustomTestCase,
     popen_launch_server,
 )
-
+DEFAULT_URL_FOR_TEST="http://127.0.0.1:2345"
 responses = []
 def send_requests(url, **kwargs):
     data = json.dumps(kwargs)
-    response = requests.post('http://127.0.0.1:12345' + url, json=data)
+    response = requests.post('http://127.0.0.1:2345' + url, json=data)
     responses.append(response)
 
 class TestAscendApi(CustomTestCase):
