@@ -2,7 +2,7 @@ import json
 import threading
 import requests
 import unittest
-
+import time
 import requests
 
 from sglang.srt.utils import kill_process_tree
@@ -44,13 +44,14 @@ class TestAscendApi(CustomTestCase):
         thread1 = threading.Thread(target=send_requests, args=('/generate',), kwargs={'rid': '10086', 'text': 'who are you?', 'sampling_params': {'temperature': 0.0, 'max_new_tokens': 1024}})
         thread2 = threading.Thread(target=send_requests, args=('/abort_request',), kwargs={'rid': "10086"})
         thread1.start()
+        time.sleep(0.5)
         thread2.start()
         thread1.join()
         thread2.join()
         #self.assertEqual(response.status_code, 200)
         #print(f'{response.status_code = }')
-        print(responses[0].json())
-        print(responses[1].json())
+        print(responses[0].text)
+        print(responses[1].text)
 
 
 if __name__ == "__main__":
