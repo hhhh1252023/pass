@@ -78,7 +78,7 @@ class TestAscendApi(CustomTestCase):
             f"{DEFAULT_URL_FOR_TEST}/encode",
             json={
                 "rid": 3,
-                "image_data": "https://miaobi-lite.bj.bcebos.com/miaobi/5mao/b%27b2Ny6K%2BG5Yir5Luj56CBXzE3MzQ2MzcyNjAuMzgxNDk5NQ%3D%3D%27/0.png"
+                "image_data": "https://miaobi-lite.bj.bcebos.com/miaobi/5mao/b%27b2Ny6K%2BG5Yir5Luj56CBXzE3MzQ2MzcyNjAuMzgxNDk5NQ%3D%3D%27/0.png",
                 "sampling_params": {
                     "temperature": 0,
                     "max_new_tokens": 200    
