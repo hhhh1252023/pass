@@ -23,6 +23,7 @@ class TestAscendApi(CustomTestCase):
                 "--disable-cuda-graph",
                 "--tp-size",
                 2,
+                "--embedding",
             ]
         )
         cls.process = popen_launch_server(
