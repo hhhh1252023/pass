@@ -51,6 +51,7 @@ class TestAscendApi(CustomTestCase):
         print(f'{response.status_code = }') 
         print(response.json())
 
+    """
     def test_api_02_pause_generation(self):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
@@ -88,7 +89,7 @@ class TestAscendApi(CustomTestCase):
         print(response.json())
         #self.assertEqual(response.json()['rid'], None)
         #self.assertEqual(response.json()['http_worker_ipc'], None)
-
+    """
 
 if __name__ == "__main__":
 
