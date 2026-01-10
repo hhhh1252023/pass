@@ -15,7 +15,7 @@ from sglang.test.test_utils import (
 class TestAscendApi(CustomTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.model = "/root/.cache/modelscope/hub/models/LLM-Research/Llama-3.2-1B-Instruct"
+        cls.model = "/root/.cache/modelscope/hub/models/Qwen/Qwen3-30B-A3B"
         other_args = (
             [
                 "--attention-backend",
@@ -44,7 +44,8 @@ class TestAscendApi(CustomTestCase):
                 "text": "what is the capital of France",
                 "sampling_params": {
                     "temperature": 0,
-                    "max_new_tokens": 200,    
+                    "max_new_tokens": 200,
+                    "top_p": 1,
                 },
                 
             },
@@ -60,6 +61,24 @@ class TestAscendApi(CustomTestCase):
             json={
                 "rid": 1,
                 "input_ids": 
+                "sampling_params": {
+                    "temperature": 0,
+                    "max_new_tokens": 200,    
+                },
+                
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        print(response.json())
+        self.assertEqual(response.json()['rid'], 1)
+        self.assertEqual(response.json()['sampling_params']['temperature'], 0)
+        
+    def test_api_encode_03(self):
+        response = requests.post(
+            f"{DEFAULT_URL_FOR_TEST}/encode",
+            json={
+                "rid": 1,
+                "image_data": "https://miaobi-lite.bj.bcebos.com/miaobi/5mao/b%27b2Ny6K%2BG5Yir5Luj56CBXzE3MzQ2MzcyNjAuMzgxNDk5NQ%3D%3D%27/0.png"
                 "sampling_params": {
                     "temperature": 0,
                     "max_new_tokens": 200,    
