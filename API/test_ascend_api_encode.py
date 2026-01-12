@@ -1,5 +1,5 @@
 import unittest
-
+import base64 
 import requests
 
 from sglang.srt.utils import kill_process_tree
@@ -111,7 +111,47 @@ class TestAscendApi(CustomTestCase):
         print(response.json())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['meta_info']['id'], "4")
-        #self.assertEqual(response.json()['sampling_params']['temperature'], 0)
+
+    def test_api_encode_05(self):
+        image_file_path = "/path/to/your/local/image.png"  # 替换为你的本地图片绝对路径
+        with open(image_file_path, "rb") as f:
+            image_binary = f.read()
+
+        image_base64 = base64.b64encode(image_binary).decode("utf-8")
+        response = requests.post(
+            f"{DEFAULT_URL_FOR_TEST}/encode",
+            json={
+                "rid": "44",
+                "text": "show me the picture",
+                "image_data": image_base64,
+                "sampling_params": {
+                    "temperature": 0,
+                    "max_new_tokens": 200    
+                },
+                
+            },
+        )
+        print(response.json())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['meta_info']['id'], "44")
+
+    def test_api_encode_06(self):
+    response = requests.post(
+        f"{DEFAULT_URL_FOR_TEST}/encode",
+        json={
+            "rid": "48",
+            "text": "show me the words",
+            # 文件路径格式：传入服务端可访问的绝对路径
+            "image_data": "/root/.cache/images/test/0.png",  # 替换为服务端上的图片绝对路径
+            "sampling_params": {
+                "temperature": 0,
+                "max_new_tokens": 200    
+            }
+        },
+    )
+    print(response.json())
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response.json()['meta_info']['id'], "48")
 
 
 if __name__ == "__main__":
