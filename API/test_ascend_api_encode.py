@@ -59,6 +59,28 @@ class TestAscendApi(CustomTestCase):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/encode",
             json={
+                "rid": "8",
+                "text": [  
+                    "what is the capital of France",
+                    "what is the capital of China",
+                    "how to learn Python well"
+                ],
+                "sampling_params": {
+                    "temperature": 0,
+                    "max_new_tokens": 200,
+                    "top_p": 1
+                },
+                
+            },
+        )
+        print(response.json().keys())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['meta_info']['id'], "8")
+
+    def test_api_encode_03(self):
+        response = requests.post(
+            f"{DEFAULT_URL_FOR_TEST}/encode",
+            json={
                 "rid": "3",
                 "input_ids": [101, 7592, 2088, 102],
                 "sampling_params": {
@@ -72,7 +94,7 @@ class TestAscendApi(CustomTestCase):
         self.assertEqual(response.json()['meta_info']['id'], "3")
         #self.assertEqual(response.json()['sampling_params']['temperature'], 0)
         
-    def test_api_encode_03(self):
+    def test_api_encode_04(self):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/encode",
             json={
