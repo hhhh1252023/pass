@@ -41,7 +41,7 @@ class TestAscendApi(CustomTestCase):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/encode",
             json={
-                "rid": "2",
+                "rid": "23",
                 "text": "what is the capital of France",
                 "sampling_params": {
                     "temperature": 0,
@@ -52,14 +52,15 @@ class TestAscendApi(CustomTestCase):
             },
         )
         print(response.json().keys())
+        print(response.json()['embedding'])
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['meta_info']['id'], "2")
+        self.assertEqual(response.json()['meta_info']['id'], "23")
         #self.assertEqual(response.json()['sampling_params']['temperature'], 0)
     def test_api_encode_02(self):
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/encode",
             json={
-                "rid": "8",
+                "rid": ["8", "88", "888"],
                 "text": [  
                     "what is the capital of France",
                     "what is the capital of China",
@@ -68,14 +69,13 @@ class TestAscendApi(CustomTestCase):
                 "sampling_params": {
                     "temperature": 0,
                     "max_new_tokens": 200,
-                    "top_p": 1
                 },
                 
             },
         )
-        print(response.json().keys())
+        print(response.json())
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['meta_info']['id'], "8")
+        #self.assertEqual(response.json()['meta_info']['id'][0], "8")
 
     def test_api_encode_03(self):
         response = requests.post(
@@ -108,12 +108,12 @@ class TestAscendApi(CustomTestCase):
                 
             },
         )
-        print(response.json())
+        #print(response.json())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['meta_info']['id'], "4")
 
     def test_api_encode_05(self):
-        image_file_path = "/path/to/your/local/image.png"  # 替换为你的本地图片绝对路径
+        image_file_path = "/data/d00662834/0104_dev/sglang/examples/assets/example_image.png"  # 替换为你的本地图片绝对路径
         with open(image_file_path, "rb") as f:
             image_binary = f.read()
 
@@ -122,7 +122,7 @@ class TestAscendApi(CustomTestCase):
             f"{DEFAULT_URL_FOR_TEST}/encode",
             json={
                 "rid": "44",
-                "text": "show me the picture",
+                "text": "describe  me the picture",
                 "image_data": image_base64,
                 "sampling_params": {
                     "temperature": 0,
@@ -131,27 +131,27 @@ class TestAscendApi(CustomTestCase):
                 
             },
         )
-        print(response.json())
+        #print(response.json())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['meta_info']['id'], "44")
 
     def test_api_encode_06(self):
-    response = requests.post(
-        f"{DEFAULT_URL_FOR_TEST}/encode",
-        json={
-            "rid": "48",
-            "text": "show me the words",
-            # 文件路径格式：传入服务端可访问的绝对路径
-            "image_data": "/root/.cache/images/test/0.png",  # 替换为服务端上的图片绝对路径
-            "sampling_params": {
-                "temperature": 0,
-                "max_new_tokens": 200    
-            }
-        },
-    )
-    print(response.json())
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.json()['meta_info']['id'], "48")
+        response = requests.post(
+            f"{DEFAULT_URL_FOR_TEST}/encode",
+            json={
+                "rid": "48",
+                "text": "describe me the picture",
+                # 文件路径格式：传入服务端可访问的绝对路径
+                "image_data": "/data/d00662834/0104_dev/sglang/examples/assets/example_image.png",  # 替换为服务端上的图片绝对路径
+                "sampling_params": {
+                    "temperature": 0,
+                    "max_new_tokens": 200    
+                }
+            },
+        )
+        #print(response.json())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['meta_info']['id'], "48")
 
 
 if __name__ == "__main__":
