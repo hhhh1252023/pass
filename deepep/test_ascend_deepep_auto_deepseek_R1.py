@@ -110,6 +110,22 @@ class TestPureTP(CustomTestCase):
         metrics = run_eval(args)
         self.assertGreater(metrics["score"], 0.5)
 
+    def test_gsm8k(self):
+        args = SimpleNamespace(
+            num_shots=5,
+            data_path=None,
+            num_questions=200,
+            max_new_tokens=512,
+            parallel=128,
+            host="http://127.0.0.1",
+            port=int(self.base_url.split(":")[-1]),
+        )
+        metrics = run_eval(args)
+        self.assertGreaterEqual(
+            metrics["accuracy"],
+            self.accuracy,
+            f'Accuracy of {self.model} is {str(metrics["accuracy"])}, is lower than {self.accuracy}',
+        )
 
 
 
