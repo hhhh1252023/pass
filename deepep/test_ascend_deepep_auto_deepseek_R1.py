@@ -113,6 +113,7 @@ class TestPureTP(CustomTestCase):
 
     def test_gsm8k(self):
         args = SimpleNamespace(
+            base_url=self.base_url,
             num_shots=5,
             data_path=None,
             num_questions=200,
