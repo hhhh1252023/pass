@@ -18,6 +18,7 @@ from sglang.test.test_utils import (
 MODEL_PATH = "/root/.cache/modelscope/hub/models/DeepSeek-R1-0528-w4a8-per-channel"
 
 class TestPureTP(CustomTestCase):
+    accuracy = 0.62
     @classmethod
     def setUpClass(cls):
         cls.model = MODEL_PATH
