@@ -61,7 +61,7 @@ class TestPureTP(CustomTestCase):
                 "--moe-a2a-backend",
                 "deepep",
                 "--deepep-mode",
-                "auto",
+                "low_latency",
                 "--enable-dp-attention",
                 "--dp-size",
                 "4",
