@@ -84,7 +84,7 @@ class TestPureTP(CustomTestCase):
                 "SGLANG_SCHEDULER_DECREASE_PREFILL_IDLE": "1",
                 #"HCCL_SOCKET_IFNAME": NIC_NAME,
                 #"GLOO_SOCKET_IFNAME": NIC_NAME,
-                "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "36",
+                "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "72",
                 "HCCL_BUFFSIZE": "1600",
                 "DEEP_NORMAL_MODE_USE_INT8_QUANT": "1",
                 "SGLANG_NPU_USE_MLAPO": "1",
