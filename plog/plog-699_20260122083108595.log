@@ -1,0 +1,13 @@
+[ERROR] RUNTIME(699,):2026-01-22-08:31:08.470.886 [npu_driver.cc:1534]5377 DevMemAllocHugePageManaged:[drv api] halMemAlloc failed:size=4296015872(bytes), type=2, moduleId=3, drvFlag=216172782123369486, drvRetCode=6, device_id=14, ErrCode=207001, desc=[driver error:out of memory], InnerCode=0x7020016
+[ERROR] RUNTIME(699,):2026-01-22-08:31:10.226.072 [npu_driver.cc:1657]5377 DevMemAllocManaged:[drv api] halMemAlloc failed:size=4296015872(bytes), type=2, moduleId=3, drvFlag=216172782123238414, drvRetCode=6, device_id=14, ErrCode=207001, desc=[driver error:out of memory], InnerCode=0x7020016
+[ERROR] ASCENDCL(699,):2026-01-22-08:31:10.226.093 [memory.cpp:212]5377 aclrtMallocInnerWithCfg:alloc memory failed, runtime result = 207001
+[ERROR] HCCL(699,):2026-01-22-08:31:10.226.139 [adapter_rts.cc:613] [5377][InitGroupStage][Resource]errNo[0x000000000500000f] rtMalloc failed, return[207001], para: devPtrAddr[(nil)], size[4296015872 Byte].
+[ERROR] HCCL(699,):2026-01-22-08:31:10.226.177 [mem_device.cc:64] [5377][DeviceMem][Alloc]rt_malloc error, ptr is nullptr, ret[15], size[4296015872 Byte]
+[ERROR] HCCL(699,):2026-01-22-08:31:10.226.182 [ccl_buffer_manager.cc:44] [5377][CreateCCLbuffer]call trace: hcclRet -> 15
+[ERROR] HCCL(699,):2026-01-22-08:31:10.226.185 [ccl_buffer_manager.cc:72] [5377][CreateCommCCLbuffer]call trace: hcclRet -> 15
+[ERROR] HCCL(699,):2026-01-22-08:31:10.226.189 [hccl_communicator_host.cc:3387] [5377][ReduceScatterOutPlace]call trace: hcclRet -> 15
+[ERROR] HCCL(699,):2026-01-22-08:31:10.226.198 [hccl_comm.cc:302] [5377][HcclComm][ReduceScatter_group_name_69]errNo[0x000000000000000f] index[1]
+[ERROR] HCCL(699,):2026-01-22-08:31:10.226.205 [op_base.cc:1672] [5377][HcclReduceScatterInner]call trace: hcclRet -> 15
+[ERROR] APP(699,):2026-01-22-08:31:10.226.224 [log_inner.cpp:78]5377 build/CMakeFiles/torch_npu.dir/compiler_depend.ts:ExecFuncOpApi:452: "[PTA]:"Custom hand fail! name=HcclReduceScatter, ret=15""
+[ERROR] APP(699,):2026-01-22-08:31:10.226.243 [log_inner.cpp:78]5377 build/CMakeFiles/torch_npu.dir/compiler_depend.ts:ReadQueue:437: "[PTA]:"---Thread---281450817515808: device = 14, write_idx = 1559, read_idx = 1554, status = 1, ret = 15""
+[ERROR] APP(699,):2026-01-22-08:31:10.226.614 [log_inner.cpp:78]699 build/CMakeFiles/torch_npu.dir/compiler_depend.ts:MakeSureQueueEmpty:342: "[PTA]:"Inner error happened, detail: the current working operator name is HcclReduceScatter""

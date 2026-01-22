@@ -1,0 +1,1 @@
+[ERROR] RUNTIME(686,):2026-01-22-08:31:08.363.040 [npu_driver.cc:1534]5235 DevMemAllocHugePageManaged:[drv api] halMemAlloc failed:size=4296015872(bytes), type=2, moduleId=3, drvFlag=216172782123369473, drvRetCode=6, device_id=1, ErrCode=207001, desc=[driver error:out of memory], InnerCode=0x7020016
