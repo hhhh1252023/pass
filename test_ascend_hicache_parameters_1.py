@@ -20,7 +20,7 @@ HICACHE_CONFIGS = [
     ("lru", "direct", "layer_first", "lru_direct_layer_first"),
     ("lfu", "kernel", "page_first", "lfu_kernel_page_first"),
     ("lru", "kernel_ascend", "page_first_direct", "lru_kernel_ascend_page_first_direct"),
-    ("lfu", "direct", "page_first_kv_split", "lfu_direct_page_first_kv_split"),
+    ("lru", "direct", "page_first_kv_split", "lfu_direct_page_first_kv_split"),
 ]
 
 # 基础服务配置（通用配置，不随HiCache变化）
