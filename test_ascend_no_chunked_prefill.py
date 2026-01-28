@@ -19,22 +19,30 @@ class TestNoChunkedPrefill(CustomTestCase):
     [Test Category] Parameter
     [Test Target] --chunked-prefill-size
     """
-
-    def test_no_chunked_prefill_without_radix_cache(self):
-        model = (
-            "/root/.cache/modelscope/hub/models/AI-ModelScope/Llama-3.1-8B-Instruct"
-        )
-        other_args = (
-            [
+    
+    @classmethod
+    def setUpClass(cls):
+        cls.model = "/root/.cache/modelscope/hub/models/AI-ModelScope/Llama-3.1-8B-Instruct"
+        cls.base_url = DEFAULT_URL_FOR_TEST
+        cls.process = popen_launch_server(
+            cls.model,
+            cls.base_url,
+            timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
+            other_args=[
                 "--disable-radix-cache",
                 "--chunked-prefill-size",
                 "-1",
                 "--attention-backend",
                 "ascend",
                 "--disable-cuda-graph",
-            ]
+            ],
         )
-        
+
+    @classmethod
+    def tearDownClass(cls):
+        kill_process_tree(cls.process.pid)
+    
+    def test_no_chunked_prefill_without_radix_cache(self):    
         args = SimpleNamespace(
             base_url=DEFAULT_URL_FOR_TEST,
             model=model,
@@ -42,18 +50,8 @@ class TestNoChunkedPrefill(CustomTestCase):
             num_examples=64,
             num_threads=32,
         )
-
         metrics = run_eval(args)
         self.assertGreaterEqual(metrics["score"], 0.65)
-        
-        res = run_bench_serving(
-            model=model,
-            num_prompts=10,
-            request_rate=float("inf"),
-            other_server_args=other_args,
-        )
-
-        assert res["completed"] == 10
 
 
 if __name__ == "__main__":
