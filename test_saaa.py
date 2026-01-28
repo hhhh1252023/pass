@@ -13,6 +13,21 @@ from sglang.test.test_utils import (
 
 DEFAULT_URL_FOR_TEST = "http://127.0.0.1:8234"
 
+# 基础参数（两个测试类共用）
+BASE_OTHER_ARGS = [
+    "--chunked-prefill-size", "256",
+    "--attention-backend", "ascend",
+    "--disable-cuda-graph",
+    "--mem-fraction-static", "0.8",
+    "--tp-size", "4",
+    "--base-gpu-id", "4",
+    "--enable-dynamic-batch-tokenizer",
+    "--dynamic-batch-tokenizer-batch-size", "4",
+    "--dynamic-batch-tokenizer-batch-timeout", "0",  # 基准值
+    "--log-level", "debug"
+]
+MODEL_NAME = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen/Qwen3-32B"
+
 # 封装通用的服务器启动逻辑，接收分词器超时参数
 def launch_server_with_tokenizer_timeout(model_name, base_url, tokenizer_timeout, other_args_base):
     """
@@ -34,61 +49,12 @@ def launch_server_with_tokenizer_timeout(model_name, base_url, tokenizer_timeout
     )
     return process
 
-# 基础参数（两个测试类共用）
-BASE_OTHER_ARGS = [
-    "--chunked-prefill-size", "256",
-    "--attention-backend", "ascend",
-    "--disable-cuda-graph",
-    "--mem-fraction-static", "0.8",
-    "--tp-size", "4",
-    "--base-gpu-id", "4",
-    "--enable-dynamic-batch-tokenizer",
-    "--dynamic-batch-tokenizer-batch-size", "4",
-    "--dynamic-batch-tokenizer-batch-timeout", "0",  # 基准值
-    "--log-level", "debug"
-]
-MODEL_NAME = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen/Qwen3-32B"
-
-# 测试类1：原有逻辑（--dynamic-batch-tokenizer-batch-timeout=0）
-class TestQwenPPTieWeightsAccuracyTokenizerTimeout0(CustomTestCase):
+# 定义基础测试类，封装通用测试方法（解决属性缺失问题）
+class BaseQwenTest(CustomTestCase):
     accuracy = 0.38
-    
-    @classmethod
-    def setUpClass(cls):
-        cls.base_url = DEFAULT_URL_FOR_TEST
-        # 启动服务器，分词器超时=0（原有值）
-        cls.process = launch_server_with_tokenizer_timeout(
-            MODEL_NAME, cls.base_url, tokenizer_timeout=0, other_args_base=BASE_OTHER_ARGS
-        )
 
-    @classmethod
-    def tearDownClass(cls):
-        kill_process_tree(cls.process.pid)
-
-    def test_gsm8k_tokenizer_timeout_0(self):
-        self._run_gsm8k_test("tokenizer_timeout=0")
-
-# 测试类2：新增逻辑（--dynamic-batch-tokenizer-batch-timeout=1）
-class TestQwenPPTieWeightsAccuracyTokenizerTimeout1(CustomTestCase):
-    accuracy = 0.38
-    
-    @classmethod
-    def setUpClass(cls):
-        cls.base_url = DEFAULT_URL_FOR_TEST
-        # 启动服务器，分词器超时=1（你要测试的场景）
-        cls.process = launch_server_with_tokenizer_timeout(
-            MODEL_NAME, cls.base_url, tokenizer_timeout=1, other_args_base=BASE_OTHER_ARGS
-        )
-
-    @classmethod
-    def tearDownClass(cls):
-        kill_process_tree(cls.process.pid)
-
-    def test_gsm8k_tokenizer_timeout_1(self):
-        self._run_gsm8k_test("tokenizer_timeout=1")
-
-    # 封装通用测试逻辑，避免重复
     def _run_gsm8k_test(self, scenario):
+        """通用的GSK8K测试逻辑，所有子类均可调用"""
         args = SimpleNamespace(
             num_shots=5,
             data_path=None,
@@ -110,6 +76,40 @@ class TestQwenPPTieWeightsAccuracyTokenizerTimeout1(CustomTestCase):
         # 调用服务器信息接口，输出相关信息
         server_info = requests.get(self.base_url + "/get_server_info")
         print(f"{scenario} - 服务器信息: {server_info=}")
+
+# 测试类1：原有逻辑（--dynamic-batch-tokenizer-batch-timeout=0）
+class TestQwenPPTieWeightsAccuracyTokenizerTimeout0(BaseQwenTest):
+    @classmethod
+    def setUpClass(cls):
+        cls.base_url = DEFAULT_URL_FOR_TEST
+        # 启动服务器，分词器超时=0（原有值）
+        cls.process = launch_server_with_tokenizer_timeout(
+            MODEL_NAME, cls.base_url, tokenizer_timeout=0, other_args_base=BASE_OTHER_ARGS
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        kill_process_tree(cls.process.pid)
+
+    def test_gsm8k_tokenizer_timeout_0(self):
+        self._run_gsm8k_test("tokenizer_timeout=0")
+
+# 测试类2：新增逻辑（--dynamic-batch-tokenizer-batch-timeout=1）
+class TestQwenPPTieWeightsAccuracyTokenizerTimeout1(BaseQwenTest):
+    @classmethod
+    def setUpClass(cls):
+        cls.base_url = DEFAULT_URL_FOR_TEST
+        # 启动服务器，分词器超时=1（你要测试的场景）
+        cls.process = launch_server_with_tokenizer_timeout(
+            MODEL_NAME, cls.base_url, tokenizer_timeout=1, other_args_base=BASE_OTHER_ARGS
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        kill_process_tree(cls.process.pid)
+
+    def test_gsm8k_tokenizer_timeout_1(self):
+        self._run_gsm8k_test("tokenizer_timeout=1")
 
 if __name__ == "__main__":
     unittest.main()
