@@ -85,7 +85,6 @@ class BaseQwenHiCacheTest(CustomTestCase):
         # 验证服务配置生效（可选，辅助排查）
         server_info = requests.get(f"{self.base_url}/get_server_info")
         self.assertEqual(server_info.status_code, 200)
-        print(f"[{scenario}] 精度: {metrics['accuracy']}, 服务配置: {server_info.json()['hicache_config']}")
 
 # 动态生成测试类（覆盖所有HiCache关键配置组合）
 def generate_hicache_test_classes() -> List[unittest.TestCase]:
