@@ -4,10 +4,10 @@ from types import SimpleNamespace
 from sglang.test.ci.ci_register import register_npu_ci
 from sglang.test.run_eval import run_eval
 from sglang.test.test_utils import (
-    DEFAULT_MODEL_NAME_FOR_TEST,
+    DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
     DEFAULT_URL_FOR_TEST,
     CustomTestCase,
-    run_bench_serving,
+    popen_launch_server,
 )
 
 register_npu_ci(est_time=400, suite="nightly-1-npu-a3", nightly=True)
