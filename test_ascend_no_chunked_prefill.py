@@ -43,7 +43,7 @@ class TestNoChunkedPrefill(CustomTestCase):
     def tearDownClass(cls):
         kill_process_tree(cls.process.pid)
     
-    def test_no_chunked_prefill_without_radix_cache(self):    
+    def test_no_chunked_prefill_without_radix_cache(cls):    
         args = SimpleNamespace(
             base_url=cls.base_url,
             model=cls.model,
@@ -52,7 +52,7 @@ class TestNoChunkedPrefill(CustomTestCase):
             num_threads=32,
         )
         metrics = run_eval(args)
-        self.assertGreaterEqual(metrics["score"], 0.65)
+        cls.assertGreaterEqual(metrics["score"], 0.65)
 
 
 if __name__ == "__main__":
