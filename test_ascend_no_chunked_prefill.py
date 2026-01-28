@@ -2,6 +2,7 @@ import unittest
 from types import SimpleNamespace
 
 from sglang.test.ci.ci_register import register_npu_ci
+from sglang.srt.utils import kill_process_tree
 from sglang.test.run_eval import run_eval
 from sglang.test.test_utils import (
     DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
@@ -44,8 +45,8 @@ class TestNoChunkedPrefill(CustomTestCase):
     
     def test_no_chunked_prefill_without_radix_cache(self):    
         args = SimpleNamespace(
-            base_url=DEFAULT_URL_FOR_TEST,
-            model=model,
+            base_url=cls.base_url,
+            model=cls.model,
             eval_name="mmlu",
             num_examples=64,
             num_threads=32,
