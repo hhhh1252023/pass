@@ -5,6 +5,7 @@ from sglang.test.ci.ci_register import register_npu_ci
 from sglang.test.run_eval import run_eval
 from sglang.test.test_utils import (
     DEFAULT_MODEL_NAME_FOR_TEST,
+    DEFAULT_URL_FOR_TEST,
     CustomTestCase,
     run_bench_serving,
 )
@@ -35,8 +36,8 @@ class TestNoChunkedPrefill(CustomTestCase):
         )
         
         args = SimpleNamespace(
-            base_url=self.base_url,
-            model=self.model,
+            base_url=DEFAULT_URL_FOR_TEST,
+            model=model,
             eval_name="mmlu",
             num_examples=64,
             num_threads=32,
