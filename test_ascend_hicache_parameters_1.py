@@ -37,7 +37,7 @@ BASE_OTHER_ARGS = [
 class BaseQwenHiCacheTest(CustomTestCase):
     """Qwen3-32B HiCache精度验证基础类"""
     # 精度阈值（保持基线，确保HiCache开启后精度无恶化）
-    accuracy = 0.88
+    accuracy = 0.8722
     model_name = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen/Qwen3-32B"
     
     @classmethod
