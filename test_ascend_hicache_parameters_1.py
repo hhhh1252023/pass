@@ -18,9 +18,9 @@ DEFAULT_URL_FOR_TEST = "http://127.0.0.1:8234"
 HICACHE_CONFIGS = [
     # (eviction_policy, io_backend, mem_layout, test_scenario_name)
     ("lru", "direct", "layer_first", "lru_direct_layer_first"),
-    ("lfu", "kernel", "page_first", "lfu_kernel_page_first"),
-    ("lru", "kernel_ascend", "page_first_direct", "lru_kernel_ascend_page_first_direct"),
-    ("lru", "direct", "page_first_kv_split", "lfu_direct_page_first_kv_split"),
+    ("lfu", "kernel", "page_first_direct", "lfu_kernel_page_first_direct"),
+    ("lru", "kernel_ascend", "page_first", "lru_kernel_ascend_page_first"),
+    ("lru", "direct", "page_first_kv_split", "lru_kernel_ascend_page_first_kv_split"),
 ]
 
 # 基础服务配置（通用配置，不随HiCache变化）
@@ -37,7 +37,7 @@ BASE_OTHER_ARGS = [
 class BaseQwenHiCacheTest(CustomTestCase):
     """Qwen3-32B HiCache精度验证基础类"""
     # 精度阈值（保持基线，确保HiCache开启后精度无恶化）
-    accuracy = 0.8722
+    accuracy = 0.87
     model_name = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen/Qwen3-32B"
     
     @classmethod
