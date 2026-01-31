@@ -13,9 +13,6 @@ from sglang.test.test_utils import (
 )
 
 
-
-# DEEPSEEK_R1_0528_W4A8_MODEL_PATH = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/DeepSeek-R1-0528-w4a8"
-#MODEL_PATH = "/root/.cache/modelscope/hub/models/Howeee/DeepSeek-R1-0528-w8a8"
 MODEL_PATH = "/root/.cache/modelscope/hub/models/DeepSeek-R1-0528-w4a8-per-channel"
 
 class TestPureTP(CustomTestCase):
@@ -81,17 +78,12 @@ class TestPureTP(CustomTestCase):
                 "SGLANG_SET_CPU_AFFINITY": "1",
                 "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
                 "STREAMS_PER_DEVICE": "32",
-                #"SGLANG_SCHEDULER_DECREASE_PREFILL_IDLE": "1",
-                #"HCCL_SOCKET_IFNAME": NIC_NAME,
-                #"GLOO_SOCKET_IFNAME": NIC_NAME,
                 "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "256",
                 "HCCL_BUFFSIZE": "3000",
                 "DEEP_NORMAL_MODE_USE_INT8_QUANT": "0",
                 "SGLANG_NPU_USE_MLAPO": "1",
                 "SGLANG_ENABLE_SPEC_V2": "1",
                 "SGLANG_ENABLE_OVERLAP_PLAN_STREAM": "1",
-                #"SGLANG_USE_FIA_NZ": "1",
-                #"ENABLE_MOE_NZ": "1",
                 **os.environ,
             },
         )
@@ -110,7 +102,7 @@ class TestPureTP(CustomTestCase):
         )
 
         metrics = run_eval(args)
-        self.assertGreater(metrics["score"], 0.5)
+        self.assertGreater(metrics["score"], 0.81)
 
     def test_gsm8k(self):
         args = SimpleNamespace(
