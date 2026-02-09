@@ -11,8 +11,8 @@ from sglang.test.test_utils import (
     popen_launch_server,
 )
 from sglang.test.ci.ci_register import register_npu_ci
-# 新增：兼容低版本的导入
-from huggingface_hub import HfApi, snapshot_download, HfHubHTTPError
+# 修复：适配0.36.0版本的导入（移除HfHubHTTPError，改用HuggingFaceHubError）
+from huggingface_hub import HfApi, snapshot_download, HuggingFaceHubError
 
 register_npu_ci(est_time=600, suite="nightly-1-npu-a3", nightly=True)
 
@@ -29,44 +29,23 @@ class TestDownloadDir(CustomTestCase):
 
     @classmethod
     def setUpClass(cls):
-        # 第一步：兼容低版本的revision验证逻辑（替代get_commit_info）
+        # 第一步：适配0.36.0版本的revision验证（用get_commit_info，因为0.36.0版本支持）
         os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
         api = HfApi()
         
         try:
-            # 方法1：尝试用list_repo_commits验证（低版本兼容）
-            # 列出指定commit的信息，验证哈希是否存在
-            commits = api.list_repo_commits(
+            # 0.36.0版本支持get_commit_info，直接用这个方法（最简洁）
+            commit_info = api.get_commit_info(
                 repo_id=cls.model,
                 commit_hash=cls.revision
             )
-            # 转换为列表（generator需遍历）
-            commit_list = list(commits)
-            if len(commit_list) == 0:
-                raise ValueError(f"Revision {cls.revision} not found in repo")
-            
-            # 提取版本信息（低版本返回的Commit对象字段）
-            commit_info = commit_list[0]
             print(f"✅ Revision验证通过：{cls.revision}")
-            print(f"版本提交时间：{commit_info.created_at}")
-            print(f"版本提交说明：{commit_info.message}")
+            print(f"版本提交时间：{commit_info.commit_time}")
+            print(f"版本提交说明：{commit_info.commit_message}")
         
-        except AttributeError:
-            # 方法2：若list_repo_commits也不存在，用下载配置文件验证（终极兼容）
-            try:
-                # 仅下载配置文件，不下载权重，快速验证版本存在性
-                snapshot_download(
-                    repo_id=cls.model,
-                    revision=cls.revision,
-                    local_dir="./temp_verify_revision",
-                    ignore_patterns=["*.bin", "*.safetensors", "*.pth"],  # 仅下配置
-                    local_dir_use_symlinks=False
-                )
-                print(f"✅ Revision {cls.revision} 验证通过（配置文件下载成功）")
-                # 清理临时目录
-                run_command("rm -rf ./temp_verify_revision")
-            except HfHubHTTPError as e:
-                raise RuntimeError(f"❌ Revision {cls.revision} 无效：{e}")
+        except HuggingFaceHubError as e:
+            # 捕获通用的Hub异常（替代原HfHubHTTPError）
+            raise RuntimeError(f"❌ Revision {cls.revision} 无效：{e}")
         except Exception as e:
             raise RuntimeError(f"❌ Revision验证失败：{e}")
 
