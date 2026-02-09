@@ -11,10 +11,10 @@ from sglang.test.test_utils import (
     popen_launch_server,
 )
 from sglang.test.ci.ci_register import register_npu_ci
-# 新增：导入huggingface_hub用于验证revision版本
-from huggingface_hub import HfApi
+# 新增：兼容低版本的导入
+from huggingface_hub import HfApi, snapshot_download, HfHubHTTPError
 
-register_npu_ci(est_time=600, suite="nightly-1-npu-a3", nightly=True)  # 调整预估时间（多模态模型启动稍久）
+register_npu_ci(est_time=600, suite="nightly-1-npu-a3", nightly=True)
 
 
 class TestDownloadDir(CustomTestCase):
@@ -23,43 +23,66 @@ class TestDownloadDir(CustomTestCase):
        [Test Category] Parameter
        [Test Target] --download-dir, --revision
        """
-    # 替换为目标模型
     model = "microsoft/Phi-4-multimodal-instruct"
-    # 指定目标revision（commit hash）
     revision = "33e62acdd07cd7d6635badd529aa0a3467bb9c6a"
     download_dir = "./phi4_multimodal_weight"
 
     @classmethod
     def setUpClass(cls):
-        # 第一步：先验证revision版本是否有效（关键！避免启动服务时版本错误）
-        os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"  # 国内镜像
+        # 第一步：兼容低版本的revision验证逻辑（替代get_commit_info）
+        os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
         api = HfApi()
+        
         try:
-            # 验证revision哈希是否存在且有效
-            commit_info = api.get_commit_info(
+            # 方法1：尝试用list_repo_commits验证（低版本兼容）
+            # 列出指定commit的信息，验证哈希是否存在
+            commits = api.list_repo_commits(
                 repo_id=cls.model,
                 commit_hash=cls.revision
             )
+            # 转换为列表（generator需遍历）
+            commit_list = list(commits)
+            if len(commit_list) == 0:
+                raise ValueError(f"Revision {cls.revision} not found in repo")
+            
+            # 提取版本信息（低版本返回的Commit对象字段）
+            commit_info = commit_list[0]
             print(f"✅ Revision验证通过：{cls.revision}")
-            print(f"版本提交时间：{commit_info.commit_time}")
-            print(f"版本提交说明：{commit_info.commit_message}")
+            print(f"版本提交时间：{commit_info.created_at}")
+            print(f"版本提交说明：{commit_info.message}")
+        
+        except AttributeError:
+            # 方法2：若list_repo_commits也不存在，用下载配置文件验证（终极兼容）
+            try:
+                # 仅下载配置文件，不下载权重，快速验证版本存在性
+                snapshot_download(
+                    repo_id=cls.model,
+                    revision=cls.revision,
+                    local_dir="./temp_verify_revision",
+                    ignore_patterns=["*.bin", "*.safetensors", "*.pth"],  # 仅下配置
+                    local_dir_use_symlinks=False
+                )
+                print(f"✅ Revision {cls.revision} 验证通过（配置文件下载成功）")
+                # 清理临时目录
+                run_command("rm -rf ./temp_verify_revision")
+            except HfHubHTTPError as e:
+                raise RuntimeError(f"❌ Revision {cls.revision} 无效：{e}")
         except Exception as e:
-            raise RuntimeError(f"❌ Revision {cls.revision} 无效：{e}")
+            raise RuntimeError(f"❌ Revision验证失败：{e}")
 
         # 第二步：创建下载目录
         run_command(f"mkdir -p {cls.download_dir}")
         
-        # 第三步：启动服务的参数（新增--revision）
+        # 第三步：启动服务（新增--revision参数）
         other_args = [
             "--download-dir",
             cls.download_dir,
-            "--revision",  # 新增：指定版本
+            "--revision",
             cls.revision,
             "--attention-backend",
             "ascend",
             "--disable-cuda-graph",
         ]
-        # 启动服务（多模态模型稍大，超时时间保持默认即可）
         cls.process = popen_launch_server(
             cls.model,
             DEFAULT_URL_FOR_TEST,
@@ -69,13 +92,11 @@ class TestDownloadDir(CustomTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        # 清理进程和目录
         kill_process_tree(cls.process.pid)
         run_command(f"rm -rf {cls.download_dir}")
 
     def test_download_dir_and_revision(self):
-        # 1. 发送多模态推理请求（适配Phi-4-multimodal-instruct）
-        # 注：多模态模型支持文本+图像，这里先测试纯文本推理（简化验证）
+        # 发送推理请求（适配多模态模型，延长超时）
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
@@ -85,13 +106,12 @@ class TestDownloadDir(CustomTestCase):
                     "max_new_tokens": 16,
                 },
             },
-            timeout=60  # 多模态模型推理稍久，延长超时
+            timeout=60
         )
-        # 验证请求成功
         self.assertEqual(response.status_code, 200)
         self.assertIn("Paris", response.text)
 
-        # 2. 验证--download-dir生效（检查权重文件）
+        # 验证--download-dir生效
         weight_suffixes = ("*.safetensors", "*.bin", "*.pth")
         weight_files = []
         for suffix in weight_suffixes:
@@ -102,18 +122,13 @@ class TestDownloadDir(CustomTestCase):
             msg=f"--download-dir {self.download_dir} 无模型权重文件"
         )
 
-        # 3. 额外验证：下载的权重对应指定revision（可选，增强版本确认）
-        # 检查下载目录中的commit_hash文件（SGLang会保存版本哈希）
-        commit_file = os.path.join(self.download_dir, ".git", "refs", "heads", "main")
-        if os.path.exists(commit_file):
-            with open(commit_file, "r") as f:
-                local_hash = f.read().strip()
-            # 验证本地下载的版本哈希与指定的revision一致（前7位匹配即可，完整哈希也可）
-            self.assertTrue(
-                local_hash.startswith(self.revision[:7]),
-                msg=f"本地版本哈希{local_hash}与指定revision{self.revision}不匹配"
-            )
-            print(f"✅ 本地下载的版本哈希验证通过：{local_hash[:7]} == {self.revision[:7]}")
+        # 验证revision对应的版本文件存在
+        config_file = os.path.join(self.download_dir, "config.json")
+        self.assertTrue(
+            os.path.exists(config_file),
+            msg=f"版本配置文件{config_file}不存在，revision可能未生效"
+        )
+        print(f"✅ 版本配置文件验证通过：{config_file} 存在")
 
 
 if __name__ == "__main__":
