@@ -1,0 +1,138 @@
+import os
+import unittest
+import shutil
+from types import SimpleNamespace
+
+# ====================== 核心路径替换 - 改为当前目录 ======================
+# 当前目录（绝对路径）
+CURRENT_DIR = os.path.abspath(".")
+# 模型路径：当前目录下的 Qwen3-30B-A3B 文件夹
+QWEN3_30B_A3B_W8A8_WEIGHTS_PATH = os.path.join(CURRENT_DIR, "Qwen3-30B-A3B")
+# Crash dump 文件夹：当前目录下的 crash_dump_folder
+CRASH_DUMP_FOLDER = os.path.join(CURRENT_DIR, "crash_dump_folder")
+
+from sglang.test.ascend.test_ascend_utils import test_config  # 仅保留必要导入，路径已替换
+from sglang.srt.utils import kill_process_tree
+from sglang.test.ci.ci_register import register_npu_ci
+from sglang.test.run_eval import run_eval
+from sglang.test.few_shot_gsm8k import run_eval as run_eval_gsm8k
+from sglang.test.test_utils import (
+    DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
+    DEFAULT_URL_FOR_TEST,
+    CustomTestCase,
+    popen_launch_server,
+)
+
+register_npu_ci(est_time=400, suite="nightly-16-npu-a3", nightly=True)
+
+
+class TestDeepepLowlatencyQwen3(CustomTestCase):
+    """Testcase: Verify the accuracy of Qwen3-30B model on MMLU and GSM8K tasks with DeepEP low latency mode on Ascend backend.
+
+    [Test Category] Parameter
+    [Test Target] --moe-a2a-backend;--deepep-mode
+    """
+    @classmethod
+    def setUpClass(cls):
+        # 初始化 crash dump 文件夹（确保存在）
+        os.makedirs(CRASH_DUMP_FOLDER, exist_ok=True)
+        
+        # 模型路径使用当前目录下的路径
+        cls.model = QWEN3_30B_A3B_W8A8_WEIGHTS_PATH
+        cls.base_url = DEFAULT_URL_FOR_TEST
+        
+        # 启动服务：添加 crash-dump-folder 参数，指向当前目录下的文件夹
+        cls.process = popen_launch_server(
+            cls.model,
+            cls.base_url,
+            timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
+            other_args=[
+                "--trust-remote-code",
+                "--tp-size",
+                "8",
+                "--quantization",
+                "modelslim",
+                "--moe-a2a-backend",
+                "deepep",
+                "--deepep-mode",
+                "low_latency",
+                "--disable-cuda-graph",
+                "--chunked-prefill-size",
+                "1024",
+                # 关键：指定 crash dump 路径为当前目录下的文件夹
+                "--crash-dump-folder", CRASH_DUMP_FOLDER,
+            ],
+            env={
+                "SGLANG_ENABLE_JIT_DEEPGEMM": "0",
+                "SGLANG_EXPERT_LOCATION_UPDATER_CANARY": "1",
+                "HCCL_BUFFSIZE": "2048",
+                # 替换原有环境变量，添加手工执行的核心环境变量（无冗余）
+                "SGLANG_SET_CPU_AFFINITY": "1",
+                "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
+                "STREAMS_PER_DEVICE": "32",
+                "HCCL_OP_EXPANSION_MODE": "AIV",
+                "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "32",
+                "SGLANG_DEEPEP_BF16_DISPATCH": "1",
+                "ENABLE_ASCEND_MOE_NZ": "1",
+                "SGLANG_TEST_CRASH_AFTER_STREAM_OUTPUTS": "1",
+                "PYTHONPATH": f"{CURRENT_DIR}/sglang/python:{os.environ.get('PYTHONPATH', '')}",
+                **os.environ,
+            },
+        )
+        cls.accuracy = 0.86
+
+    @classmethod
+    def tearDownClass(cls):
+        # 终止进程（无 try，直接执行）
+        kill_process_tree(cls.process.pid)
+        # 验证并清理 crash dump 文件（无 try，直接判断+删除）
+        cls.check_and_clean_crash_files()
+
+    @classmethod
+    def check_and_clean_crash_files(cls):
+        """验证 crash dump 文件并清理（无 try 语句）"""
+        # 检查文件夹是否存在
+        if os.path.exists(CRASH_DUMP_FOLDER):
+            # 遍历所有 crash dump 文件/文件夹
+            for item in os.listdir(CRASH_DUMP_FOLDER):
+                item_path = os.path.join(CRASH_DUMP_FOLDER, item)
+                # 判断是文件还是文件夹，直接删除
+                if os.path.isdir(item_path):
+                    shutil.rmtree(item_path)
+                else:
+                    os.remove(item_path)
+
+    def test_mmlu(self):
+        args = SimpleNamespace(
+            base_url=self.base_url,
+            model=self.model,
+            eval_name="mmlu",
+            num_examples=8,
+            num_threads=32,
+        )
+        metrics = run_eval(args)
+        self.assertGreaterEqual(metrics["score"], 0.5)
+    
+    def test_gsm8k(self):
+        args = SimpleNamespace(
+            num_shots=8,
+            data_path=None,
+            num_questions=200,
+            max_new_tokens=512,
+            parallel=64,
+            host="http://127.0.0.1",
+            port=int(self.base_url.split(":")[-1]),
+        )
+        metrics = run_eval_gsm8k(args)
+        self.assertGreaterEqual(
+            metrics["accuracy"],
+            self.accuracy,
+            f'Accuracy of {self.model} is {str(metrics["accuracy"])}, is lower than {self.accuracy}',
+        )
+
+
+if __name__ == "__main__":
+    # 运行前清理残留的 crash dump 文件（无 try）
+    if os.path.exists(CRASH_DUMP_FOLDER):
+        shutil.rmtree(CRASH_DUMP_FOLDER)
+    unittest.main()
