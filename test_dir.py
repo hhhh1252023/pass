@@ -11,8 +11,8 @@ from sglang.test.test_utils import (
     popen_launch_server,
 )
 from sglang.test.ci.ci_register import register_npu_ci
-# 修复：适配0.36.0版本的导入（移除HfHubHTTPError，改用HuggingFaceHubError）
-from huggingface_hub import HfApi, snapshot_download, HuggingFaceHubError
+# 修复：仅导入必用的基础类，移除所有异常类导入（避免版本兼容问题）
+from huggingface_hub import HfApi, snapshot_download
 
 register_npu_ci(est_time=600, suite="nightly-1-npu-a3", nightly=True)
 
@@ -29,12 +29,12 @@ class TestDownloadDir(CustomTestCase):
 
     @classmethod
     def setUpClass(cls):
-        # 第一步：适配0.36.0版本的revision验证（用get_commit_info，因为0.36.0版本支持）
+        # 第一步：版本验证（极简逻辑，无异常类依赖）
         os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
         api = HfApi()
         
         try:
-            # 0.36.0版本支持get_commit_info，直接用这个方法（最简洁）
+            # 核心：用get_commit_info验证revision有效性（0.36.0支持）
             commit_info = api.get_commit_info(
                 repo_id=cls.model,
                 commit_hash=cls.revision
@@ -43,11 +43,13 @@ class TestDownloadDir(CustomTestCase):
             print(f"版本提交时间：{commit_info.commit_time}")
             print(f"版本提交说明：{commit_info.commit_message}")
         
-        except HuggingFaceHubError as e:
-            # 捕获通用的Hub异常（替代原HfHubHTTPError）
-            raise RuntimeError(f"❌ Revision {cls.revision} 无效：{e}")
         except Exception as e:
-            raise RuntimeError(f"❌ Revision验证失败：{e}")
+            # 通用异常捕获（兼容所有版本）
+            error_msg = f"❌ Revision {cls.revision} 无效或验证失败：{str(e)}"
+            # 补充常见失败原因提示
+            if "404" in str(e):
+                error_msg += "\n提示：可能是commit hash错误，或模型仓库未同步该版本"
+            raise RuntimeError(error_msg)
 
         # 第二步：创建下载目录
         run_command(f"mkdir -p {cls.download_dir}")
@@ -71,11 +73,14 @@ class TestDownloadDir(CustomTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        kill_process_tree(cls.process.pid)
-        run_command(f"rm -rf {cls.download_dir}")
+        # 清理进程和目录
+        if hasattr(cls, 'process') and cls.process:
+            kill_process_tree(cls.process.pid)
+        if os.path.exists(cls.download_dir):
+            run_command(f"rm -rf {cls.download_dir}")
 
     def test_download_dir_and_revision(self):
-        # 发送推理请求（适配多模态模型，延长超时）
+        # 1. 发送推理请求（适配多模态模型）
         response = requests.post(
             f"{DEFAULT_URL_FOR_TEST}/generate",
             json={
@@ -87,10 +92,10 @@ class TestDownloadDir(CustomTestCase):
             },
             timeout=60
         )
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Paris", response.text)
+        self.assertEqual(response.status_code, 200, msg="推理请求失败，状态码非200")
+        self.assertIn("Paris", response.text, msg="推理结果未包含预期内容'Paris'")
 
-        # 验证--download-dir生效
+        # 2. 验证--download-dir生效（检查权重文件）
         weight_suffixes = ("*.safetensors", "*.bin", "*.pth")
         weight_files = []
         for suffix in weight_suffixes:
@@ -98,10 +103,10 @@ class TestDownloadDir(CustomTestCase):
         self.assertGreater(
             len(weight_files),
             0,
-            msg=f"--download-dir {self.download_dir} 无模型权重文件"
+            msg=f"--download-dir {self.download_dir} 未找到任何模型权重文件"
         )
 
-        # 验证revision对应的版本文件存在
+        # 3. 验证revision版本配置文件存在
         config_file = os.path.join(self.download_dir, "config.json")
         self.assertTrue(
             os.path.exists(config_file),
