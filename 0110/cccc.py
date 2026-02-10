@@ -63,10 +63,7 @@ class TestDeepepLowlatencyQwen3(CustomTestCase):
                 "--crash-dump-folder", CRASH_DUMP_FOLDER,
             ],
             env={
-                "SGLANG_ENABLE_JIT_DEEPGEMM": "0",
-                "SGLANG_EXPERT_LOCATION_UPDATER_CANARY": "1",
-                "HCCL_BUFFSIZE": "2048",
-                # 替换原有环境变量，添加手工执行的核心环境变量（无冗余）
+                "HCCL_BUFFSIZE": "1536",
                 "SGLANG_SET_CPU_AFFINITY": "1",
                 "PYTORCH_NPU_ALLOC_CONF": "expandable_segments:True",
                 "STREAMS_PER_DEVICE": "32",
@@ -75,28 +72,20 @@ class TestDeepepLowlatencyQwen3(CustomTestCase):
                 "SGLANG_DEEPEP_BF16_DISPATCH": "1",
                 "ENABLE_ASCEND_MOE_NZ": "1",
                 "SGLANG_TEST_CRASH_AFTER_STREAM_OUTPUTS": "1",
-                "PYTHONPATH": f"{CURRENT_DIR}/sglang/python:{os.environ.get('PYTHONPATH', '')}",
                 **os.environ,
             },
         )
-        cls.accuracy = 0.86
 
     @classmethod
     def tearDownClass(cls):
-        # 终止进程（无 try，直接执行）
         kill_process_tree(cls.process.pid)
-        # 验证并清理 crash dump 文件（无 try，直接判断+删除）
         cls.check_and_clean_crash_files()
 
     @classmethod
     def check_and_clean_crash_files(cls):
-        """验证 crash dump 文件并清理（无 try 语句）"""
-        # 检查文件夹是否存在
         if os.path.exists(CRASH_DUMP_FOLDER):
-            # 遍历所有 crash dump 文件/文件夹
             for item in os.listdir(CRASH_DUMP_FOLDER):
                 item_path = os.path.join(CRASH_DUMP_FOLDER, item)
-                # 判断是文件还是文件夹，直接删除
                 if os.path.isdir(item_path):
                     shutil.rmtree(item_path)
                 else:
@@ -105,7 +94,6 @@ class TestDeepepLowlatencyQwen3(CustomTestCase):
 
 
 if __name__ == "__main__":
-    # 运行前清理残留的 crash dump 文件（无 try）
     if os.path.exists(CRASH_DUMP_FOLDER):
         shutil.rmtree(CRASH_DUMP_FOLDER)
     unittest.main()
