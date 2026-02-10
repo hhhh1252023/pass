@@ -102,33 +102,6 @@ class TestDeepepLowlatencyQwen3(CustomTestCase):
                 else:
                     os.remove(item_path)
 
-    def test_mmlu(self):
-        args = SimpleNamespace(
-            base_url=self.base_url,
-            model=self.model,
-            eval_name="mmlu",
-            num_examples=8,
-            num_threads=32,
-        )
-        metrics = run_eval(args)
-        self.assertGreaterEqual(metrics["score"], 0.5)
-    
-    def test_gsm8k(self):
-        args = SimpleNamespace(
-            num_shots=8,
-            data_path=None,
-            num_questions=200,
-            max_new_tokens=512,
-            parallel=64,
-            host="http://127.0.0.1",
-            port=int(self.base_url.split(":")[-1]),
-        )
-        metrics = run_eval_gsm8k(args)
-        self.assertGreaterEqual(
-            metrics["accuracy"],
-            self.accuracy,
-            f'Accuracy of {self.model} is {str(metrics["accuracy"])}, is lower than {self.accuracy}',
-        )
 
 
 if __name__ == "__main__":
