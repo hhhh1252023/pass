@@ -12,7 +12,7 @@ from sglang.test.test_utils import (
     CustomTestCase,
     popen_launch_server,
 )
-
+DEFAULT_URL_FOR_TEST="http://127.0.0.1:8234"
 # ===================== 通用环境变量管理函数 =====================
 TEST_RELATED_ENVS = [
     "SGLANG_IS_IN_CI",
@@ -58,35 +58,46 @@ class BaseTestDetokenizerWatchdog:
         if cls.set_soft_watchdog:
             other_args.extend(["--soft-watchdog-timeout", str(cls.soft_watchdog_value)])
 
+        # 场景4超时设为20秒（保证日志打印完整），其他场景用默认超时
+        timeout = 20 if (cls.ci_mode is False and cls.set_soft_watchdog is False) else DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH
+        
         try:
             # 模拟解词器阻塞
             with envs.SGLANG_TEST_STUCK_DETOKENIZER.override(cls.stuck_seconds):
-                # 场景4缩短超时时间，快速终止
-                timeout = 5 if (cls.ci_mode is False and cls.set_soft_watchdog is False) else DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH
+                # 先尝试启动服务，捕获内部的AssertionError
                 cls.process = popen_launch_server(
-                    "Qwen/Qwen3-0.6B",
+                    "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen/Qwen3-0.6B/",
                     DEFAULT_URL_FOR_TEST,
                     timeout=timeout,
                     other_args=other_args,
                     return_stdout_stderr=(cls.stdout, cls.stderr),
                 )
             cls.launch_success = True
-        except AssertionError as e:
-            # 捕获到预期的断言错误：记录+标记+打印日志
-            cls.expected_error = e
-            cls.assertion_error_caught = True
-            cls.launch_success = False
-            print(f"\n【场景4】捕获到预期的AssertionError: {str(e)}")
-            # 主动清理进程（即使启动失败，也可能有残留子进程）
-            if cls.process:
-                kill_process_tree(cls.process.pid)
-                print(f"【场景4】已清理残留进程（PID: {cls.process.pid}）")
-        except TimeoutError:
-            # 仅当未捕获到AssertionError时，才抛出超时错误
-            if not cls.assertion_error_caught:
+        except Exception as e:
+            # 第一步：优先判断是否是预期的AssertionError
+            if isinstance(e, AssertionError) and "stuck tester can be enabled only if soft watchdog is enabled" in str(e):
+                cls.expected_error = e
+                cls.assertion_error_caught = True
+                cls.launch_success = False
+                print(f"\n【场景4】捕获到预期的AssertionError: {str(e)}")
+                # 主动清理进程（即使启动失败，也可能有残留子进程）
+                if cls.process:
+                    kill_process_tree(cls.process.pid)
+                    print(f"【场景4】已清理残留进程（PID: {cls.process.pid}）")
+                # 打印完整日志（保证日志输出）
+                stderr_output = cls.stderr.getvalue()
+                stdout_output = cls.stdout.getvalue()
+                if stderr_output:
+                    print(f"\n【场景4】STDERR日志: {stderr_output}")
+                if stdout_output:
+                    print(f"\n【场景4】STDOUT日志: {stdout_output}")
+            # 第二步：判断是否是TimeoutError（场景4捕获到AssertionError后，忽略TimeoutError）
+            elif isinstance(e, TimeoutError) and cls.assertion_error_caught:
+                cls.launch_success = False
+                print(f"\n【场景4】服务启动超时（已捕获AssertionError，忽略超时）")
+            # 第三步：其他异常（非预期），重新抛出
+            else:
                 raise
-            cls.launch_success = False
-            print(f"\n【场景4】服务启动超时（已捕获AssertionError，忽略超时）")
 
     @classmethod
     def tearDownClass(cls):
@@ -108,13 +119,6 @@ class BaseTestDetokenizerWatchdog:
                 str(self.expected_error),
                 "非CI不设置软看门狗未触发预期的AssertionError"
             )
-            # 打印完整日志，便于排查
-            stderr_output = self.stderr.getvalue()
-            stdout_output = self.stdout.getvalue()
-            if stderr_output:
-                print(f"\n【场景4】STDERR日志: {stderr_output}")
-            if stdout_output:
-                print(f"\n【场景4】STDOUT日志: {stdout_output}")
             print("【场景4】测试通过：捕获到预期的AssertionError")
             return
 
