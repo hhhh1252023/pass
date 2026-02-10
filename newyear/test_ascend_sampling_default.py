@@ -13,7 +13,7 @@ from sglang.test.test_utils import (
 )
 
 
-# 通用配置（抽离出来便于维护）
+# 通用配置抽离
 COMMON_CONFIG = {
     "model": "/root/.cache/modelscope/hub/models/Qwen/Qwen3-30B-A3B",
     "base_url": DEFAULT_URL_FOR_TEST,
@@ -37,21 +37,21 @@ COMMON_CONFIG = {
 
 
 class BaseSamplingTest(CustomTestCase):
-    """基础测试类：封装通用逻辑，避免代码重复"""
+    """基础测试类：封装通用逻辑"""
     server_process = None
     model_gen_config = None
 
     @classmethod
     def setUpClass(cls):
-        """类级别初始化：只执行一次"""
+        """类级别初始化：仅执行一次"""
         # 1. 创建metrics目录
         Path(COMMON_CONFIG["metrics_dir"]).mkdir(parents=True, exist_ok=True)
         
-        # 2. 读取模型generation_config.json（仅读取一次）
+        # 2. 读取模型generation_config.json
         cls.model_gen_config = cls._load_model_gen_config()
         
-        # 3. 启动对应模式的服务 + 健康检查
-        cls._launch_server_with_health_check()
+        # 3. 启动对应模式的服务（信任popen_launch_server的完备性）
+        cls._launch_server()
         
         print(f"\n=== {cls.__name__} 初始化完成 ===")
         print(f"模型配置默认参数：{cls.model_gen_config}")
@@ -59,7 +59,7 @@ class BaseSamplingTest(CustomTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """类级别清理：只关闭一次服务"""
+        """类级别清理：仅关闭一次服务"""
         if cls.server_process:
             kill_process_tree(cls.server_process.pid)
             time.sleep(1)
@@ -89,29 +89,12 @@ class BaseSamplingTest(CustomTestCase):
         return core_params
 
     @classmethod
-    def _launch_server_with_health_check(cls):
-        """启动服务 + 健康检查（确保服务完全就绪）"""
-        # 子类必须实现该方法，定义具体的启动逻辑
-        raise NotImplementedError("子类必须实现_launch_server_with_health_check方法")
-
-    @classmethod
-    def _wait_for_server_ready(cls, max_retries=20, interval=1):
-        """等待服务就绪（健康检查）"""
-        retry = 0
-        while retry < max_retries:
-            try:
-                response = requests.get(f"{COMMON_CONFIG['base_url']}/health", timeout=5)
-                if response.status_code == 200:
-                    print(f"服务健康检查通过（重试{retry}次）")
-                    return True
-            except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-                pass
-            retry += 1
-            time.sleep(interval)
-        raise RuntimeError(f"服务启动超时（最大重试{max_retries}次）")
+    def _launch_server(cls):
+        """启动服务（子类实现具体逻辑）"""
+        raise NotImplementedError("子类必须实现_launch_server方法")
 
     def _call_chat(self, custom_params: dict = None):
-        """调用接口（封装通用请求逻辑）"""
+        """调用接口（无健康检查，信任popen启动的服务）"""
         req_body = {
             "model": COMMON_CONFIG["model"],
             "messages": [{"role": "user", "content": "测试采样参数：1+1=？"}]
@@ -119,9 +102,7 @@ class BaseSamplingTest(CustomTestCase):
         if custom_params:
             req_body.update(custom_params)
         
-        # 确保请求前服务已就绪
-        self._wait_for_server_ready(max_retries=5, interval=0.5)
-        
+        # 直接调用接口（信任popen_launch_server已确保服务就绪）
         response = requests.post(
             f"{COMMON_CONFIG['base_url']}/v1/chat/completions",
             json=req_body,
@@ -162,32 +143,25 @@ class BaseSamplingTest(CustomTestCase):
 
 
 class TestSamplingDefaultsModel(BaseSamplingTest):
-    """专门测试 --sampling-defaults=model 模式"""
+    """测试 --sampling-defaults=model 模式"""
     @classmethod
-    def _launch_server_with_health_check(cls):
-        """启动model模式服务 + 健康检查"""
-        # 拼接启动参数
-        server_args = COMMON_CONFIG["base_server_args"] + [
-            "--sampling-defaults", "model"
-        ]
+    def _launch_server(cls):
+        """启动model模式服务（仅依赖popen_launch_server）"""
+        server_args = COMMON_CONFIG["base_server_args"] + ["--sampling-defaults", "model"]
         print(f"\n=== 启动model模式服务 ===")
         print(f"启动参数：{server_args}")
         
-        # 启动服务
+        # 直接调用popen_launch_server（信任其超时和就绪逻辑）
         cls.server_process = popen_launch_server(
             COMMON_CONFIG["model"],
             COMMON_CONFIG["base_url"],
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=server_args,
         )
-        
-        # 健康检查，确保服务就绪
-        cls._wait_for_server_ready()
 
     def test_default_params(self):
         """model模式 - 默认参数（无手工配置）"""
         print("\n=== 测试model模式默认参数 ===")
-        # 调用接口（无手工参数）
         sampling_params = self._call_chat()
         
         # 打印对比
@@ -204,7 +178,6 @@ class TestSamplingDefaultsModel(BaseSamplingTest):
     def test_custom_params(self):
         """model模式 - 手工自定义参数"""
         print("\n=== 测试model模式手工参数 ===")
-        # 手工参数
         custom_params = {
             "temperature": 0.6,
             "top_p": 0.75,
@@ -214,7 +187,6 @@ class TestSamplingDefaultsModel(BaseSamplingTest):
         }
         print(f"手工配置参数：{custom_params}")
         
-        # 调用接口
         sampling_params = self._call_chat(custom_params)
         print(f"实际参数（metrics）：{sampling_params}")
         
@@ -227,32 +199,25 @@ class TestSamplingDefaultsModel(BaseSamplingTest):
 
 
 class TestSamplingDefaultsOpenAI(BaseSamplingTest):
-    """专门测试 --sampling-defaults=openai 模式"""
+    """测试 --sampling-defaults=openai 模式"""
     @classmethod
-    def _launch_server_with_health_check(cls):
-        """启动openai模式服务 + 健康检查"""
-        # 拼接启动参数
-        server_args = COMMON_CONFIG["base_server_args"] + [
-            "--sampling-defaults", "openai"
-        ]
+    def _launch_server(cls):
+        """启动openai模式服务（仅依赖popen_launch_server）"""
+        server_args = COMMON_CONFIG["base_server_args"] + ["--sampling-defaults", "openai"]
         print(f"\n=== 启动openai模式服务 ===")
         print(f"启动参数：{server_args}")
         
-        # 启动服务
+        # 直接调用popen_launch_server
         cls.server_process = popen_launch_server(
             COMMON_CONFIG["model"],
             COMMON_CONFIG["base_url"],
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=server_args,
         )
-        
-        # 健康检查
-        cls._wait_for_server_ready()
 
     def test_default_params(self):
         """openai模式 - 默认参数（无手工配置）"""
         print("\n=== 测试openai模式默认参数 ===")
-        # 调用接口
         sampling_params = self._call_chat()
         
         # 打印对比
@@ -269,7 +234,6 @@ class TestSamplingDefaultsOpenAI(BaseSamplingTest):
     def test_custom_params(self):
         """openai模式 - 手工自定义参数"""
         print("\n=== 测试openai模式手工参数 ===")
-        # 手工参数
         custom_params = {
             "temperature": 0.3,
             "top_p": 0.9,
@@ -279,7 +243,6 @@ class TestSamplingDefaultsOpenAI(BaseSamplingTest):
         }
         print(f"手工配置参数：{custom_params}")
         
-        # 调用接口
         sampling_params = self._call_chat(custom_params)
         print(f"实际参数（metrics）：{sampling_params}")
         
@@ -292,5 +255,4 @@ class TestSamplingDefaultsOpenAI(BaseSamplingTest):
 
 
 if __name__ == "__main__":
-    # 运行所有测试
     unittest.main(verbosity=2)
