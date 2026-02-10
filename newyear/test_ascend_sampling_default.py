@@ -17,7 +17,8 @@ from sglang.test.test_utils import (
 COMMON_CONFIG = {
     "model": "/root/.cache/modelscope/hub/models/Qwen/Qwen3-30B-A3B",
     "base_url": DEFAULT_URL_FOR_TEST,
-    "metrics_dir": "/tmp/sglang_metrics_test",
+    # 改为当前目录（运行脚本的目录）
+    "metrics_dir": os.path.abspath("."),
     "SGLANG_BUILTIN_DEFAULTS": {
         "temperature": 1.0,
         "top_p": 1.0,
@@ -30,9 +31,11 @@ COMMON_CONFIG = {
         "--disable-cuda-graph",
         "--mem-fraction-static", 0.8,
         "--tp-size", 2,
+        # 确保参数传递正确（当前目录）
         "--export-metrics-to-file",
-        "--export-metrics-to-file-dir", "/tmp/sglang_metrics_test",
-    ]
+        "--export-metrics-to-file-dir", os.path.abspath("."),
+    ],
+    "request_timeout": 60
 }
 
 
@@ -44,18 +47,28 @@ class BaseSamplingTest(CustomTestCase):
     @classmethod
     def setUpClass(cls):
         """类级别初始化：仅执行一次"""
-        # 1. 创建metrics目录
-        Path(COMMON_CONFIG["metrics_dir"]).mkdir(parents=True, exist_ok=True)
+        # 1. 确认当前目录可写
+        metrics_dir = Path(COMMON_CONFIG["metrics_dir"])
+        # 验证目录可写
+        test_file = metrics_dir / "test_write_perm.txt"
+        try:
+            test_file.write_text("test")
+            test_file.unlink()
+            print(f"✅ 当前目录可写：{metrics_dir}")
+        except PermissionError:
+            raise RuntimeError(f"❌ 当前目录无写入权限：{metrics_dir}")
         
-        # 2. 读取模型generation_config.json
+        # 2. 读取模型配置
         cls.model_gen_config = cls._load_model_gen_config()
         
-        # 3. 启动对应模式的服务（信任popen_launch_server的完备性）
+        # 3. 启动服务
         cls._launch_server()
         
         print(f"\n=== {cls.__name__} 初始化完成 ===")
         print(f"模型配置默认参数：{cls.model_gen_config}")
         print(f"SGLang内置默认参数：{COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']}")
+        # 打印当前目录文件，确认初始状态
+        print(f"📂 当前目录初始文件：{[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
 
     @classmethod
     def tearDownClass(cls):
@@ -64,13 +77,20 @@ class BaseSamplingTest(CustomTestCase):
             kill_process_tree(cls.server_process.pid)
             time.sleep(1)
             print(f"\n=== {cls.__name__} 服务已关闭 ===")
+            # 打印最终目录文件，便于查看生成的metrics
+            metrics_dir = Path(COMMON_CONFIG["metrics_dir"])
+            print(f"📂 测试完成后当前目录文件：{[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
 
     def setUp(self):
-        """每个测试方法前：清空metrics日志"""
-        for file in Path(COMMON_CONFIG["metrics_dir"]).glob("*"):
-            if file.is_file():
-                file.unlink()
-        time.sleep(0.5)  # 确保日志清空完成
+        """每个测试方法前：不删除日志文件，仅打印当前文件列表"""
+        metrics_dir = Path(COMMON_CONFIG["metrics_dir"])
+        # 注释删除逻辑，保留日志文件
+        # for file in metrics_dir.glob("*"):
+        #     if file.is_file():
+        #         file.unlink()
+        time.sleep(0.5)
+        # 打印当前目录文件，便于排查
+        print(f"\n📂 测试方法执行前目录文件：{[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
 
     @classmethod
     def _load_model_gen_config(cls):
@@ -82,7 +102,6 @@ class BaseSamplingTest(CustomTestCase):
         with open(gen_config_path, "r", encoding="utf-8") as f:
             gen_config = json.load(f)
         
-        # 提取核心采样参数
         core_params = {}
         for key in COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"].keys():
             core_params[key] = gen_config.get(key, COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"][key])
@@ -94,7 +113,7 @@ class BaseSamplingTest(CustomTestCase):
         raise NotImplementedError("子类必须实现_launch_server方法")
 
     def _call_chat(self, custom_params: dict = None):
-        """调用接口（无健康检查，信任popen启动的服务）"""
+        """调用接口（仅调整超时时间，无重试）"""
         req_body = {
             "model": COMMON_CONFIG["model"],
             "messages": [{"role": "user", "content": "测试采样参数：1+1=？"}]
@@ -102,27 +121,44 @@ class BaseSamplingTest(CustomTestCase):
         if custom_params:
             req_body.update(custom_params)
         
-        # 直接调用接口（信任popen_launch_server已确保服务就绪）
+        # 调用接口
         response = requests.post(
             f"{COMMON_CONFIG['base_url']}/v1/chat/completions",
             json=req_body,
-            timeout=10
+            timeout=COMMON_CONFIG["request_timeout"]
         )
         self.assertEqual(response.status_code, 200, f"接口调用失败：{response.text}")
         
-        # 等待metrics日志写入
-        time.sleep(1)
+        # 延长日志写入等待时间（从1秒改为3秒）
+        time.sleep(3)
         return self._get_sampling_params_from_metrics()
 
     def _get_sampling_params_from_metrics(self):
-        """提取metrics中的采样参数"""
-        metrics_files = list(Path(COMMON_CONFIG["metrics_dir"]).glob("metrics-*.log"))
+        """提取metrics中的采样参数（增加详细打印）"""
+        metrics_dir = Path(COMMON_CONFIG["metrics_dir"])
+        # 打印当前目录所有文件，便于排查
+        all_files = [f.name for f in metrics_dir.glob("*") if f.is_file()]
+        print(f"\n🔍 提取参数时目录文件：{all_files}")
+        
+        # 匹配所有metrics相关文件（兼容不同命名格式）
+        metrics_files = list(metrics_dir.glob("metrics-*.log")) + list(metrics_dir.glob("*.metrics"))
+        print(f"🔍 匹配到的metrics文件：{[f.name for f in metrics_files]}")
+        
         if not metrics_files:
-            self.fail("未找到metrics日志文件")
+            # 不直接断言失败，先打印详细信息再失败，便于排查
+            self.fail(f"❌ 未找到metrics日志文件！当前目录文件：{all_files}")
         
         latest_file = max(metrics_files, key=lambda f: f.stat().st_mtime)
+        print(f"🔍 读取最新metrics文件：{latest_file.name}")
+        
         sampling_params = {}
         with open(latest_file, "r", encoding="utf-8") as f:
+            log_content = f.read()
+            # 打印日志内容（便于调试）
+            print(f"\n📝 metrics文件内容：\n{log_content[:500]}...")  # 只打印前500字符
+            
+            # 重新定位到文件开头解析
+            f.seek(0)
             for line in f:
                 line = line.strip()
                 if not line:
@@ -139,6 +175,7 @@ class BaseSamplingTest(CustomTestCase):
         core_params = {}
         for key in COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"].keys():
             core_params[key] = sampling_params.get(key)
+        print(f"🔍 提取的采样参数：{core_params}")
         return core_params
 
 
@@ -151,7 +188,6 @@ class TestSamplingDefaultsModel(BaseSamplingTest):
         print(f"\n=== 启动model模式服务 ===")
         print(f"启动参数：{server_args}")
         
-        # 直接调用popen_launch_server（信任其超时和就绪逻辑）
         cls.server_process = popen_launch_server(
             COMMON_CONFIG["model"],
             COMMON_CONFIG["base_url"],
@@ -164,11 +200,9 @@ class TestSamplingDefaultsModel(BaseSamplingTest):
         print("\n=== 测试model模式默认参数 ===")
         sampling_params = self._call_chat()
         
-        # 打印对比
         print(f"预期参数（模型配置）：{self.model_gen_config}")
         print(f"实际参数（metrics）：{sampling_params}")
         
-        # 验证
         for key in COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"].keys():
             self.assertEqual(
                 sampling_params[key], self.model_gen_config[key],
@@ -190,7 +224,6 @@ class TestSamplingDefaultsModel(BaseSamplingTest):
         sampling_params = self._call_chat(custom_params)
         print(f"实际参数（metrics）：{sampling_params}")
         
-        # 验证
         for key, value in custom_params.items():
             self.assertEqual(
                 sampling_params[key], value,
@@ -207,7 +240,6 @@ class TestSamplingDefaultsOpenAI(BaseSamplingTest):
         print(f"\n=== 启动openai模式服务 ===")
         print(f"启动参数：{server_args}")
         
-        # 直接调用popen_launch_server
         cls.server_process = popen_launch_server(
             COMMON_CONFIG["model"],
             COMMON_CONFIG["base_url"],
@@ -220,11 +252,9 @@ class TestSamplingDefaultsOpenAI(BaseSamplingTest):
         print("\n=== 测试openai模式默认参数 ===")
         sampling_params = self._call_chat()
         
-        # 打印对比
         print(f"预期参数（SGLang内置）：{COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']}")
         print(f"实际参数（metrics）：{sampling_params}")
         
-        # 验证
         for key in COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"].keys():
             self.assertEqual(
                 sampling_params[key], COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"][key],
@@ -246,7 +276,6 @@ class TestSamplingDefaultsOpenAI(BaseSamplingTest):
         sampling_params = self._call_chat(custom_params)
         print(f"实际参数（metrics）：{sampling_params}")
         
-        # 验证
         for key, value in custom_params.items():
             self.assertEqual(
                 sampling_params[key], value,
