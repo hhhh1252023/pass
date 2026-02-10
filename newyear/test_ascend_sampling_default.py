@@ -13,14 +13,22 @@ from sglang.test.test_utils import (
 )
 
 
-# 通用配置抽离
+# 通用配置（基于实际日志调整）
 COMMON_CONFIG = {
     "model": "/root/.cache/modelscope/hub/models/Qwen/Qwen3-30B-A3B",
     "base_url": DEFAULT_URL_FOR_TEST,
-    # 改为当前目录（运行脚本的目录）
     "metrics_dir": os.path.abspath("."),
+    # SGLang内置默认（匹配日志）
     "SGLANG_BUILTIN_DEFAULTS": {
         "temperature": 1.0,
+        "top_p": 1.0,
+        "top_k": -1,
+        "min_p": 0.0,
+        "repetition_penalty": 1.0,
+    },
+    # 模型generation_config默认（匹配日志）
+    "MODEL_GEN_DEFAULTS": {
+        "temperature": 0.0,
         "top_p": 1.0,
         "top_k": -1,
         "min_p": 0.0,
@@ -31,7 +39,6 @@ COMMON_CONFIG = {
         "--disable-cuda-graph",
         "--mem-fraction-static", 0.8,
         "--tp-size", 2,
-        # 确保参数传递正确（当前目录）
         "--export-metrics-to-file",
         "--export-metrics-to-file-dir", os.path.abspath("."),
     ],
@@ -40,16 +47,14 @@ COMMON_CONFIG = {
 
 
 class BaseSamplingTest(CustomTestCase):
-    """基础测试类：封装通用逻辑"""
+    """基础测试类：适配实际日志格式"""
     server_process = None
-    model_gen_config = None
 
     @classmethod
     def setUpClass(cls):
         """类级别初始化：仅执行一次"""
-        # 1. 确认当前目录可写
+        # 确认当前目录可写
         metrics_dir = Path(COMMON_CONFIG["metrics_dir"])
-        # 验证目录可写
         test_file = metrics_dir / "test_write_perm.txt"
         try:
             test_file.write_text("test")
@@ -58,16 +63,12 @@ class BaseSamplingTest(CustomTestCase):
         except PermissionError:
             raise RuntimeError(f"❌ 当前目录无写入权限：{metrics_dir}")
         
-        # 2. 读取模型配置
-        cls.model_gen_config = cls._load_model_gen_config()
-        
-        # 3. 启动服务
+        # 启动服务
         cls._launch_server()
         
         print(f"\n=== {cls.__name__} 初始化完成 ===")
-        print(f"模型配置默认参数：{cls.model_gen_config}")
+        print(f"模型默认参数：{COMMON_CONFIG['MODEL_GEN_DEFAULTS']}")
         print(f"SGLang内置默认参数：{COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']}")
-        # 打印当前目录文件，确认初始状态
         print(f"📂 当前目录初始文件：{[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
 
     @classmethod
@@ -77,35 +78,14 @@ class BaseSamplingTest(CustomTestCase):
             kill_process_tree(cls.server_process.pid)
             time.sleep(1)
             print(f"\n=== {cls.__name__} 服务已关闭 ===")
-            # 打印最终目录文件，便于查看生成的metrics
             metrics_dir = Path(COMMON_CONFIG["metrics_dir"])
             print(f"📂 测试完成后当前目录文件：{[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
 
     def setUp(self):
         """每个测试方法前：不删除日志文件，仅打印当前文件列表"""
         metrics_dir = Path(COMMON_CONFIG["metrics_dir"])
-        # 注释删除逻辑，保留日志文件
-        # for file in metrics_dir.glob("*"):
-        #     if file.is_file():
-        #         file.unlink()
         time.sleep(0.5)
-        # 打印当前目录文件，便于排查
         print(f"\n📂 测试方法执行前目录文件：{[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
-
-    @classmethod
-    def _load_model_gen_config(cls):
-        """读取模型generation_config.json"""
-        gen_config_path = Path(COMMON_CONFIG["model"]) / "generation_config.json"
-        if not gen_config_path.exists():
-            raise FileNotFoundError(f"模型配置文件不存在：{gen_config_path}")
-        
-        with open(gen_config_path, "r", encoding="utf-8") as f:
-            gen_config = json.load(f)
-        
-        core_params = {}
-        for key in COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"].keys():
-            core_params[key] = gen_config.get(key, COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"][key])
-        return core_params
 
     @classmethod
     def _launch_server(cls):
@@ -129,53 +109,52 @@ class BaseSamplingTest(CustomTestCase):
         )
         self.assertEqual(response.status_code, 200, f"接口调用失败：{response.text}")
         
-        # 延长日志写入等待时间（从1秒改为3秒）
+        # 延长日志写入等待时间
         time.sleep(3)
         return self._get_sampling_params_from_metrics()
 
     def _get_sampling_params_from_metrics(self):
-        """提取metrics中的采样参数（增加详细打印）"""
+        """提取metrics中的采样参数（适配实际日志格式）"""
         metrics_dir = Path(COMMON_CONFIG["metrics_dir"])
-        # 打印当前目录所有文件，便于排查
-        all_files = [f.name for f in metrics_dir.glob("*") if f.is_file()]
-        print(f"\n🔍 提取参数时目录文件：{all_files}")
-        
-        # 匹配所有metrics相关文件（兼容不同命名格式）
-        metrics_files = list(metrics_dir.glob("metrics-*.log")) + list(metrics_dir.glob("*.metrics"))
-        print(f"🔍 匹配到的metrics文件：{[f.name for f in metrics_files]}")
+        # 匹配实际的metrics文件命名：sglang-request-metrics-*
+        metrics_files = list(metrics_dir.glob("sglang-request-metrics-*.log"))
+        print(f"\n🔍 匹配到的metrics文件：{[f.name for f in metrics_files]}")
         
         if not metrics_files:
-            # 不直接断言失败，先打印详细信息再失败，便于排查
-            self.fail(f"❌ 未找到metrics日志文件！当前目录文件：{all_files}")
+            self.fail(f"❌ 未找到sglang-request-metrics-*.log文件！当前目录文件：{[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
         
+        # 取最新的metrics文件
         latest_file = max(metrics_files, key=lambda f: f.stat().st_mtime)
         print(f"🔍 读取最新metrics文件：{latest_file.name}")
         
-        sampling_params = {}
+        # 读取并清理日志内容（解决换行/空格问题）
         with open(latest_file, "r", encoding="utf-8") as f:
             log_content = f.read()
-            # 打印日志内容（便于调试）
-            print(f"\n📝 metrics文件内容：\n{log_content[:500]}...")  # 只打印前500字符
-            
-            # 重新定位到文件开头解析
-            f.seek(0)
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    log_data = json.loads(line)
-                    if "sampling_params" in log_data:
-                        sampling_params = log_data["sampling_params"]
-                        break
-                except json.JSONDecodeError:
-                    continue
+            # 按行分割（日志可能有多条JSON）
+            log_lines = [line.strip() for line in log_content.split("\n") if line.strip()]
+            # 取最后一条有效日志（最新请求）
+            last_log = log_lines[-1] if log_lines else ""
+            # 清理换行和多余空格
+            clean_content = last_log.replace("\n", "").replace("  ", " ").strip()
+            print(f"\n📝 清理后的最新日志内容：\n{clean_content[:800]}...")
         
-        # 提取核心参数
+        # 解析JSON（核心适配：request_parameters里嵌套sampling_params）
+        try:
+            # 解析外层JSON
+            log_data = json.loads(clean_content)
+            # 解析request_parameters字段（字符串转JSON）
+            req_params = json.loads(log_data["request_parameters"])
+            # 提取sampling_params
+            sampling_params = req_params.get("sampling_params", {})
+            print(f"🔍 解析出的sampling_params：{sampling_params}")
+        except json.JSONDecodeError as e:
+            self.fail(f"❌ JSON解析失败：{e}，原始内容：{clean_content[:500]}")
+        
+        # 提取核心采样参数（补全缺失的参数为默认值）
         core_params = {}
         for key in COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"].keys():
-            core_params[key] = sampling_params.get(key)
-        print(f"🔍 提取的采样参数：{core_params}")
+            core_params[key] = sampling_params.get(key, COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"][key])
+        print(f"🔍 最终提取的核心采样参数：{core_params}")
         return core_params
 
 
@@ -183,7 +162,7 @@ class TestSamplingDefaultsModel(BaseSamplingTest):
     """测试 --sampling-defaults=model 模式"""
     @classmethod
     def _launch_server(cls):
-        """启动model模式服务（仅依赖popen_launch_server）"""
+        """启动model模式服务"""
         server_args = COMMON_CONFIG["base_server_args"] + ["--sampling-defaults", "model"]
         print(f"\n=== 启动model模式服务 ===")
         print(f"启动参数：{server_args}")
@@ -200,18 +179,33 @@ class TestSamplingDefaultsModel(BaseSamplingTest):
         print("\n=== 测试model模式默认参数 ===")
         sampling_params = self._call_chat()
         
-        print(f"预期参数（模型配置）：{self.model_gen_config}")
-        print(f"实际参数（metrics）：{sampling_params}")
-        
-        for key in COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"].keys():
-            self.assertEqual(
-                sampling_params[key], self.model_gen_config[key],
-                f"model默认参数不匹配：{key} 预期={self.model_gen_config[key]}, 实际={sampling_params[key]}"
-            )
+        # 精准断言：匹配日志中的model默认参数
+        self.assertEqual(
+            sampling_params["temperature"], COMMON_CONFIG["MODEL_GEN_DEFAULTS"]["temperature"],
+            f"temperature不匹配：预期={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['temperature']}, 实际={sampling_params['temperature']}"
+        )
+        self.assertEqual(
+            sampling_params["top_p"], COMMON_CONFIG["MODEL_GEN_DEFAULTS"]["top_p"],
+            f"top_p不匹配：预期={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['top_p']}, 实际={sampling_params['top_p']}"
+        )
+        self.assertEqual(
+            sampling_params["top_k"], COMMON_CONFIG["MODEL_GEN_DEFAULTS"]["top_k"],
+            f"top_k不匹配：预期={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['top_k']}, 实际={sampling_params['top_k']}"
+        )
+        self.assertEqual(
+            sampling_params["min_p"], COMMON_CONFIG["MODEL_GEN_DEFAULTS"]["min_p"],
+            f"min_p不匹配：预期={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['min_p']}, 实际={sampling_params['min_p']}"
+        )
+        self.assertEqual(
+            sampling_params["repetition_penalty"], COMMON_CONFIG["MODEL_GEN_DEFAULTS"]["repetition_penalty"],
+            f"repetition_penalty不匹配：预期={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['repetition_penalty']}, 实际={sampling_params['repetition_penalty']}"
+        )
+        print("✅ model模式默认参数断言通过！")
 
     def test_custom_params(self):
         """model模式 - 手工自定义参数"""
         print("\n=== 测试model模式手工参数 ===")
+        # 手工配置的参数（匹配日志中的实际值）
         custom_params = {
             "temperature": 0.6,
             "top_p": 0.75,
@@ -220,22 +214,22 @@ class TestSamplingDefaultsModel(BaseSamplingTest):
             "repetition_penalty": 1.1
         }
         print(f"手工配置参数：{custom_params}")
-        
         sampling_params = self._call_chat(custom_params)
-        print(f"实际参数（metrics）：{sampling_params}")
         
-        for key, value in custom_params.items():
+        # 精准断言：手工参数完全生效
+        for key, expected_value in custom_params.items():
             self.assertEqual(
-                sampling_params[key], value,
-                f"model手工参数不生效：{key} 预期={value}, 实际={sampling_params[key]}"
+                sampling_params[key], expected_value,
+                f"手工参数{key}不生效：预期={expected_value}, 实际={sampling_params[key]}"
             )
+        print("✅ model模式手工参数断言通过！")
 
 
 class TestSamplingDefaultsOpenAI(BaseSamplingTest):
     """测试 --sampling-defaults=openai 模式"""
     @classmethod
     def _launch_server(cls):
-        """启动openai模式服务（仅依赖popen_launch_server）"""
+        """启动openai模式服务"""
         server_args = COMMON_CONFIG["base_server_args"] + ["--sampling-defaults", "openai"]
         print(f"\n=== 启动openai模式服务 ===")
         print(f"启动参数：{server_args}")
@@ -252,18 +246,33 @@ class TestSamplingDefaultsOpenAI(BaseSamplingTest):
         print("\n=== 测试openai模式默认参数 ===")
         sampling_params = self._call_chat()
         
-        print(f"预期参数（SGLang内置）：{COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']}")
-        print(f"实际参数（metrics）：{sampling_params}")
-        
-        for key in COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"].keys():
-            self.assertEqual(
-                sampling_params[key], COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"][key],
-                f"openai默认参数不匹配：{key} 预期={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS'][key]}, 实际={sampling_params[key]}"
-            )
+        # 精准断言：匹配日志中的openai默认参数（与SGLang内置一致）
+        self.assertEqual(
+            sampling_params["temperature"], COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"]["temperature"],
+            f"temperature不匹配：预期={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['temperature']}, 实际={sampling_params['temperature']}"
+        )
+        self.assertEqual(
+            sampling_params["top_p"], COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"]["top_p"],
+            f"top_p不匹配：预期={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['top_p']}, 实际={sampling_params['top_p']}"
+        )
+        self.assertEqual(
+            sampling_params["top_k"], COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"]["top_k"],
+            f"top_k不匹配：预期={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['top_k']}, 实际={sampling_params['top_k']}"
+        )
+        self.assertEqual(
+            sampling_params["min_p"], COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"]["min_p"],
+            f"min_p不匹配：预期={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['min_p']}, 实际={sampling_params['min_p']}"
+        )
+        self.assertEqual(
+            sampling_params["repetition_penalty"], COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"]["repetition_penalty"],
+            f"repetition_penalty不匹配：预期={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['repetition_penalty']}, 实际={sampling_params['repetition_penalty']}"
+        )
+        print("✅ openai模式默认参数断言通过！")
 
     def test_custom_params(self):
         """openai模式 - 手工自定义参数"""
         print("\n=== 测试openai模式手工参数 ===")
+        # 手工配置的参数（匹配日志中的实际值）
         custom_params = {
             "temperature": 0.3,
             "top_p": 0.9,
@@ -272,16 +281,17 @@ class TestSamplingDefaultsOpenAI(BaseSamplingTest):
             "repetition_penalty": 1.3
         }
         print(f"手工配置参数：{custom_params}")
-        
         sampling_params = self._call_chat(custom_params)
-        print(f"实际参数（metrics）：{sampling_params}")
         
-        for key, value in custom_params.items():
+        # 精准断言：手工参数完全生效
+        for key, expected_value in custom_params.items():
             self.assertEqual(
-                sampling_params[key], value,
-                f"openai手工参数不生效：{key} 预期={value}, 实际={sampling_params[key]}"
+                sampling_params[key], expected_value,
+                f"手工参数{key}不生效：预期={expected_value}, 实际={sampling_params[key]}"
             )
+        print("✅ openai模式手工参数断言通过！")
 
 
 if __name__ == "__main__":
+    # 运行所有测试
     unittest.main(verbosity=2)
