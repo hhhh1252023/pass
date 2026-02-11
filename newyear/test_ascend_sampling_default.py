@@ -28,9 +28,9 @@ COMMON_CONFIG = {
     },
     # 模型generation_config默认（匹配日志）
     "MODEL_GEN_DEFAULTS": {
-        "temperature": 0.0,
-        "top_p": 1.0,
-        "top_k": -1,
+        "temperature": 0.6,
+        "top_p": 0.95,
+        "top_k": 20,
         "min_p": 0.0,
         "repetition_penalty": 1.0,
     },
