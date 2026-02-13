@@ -34,7 +34,7 @@ class TestDownloadDir(CustomTestCase):
             "ascend",
             "--disable-cuda-graph",
             "--revision",
-            "v2.0",
+            "a8b602d9dafd3a75d382e62757d83d89fca3be54",
         ]
         cls.process = popen_launch_server(
             cls.model,
