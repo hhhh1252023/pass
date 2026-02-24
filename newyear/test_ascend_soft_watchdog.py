@@ -86,11 +86,7 @@ class BaseTestDetokenizerWatchdog:
             else:
                 # 未找到预期错误，抛出超时错误
                 raise
-        finally:
-            # 无论是否超时，都清理进程
-            if cls.process:
-                kill_process_tree(cls.process.pid)
-                print(f"【场景4】已清理进程（PID: {cls.process.pid}）")
+
 
     @classmethod
     def tearDownClass(cls):
