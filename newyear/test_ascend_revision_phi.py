@@ -44,7 +44,6 @@ class TestDownloadDir(CustomTestCase):
     @classmethod
     def tearDownClass(cls):
         kill_process_tree(cls.process.pid)
-        run_command(f"rm -rf {cls.download_dir}")
 
     def test_download_dir(self):
         response = requests.post(
