@@ -2,7 +2,6 @@ import unittest
 import requests
 import os
 import glob
-from sglang.test.ascend.test_ascend_utils import run_command
 from sglang.srt.utils import kill_process_tree
 from sglang.test.test_utils import (
     DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
@@ -26,7 +25,6 @@ class TestDownloadDir(CustomTestCase):
 
     @classmethod
     def setUpClass(cls):
-        run_command(f"mkdir -p {cls.download_dir}")
         other_args = [
             "--download-dir",
             cls.download_dir,
