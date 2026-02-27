@@ -1,7 +1,9 @@
 import json
+import logging
 import requests
 import unittest
 from sglang.srt.utils import kill_process_tree
+from sglang.test.ci.ci_register import register_npu_ci
 from sglang.test.test_utils import (
     DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
     DEFAULT_URL_FOR_TEST,
@@ -9,8 +11,18 @@ from sglang.test.test_utils import (
     popen_launch_server,
 )
 
+# Initialize logging configuration (replace print)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler()]
+)
+logger = logging.getLogger(__name__)
 
-# 通用配置抽离
+# Register CI task for NPU environment (adjust est_time/suite as needed)
+register_npu_ci(est_time=300, suite="nightly-1-npu-a3", nightly=True)
+
+# Common configuration extraction
 COMMON_CONFIG = {
     "model": "/root/.cache/modelscope/hub/models/Qwen/Qwen3-32B",
     "accuracy": 0.89,
@@ -26,135 +38,151 @@ COMMON_CONFIG = {
     "request_timeout": 120
 }
 
+# Common score request data (reused in both test classes)
+COMMON_SCORE_REQUEST = {
+    "query": "Is this the correct result of 1 plus 2? ",
+    "items": ["It is 3", "It is 4", "It is 5"],
+    "label_token_ids": [9454, 2753],
+    "apply_softmax": True,
+    "item_first": False
+}
+
 
 class TestScoreWithDelimiter(CustomTestCase):
-    """测试类1：开启 --multi-item-scoring-delimiter"""
+    """Testcase: Verify score logic when --multi-item-scoring-delimiter is enabled.
+
+    [Test Category] Parameter
+    [Test Target] --multi-item-scoring-delimiter
+    """
     server_process = None
 
     @classmethod
     def setUpClass(cls):
-        """类级别初始化：启动带delimiter的服务（信任popen_launch_server）"""
-        print("\n=== 初始化【开启delimiter】测试环境 ===")
-        # 构造完整启动参数
+        """Class-level initialization: Start server with delimiter enabled."""
+        logger.info("\n=== Initializing test environment [delimiter enabled] ===")
+        # Construct complete server startup arguments
         server_args = COMMON_CONFIG["base_args"] + [
             "--multi-item-scoring-delimiter", "151643"
         ]
-        # 信任popen_launch_server的就绪逻辑，无需sleep
+        # Trust popen_launch_server's readiness logic, no sleep needed
         cls.server_process = popen_launch_server(
             model=COMMON_CONFIG["model"],
             url=DEFAULT_URL_FOR_TEST,
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=server_args
         )
-        print(f"✅ 服务启动完成（带delimiter），参数：{server_args}")
+        logger.info(f"✅ Server started successfully (with delimiter), args: {server_args}")
 
     @classmethod
     def tearDownClass(cls):
-        """类级别清理：仅关闭服务"""
+        """Class-level cleanup: Shutdown server only."""
         if cls.server_process:
             kill_process_tree(cls.server_process.pid)
-            print("\n=== 【开启delimiter】测试服务已关闭 ===")
+            logger.info("\n=== Test server [delimiter enabled] has been shut down ===")
 
     def test_score_logic_with_delimiter(self):
-        """验证开启delimiter后的分数大小逻辑"""
-        print("\n=== 测试：开启 --multi-item-scoring-delimiter ===")
-        # 构造score接口请求
-        req_data = {
-            "query": "Is this the correct result of 1 plus 2? ",
-            "items": ["It is 3", "It is 4", "It is 5"],
-            "label_token_ids": [9454, 2753],
-            "apply_softmax": True,
-            "item_first": False
-        }
-
-        # 调用接口（信任popen启动的服务已就绪）
+        """Verify score comparison logic when --multi-item-scoring-delimiter is enabled."""
+        logger.info("\n=== Testing: --multi-item-scoring-delimiter enabled ===")
+        # Call score API
         response = requests.post(
             url=f"{DEFAULT_URL_FOR_TEST}/v1/score",
-            json=req_data,
+            json=COMMON_SCORE_REQUEST,
             headers={"Content-Type": "application/json"},
             timeout=COMMON_CONFIG["request_timeout"]
         )
-        self.assertEqual(response.status_code, 200, 
-                         f"❌ 接口返回状态码错误：预期200，实际{response.status_code}")
+        # Verify response status code
+        self.assertEqual(
+            response.status_code, 200,
+            f"❌ API returned wrong status code: expected 200, actual {response.status_code}"
+        )
         
-        # 解析结果并验证逻辑
+        # Parse result and verify score logic
         result = response.json()
         scores = result["scores"]
-        print(f"📝 接口返回scores：{scores}")
+        logger.info(f"📝 API returned scores: {scores}")
 
-        # 核心逻辑断言：仅正确项满足score[0]>score[1]
-        self.assertTrue(scores[0][0] > scores[0][1], 
-                        "❌ 正确项（It is 3）分数逻辑错误：score[0] 应大于 score[1]")
-        self.assertTrue(scores[1][0] < scores[1][1], 
-                        "❌ 错误项（It is 4）分数逻辑错误：score[0] 应小于 score[1]")
-        self.assertTrue(scores[2][0] < scores[2][1], 
-                        "❌ 错误项（It is 5）分数逻辑错误：score[0] 应小于 score[1]")
-        print("✅ 开启delimiter：分数逻辑验证通过！")
+        # Core logic assertions
+        self.assertTrue(
+            scores[0][0] > scores[0][1],
+            "❌ Score logic error for correct item (It is 3): score[0] should be greater than score[1]"
+        )
+        self.assertTrue(
+            scores[1][0] < scores[1][1],
+            "❌ Score logic error for wrong item (It is 4): score[0] should be less than score[1]"
+        )
+        self.assertTrue(
+            scores[2][0] < scores[2][1],
+            "❌ Score logic error for wrong item (It is 5): score[0] should be less than score[1]"
+        )
+        logger.info("✅ Delimiter enabled: Score logic verification passed!")
 
 
 class TestScoreWithoutDelimiter(CustomTestCase):
-    """测试类2：关闭 --multi-item-scoring-delimiter"""
+    """Testcase: Verify score logic when --multi-item-scoring-delimiter is disabled.
+
+    [Test Category] Parameter
+    [Test Target] --multi-item-scoring-delimiter
+    """
     server_process = None
 
     @classmethod
     def setUpClass(cls):
-        """类级别初始化：启动不带delimiter的服务（信任popen_launch_server）"""
-        print("\n=== 初始化【关闭delimiter】测试环境 ===")
-        # 直接使用基础参数（不含delimiter）
+        """Class-level initialization: Start server with delimiter disabled."""
+        logger.info("\n=== Initializing test environment [delimiter disabled] ===")
+        # Use base args only (no delimiter parameter)
         server_args = COMMON_CONFIG["base_args"].copy()
-        # 信任popen_launch_server的就绪逻辑，无需sleep
         cls.server_process = popen_launch_server(
             model=COMMON_CONFIG["model"],
             url=DEFAULT_URL_FOR_TEST,
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=server_args
         )
-        print(f"✅ 服务启动完成（无delimiter），参数：{server_args}")
+        logger.info(f"✅ Server started successfully (without delimiter), args: {server_args}")
 
     @classmethod
     def tearDownClass(cls):
-        """类级别清理：仅关闭服务"""
+        """Class-level cleanup: Shutdown server only."""
         if cls.server_process:
             kill_process_tree(cls.server_process.pid)
-            print("\n=== 【关闭delimiter】测试服务已关闭 ===")
+            logger.info("\n=== Test server [delimiter disabled] has been shut down ===")
 
     def test_score_logic_without_delimiter(self):
-        """验证关闭delimiter后的分数大小逻辑"""
-        print("\n=== 测试：关闭 --multi-item-scoring-delimiter ===")
-        # 构造score接口请求（与开启delimiter的请求完全一致）
-        req_data = {
-            "query": "Is this the correct result of 1 plus 2? ",
-            "items": ["It is 3", "It is 4", "It is 5"],
-            "label_token_ids": [9454, 2753],
-            "apply_softmax": True,
-            "item_first": False
-        }
-
-        # 调用接口（信任popen启动的服务已就绪）
+        """Verify score comparison logic when --multi-item-scoring-delimiter is disabled."""
+        logger.info("\n=== Testing: --multi-item-scoring-delimiter disabled ===")
+        # Call score API (same request data as delimiter enabled)
         response = requests.post(
             url=f"{DEFAULT_URL_FOR_TEST}/v1/score",
-            json=req_data,
+            json=COMMON_SCORE_REQUEST,
             headers={"Content-Type": "application/json"},
             timeout=COMMON_CONFIG["request_timeout"]
         )
-        self.assertEqual(response.status_code, 200, 
-                         f"❌ 接口返回状态码错误：预期200，实际{response.status_code}")
+        # Verify response status code
+        self.assertEqual(
+            response.status_code, 200,
+            f"❌ API returned wrong status code: expected 200, actual {response.status_code}"
+        )
         
-        # 解析结果并验证逻辑
+        # Parse result and verify score logic
         result = response.json()
         scores = result["scores"]
-        print(f"📝 接口返回scores：{scores}")
+        logger.info(f"📝 API returned scores: {scores}")
 
-        # 核心逻辑断言：所有项都满足score[0]>score[1]
-        self.assertTrue(scores[0][0] > scores[0][1], 
-                        "❌ 正确项（It is 3）分数逻辑错误：score[0] 应大于 score[1]")
-        self.assertTrue(scores[1][0] > scores[1][1], 
-                        "❌ 错误项（It is 4）分数逻辑错误：score[0] 应大于 score[1]")
-        self.assertTrue(scores[2][0] > scores[2][1], 
-                        "❌ 错误项（It is 5）分数逻辑错误：score[0] 应大于 score[1]")
-        print("✅ 关闭delimiter：分数逻辑验证通过！")
+        # Core logic assertions
+        self.assertTrue(
+            scores[0][0] > scores[0][1],
+            "❌ Score logic error for correct item (It is 3): score[0] should be greater than score[1]"
+        )
+        self.assertTrue(
+            scores[1][0] > scores[1][1],
+            "❌ Score logic error for wrong item (It is 4): score[0] should be greater than score[1]"
+        )
+        self.assertTrue(
+            scores[2][0] > scores[2][1],
+            "❌ Score logic error for wrong item (It is 5): score[0] should be greater than score[1]"
+        )
+        logger.info("✅ Delimiter disabled: Score logic verification passed!")
 
 
 if __name__ == "__main__":
-    # 运行两个独立测试类
+    # Run both independent test classes with detailed output
     unittest.main(verbosity=2)
