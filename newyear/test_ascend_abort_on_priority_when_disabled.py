@@ -12,7 +12,6 @@ from sglang.test.test_utils import (
     CustomTestCase,
     popen_launch_server,
 )
-DEFAULT_URL_FOR_TEST="http://127.0.0.1:8234"
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
