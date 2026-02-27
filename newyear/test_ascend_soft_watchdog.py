@@ -1,11 +1,13 @@
 import io
 import os
+import logging
 import unittest
 import requests
 from contextlib import contextmanager
 
 from sglang.srt.environ import envs
 from sglang.srt.utils import kill_process_tree
+from sglang.test.ci.ci_register import register_npu_ci
 from sglang.test.test_utils import (
     DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
     DEFAULT_URL_FOR_TEST,
@@ -13,7 +15,18 @@ from sglang.test.test_utils import (
     popen_launch_server,
 )
 
-# ===================== 通用环境变量管理函数 =====================
+# Initialize logging configuration (replace print)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler()]
+)
+logger = logging.getLogger(__name__)
+
+# Register CI task for NPU environment
+register_npu_ci(est_time=400, suite="nightly-1-npu-a3", nightly=True)
+
+# ===================== Common Env Var Management Functions =====================
 TEST_RELATED_ENVS = [
     "SGLANG_IS_IN_CI",
     "SGLANG_TEST_STUCK_DETOKENIZER"
@@ -21,7 +34,7 @@ TEST_RELATED_ENVS = [
 
 @contextmanager
 def temporary_test_envs(ci_mode: bool = None, stuck_detokenizer: int = None):
-    """仅管理测试相关的环境变量，自动保存/还原"""
+    """Manage only test-related environment variables, auto save/restore"""
     original_values = {var: os.environ.get(var) for var in TEST_RELATED_ENVS}
     try:
         if ci_mode is not None:
@@ -36,13 +49,13 @@ def temporary_test_envs(ci_mode: bool = None, stuck_detokenizer: int = None):
             else:
                 os.environ[var_name] = original_val
 
-# ===================== 基础测试类（聚焦DetokenizerManager） =====================
+# ===================== Base Test Class (Focus on DetokenizerManager) =====================
 class BaseTestDetokenizerWatchdog:
-    ci_mode = None          # 是否为CI环境
-    set_soft_watchdog = None# 是否设置soft-watchdog-timeout
-    soft_watchdog_value = 10# 设置时的默认值（子类可覆盖）
-    stuck_seconds = 350     # 解词器阻塞时长（子类可覆盖）
-    expected_log = None     # 预期日志/报错
+    ci_mode = None          # Whether it's CI environment
+    set_soft_watchdog = None# Whether to set soft-watchdog-timeout
+    soft_watchdog_value = 10# Default value when set (can be overridden by subclass)
+    stuck_seconds = 350     # Detokenizer blocking duration (can be overridden by subclass)
+    expected_log = None     # Expected log/error message
     expected_assert_error = "stuck tester can be enabled only if soft watchdog is enabled"
 
     @classmethod
@@ -51,21 +64,21 @@ class BaseTestDetokenizerWatchdog:
         cls.stderr = io.StringIO()
         cls.process = None
         cls.launch_success = False
-        cls.error_found_in_log = False  # 标记日志中是否找到预期错误
+        cls.error_found_in_log = False  # Mark if expected error is found in logs
 
-        # 构建启动参数（是否设置soft-watchdog-timeout）
+        # Build launch arguments (whether to set soft-watchdog-timeout)
         other_args = ["--skip-server-warmup"]
         if cls.set_soft_watchdog:
             other_args.extend(["--soft-watchdog-timeout", str(cls.soft_watchdog_value)])
 
-        # 场景4超时设为20秒（保证日志打印完整）
+        # Scenario 4 timeout set to 20 seconds (ensure complete log printing)
         timeout = 20 if (cls.ci_mode is False and cls.set_soft_watchdog is False) else DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH
         
         try:
-            # 模拟解词器阻塞
+            # Simulate detokenizer blocking
             with envs.SGLANG_TEST_STUCK_DETOKENIZER.override(cls.stuck_seconds):
                 cls.process = popen_launch_server(
-                    "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen/Qwen3-0.6B/",,
+                    "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen/Qwen3-0.6B/",
                     DEFAULT_URL_FOR_TEST,
                     timeout=timeout,
                     other_args=other_args,
@@ -73,24 +86,24 @@ class BaseTestDetokenizerWatchdog:
                 )
             cls.launch_success = True
         except TimeoutError:
-            # 场景4预期超时，检查日志中是否有目标错误
+            # Scenario 4 expects timeout, check if target error exists in logs
             cls.launch_success = False
-            # 读取完整日志
+            # Read complete logs
             combined_log = cls.stdout.getvalue() + cls.stderr.getvalue()
-            # 检查是否包含预期的AssertionError字符串
+            # Check if contains expected AssertionError string
             if cls.expected_assert_error in combined_log:
                 cls.error_found_in_log = True
-                print(f"\n【场景4】在日志中找到预期错误: {cls.expected_assert_error}")
-                # 打印完整日志便于排查
-                print(f"\n【场景4】完整日志:\n{combined_log}")
+                logger.info(f"\n[Scenario 4] Found expected error in logs: {cls.expected_assert_error}")
+                # Print complete logs for troubleshooting
+                logger.info(f"\n[Scenario 4] Complete logs:\n{combined_log}")
             else:
-                # 未找到预期错误，抛出超时错误
+                # Expected error not found, raise timeout error
                 raise
 
 
     @classmethod
     def tearDownClass(cls):
-        # 最终兜底清理
+        # Final fallback cleanup
         if cls.process:
             kill_process_tree(cls.process.pid)
         if cls.stdout:
@@ -99,19 +112,19 @@ class BaseTestDetokenizerWatchdog:
             cls.stderr.close()
 
     def test_detokenizer_watchdog(self):
-        # 场景4：非CI+不设置软看门狗 → 验证日志中的AssertionError
+        # Scenario 4: Non-CI + no soft watchdog → verify AssertionError in logs
         if self.ci_mode is False and self.set_soft_watchdog is False:
             self.assertTrue(
                 self.error_found_in_log,
-                f"场景4日志中未找到预期错误: {self.expected_assert_error}"
+                f"Scenario 4: Expected error not found in logs: {self.expected_assert_error}"
             )
-            print("【场景4】测试通过：日志中找到预期的AssertionError字符串")
+            logger.info("[Scenario 4] Test passed: Found expected AssertionError string in logs")
             return
 
-        # 场景1-3：启动成功 → 调用API并验证超时日志
-        self.assertTrue(self.launch_success, "服务启动失败")
+        # Scenarios 1-3: Launch success → call API and verify timeout logs
+        self.assertTrue(self.launch_success, "Server launch failed")
         
-        print("Start call /generate API", flush=True)
+        logger.info("Start call /generate API", extra={'flush': True})
         requests.post(
             DEFAULT_URL_FOR_TEST + "/generate",
             json={
@@ -120,26 +133,26 @@ class BaseTestDetokenizerWatchdog:
             },
             timeout=40,
         )
-        print("End call /generate API", flush=True)
+        logger.info("End call /generate API", extra={'flush': True})
 
-        # 合并输出并验证预期日志
+        # Merge output and verify expected logs
         combined_output = self.stdout.getvalue() + self.stderr.getvalue()
         self.assertIn(
             self.expected_log,
             combined_output,
-            f"未找到预期日志: {self.expected_log}"
+            f"Expected log not found: {self.expected_log}"
         )
-        print(f"【场景{self.__class__.__name__}】测试通过：找到预期日志 {self.expected_log}")
+        logger.info(f"[Scenario {self.__class__.__name__}] Test passed: Found expected log {self.expected_log}")
 
-# ===================== 四个场景的测试子类 =====================
-# 场景1：CI环境 + 不设置soft-watchdog（默认300秒）→ 阻塞350秒
+# ===================== Test Subclasses for Four Scenarios =====================
+# Scenario 1: CI environment + no soft-watchdog (default 300s) → block 350s
 class TestCIWithoutSoftWatchdog(BaseTestDetokenizerWatchdog, CustomTestCase):
     ci_mode = True
     set_soft_watchdog = False
     stuck_seconds = 350
     expected_log = "DetokenizerManager watchdog timeout"
 
-# 场景2：CI环境 + 设置soft-watchdog（20秒）→ 阻塞30秒
+# Scenario 2: CI environment + set soft-watchdog (20s) → block 30s
 class TestCIWithSoftWatchdog(BaseTestDetokenizerWatchdog, CustomTestCase):
     ci_mode = True
     set_soft_watchdog = True
@@ -147,7 +160,7 @@ class TestCIWithSoftWatchdog(BaseTestDetokenizerWatchdog, CustomTestCase):
     stuck_seconds = 30
     expected_log = "DetokenizerManager watchdog timeout"
 
-# 场景3：非CI环境 + 设置soft-watchdog（20秒）→ 阻塞30秒
+# Scenario 3: Non-CI environment + set soft-watchdog (20s) → block 30s
 class TestNonCIWithSoftWatchdog(BaseTestDetokenizerWatchdog, CustomTestCase):
     ci_mode = False
     set_soft_watchdog = True
@@ -155,32 +168,32 @@ class TestNonCIWithSoftWatchdog(BaseTestDetokenizerWatchdog, CustomTestCase):
     stuck_seconds = 30
     expected_log = "DetokenizerManager watchdog timeout"
 
-# 场景4：非CI环境 + 不设置soft-watchdog（验证日志中的AssertionError）
+# Scenario 4: Non-CI environment + no soft-watchdog (verify AssertionError in logs)
 class TestNonCIWithoutSoftWatchdog(BaseTestDetokenizerWatchdog, CustomTestCase):
     ci_mode = False
     set_soft_watchdog = False
 
-# ===================== 测试执行函数 =====================
+# ===================== Test Execution Function =====================
 def run_test_scenario(test_case_cls):
-    """运行单个测试场景，自动管理环境变量"""
+    """Run single test scenario, auto manage environment variables"""
     with temporary_test_envs(ci_mode=test_case_cls.ci_mode):
         suite = unittest.TestLoader().loadTestsFromTestCase(test_case_cls)
         unittest.TextTestRunner(verbosity=2).run(suite)
 
-# ===================== 主函数（执行四个场景） =====================
+# ===================== Main Function (Execute Four Scenarios) =====================
 if __name__ == "__main__":
-    # 场景1：CI + 不设置soft-watchdog
-    print("=== 场景1: CI环境 - 不设置soft-watchdog ===")
+    # Scenario 1: CI + no soft-watchdog
+    logger.info("=== Scenario 1: CI Environment - No soft-watchdog ===")
     run_test_scenario(TestCIWithoutSoftWatchdog)
 
-    # 场景2：CI + 设置soft-watchdog(20秒) → 阻塞30秒
-    print("\n=== 场景2: CI环境 - 设置soft-watchdog(20秒)，阻塞30秒 ===")
+    # Scenario 2: CI + set soft-watchdog(20s) → block 30s
+    logger.info("\n=== Scenario 2: CI Environment - Set soft-watchdog(20s), block 30s ===")
     run_test_scenario(TestCIWithSoftWatchdog)
 
-    # 场景3：非CI + 设置soft-watchdog(20秒) → 阻塞30秒
-    print("\n=== 场景3: 非CI环境 - 设置soft-watchdog(20秒)，阻塞30秒 ===")
+    # Scenario 3: Non-CI + set soft-watchdog(20s) → block 30s
+    logger.info("\n=== Scenario 3: Non-CI Environment - Set soft-watchdog(20s), block 30s ===")
     run_test_scenario(TestNonCIWithSoftWatchdog)
 
-    # 场景4：非CI + 不设置soft-watchdog（验证日志中的AssertionError）
-    print("\n=== 场景4: 非CI环境 - 不设置soft-watchdog（验证断言错误） ===")
+    # Scenario 4: Non-CI + no soft-watchdog (verify AssertionError)
+    logger.info("\n=== Scenario 4: Non-CI Environment - No soft-watchdog (Verify AssertionError) ===")
     run_test_scenario(TestNonCIWithoutSoftWatchdog)
