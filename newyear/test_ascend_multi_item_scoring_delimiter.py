@@ -20,7 +20,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Register CI task for NPU environment (adjust est_time/suite as needed)
 register_npu_ci(est_time=300, suite="nightly-1-npu-a3", nightly=True)
 
 # Common configuration extraction
