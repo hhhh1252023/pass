@@ -25,7 +25,6 @@ register_npu_ci(est_time=300, suite="nightly-1-npu-a3", nightly=True)
 # Common configuration extraction
 COMMON_CONFIG = {
     "model": "/root/.cache/modelscope/hub/models/Qwen/Qwen3-32B",
-    "accuracy": 0.89,
     "base_args": [
         "--trust-remote-code",
         "--mem-fraction-static", "0.8",
@@ -67,7 +66,7 @@ class TestScoreWithDelimiter(CustomTestCase):
         # Trust popen_launch_server's readiness logic, no sleep needed
         cls.server_process = popen_launch_server(
             model=COMMON_CONFIG["model"],
-            url=DEFAULT_URL_FOR_TEST,
+            base_url=DEFAULT_URL_FOR_TEST,
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=server_args
         )
@@ -75,10 +74,7 @@ class TestScoreWithDelimiter(CustomTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """Class-level cleanup: Shutdown server only."""
-        if cls.server_process:
-            kill_process_tree(cls.server_process.pid)
-            logger.info("\n=== Test server [delimiter enabled] has been shut down ===")
+        kill_process_tree(cls.server_process.pid)
 
     def test_score_logic_with_delimiter(self):
         """Verify score comparison logic when --multi-item-scoring-delimiter is enabled."""
@@ -133,7 +129,7 @@ class TestScoreWithoutDelimiter(CustomTestCase):
         server_args = COMMON_CONFIG["base_args"].copy()
         cls.server_process = popen_launch_server(
             model=COMMON_CONFIG["model"],
-            url=DEFAULT_URL_FOR_TEST,
+            base_url=DEFAULT_URL_FOR_TEST,
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=server_args
         )
@@ -141,13 +137,9 @@ class TestScoreWithoutDelimiter(CustomTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """Class-level cleanup: Shutdown server only."""
-        if cls.server_process:
-            kill_process_tree(cls.server_process.pid)
-            logger.info("\n=== Test server [delimiter disabled] has been shut down ===")
+        kill_process_tree(cls.server_process.pid)
 
     def test_score_logic_without_delimiter(self):
-        """Verify score comparison logic when --multi-item-scoring-delimiter is disabled."""
         logger.info("\n=== Testing: --multi-item-scoring-delimiter disabled ===")
         # Call score API (same request data as delimiter enabled)
         response = requests.post(
@@ -156,7 +148,6 @@ class TestScoreWithoutDelimiter(CustomTestCase):
             headers={"Content-Type": "application/json"},
             timeout=COMMON_CONFIG["request_timeout"]
         )
-        # Verify response status code
         self.assertEqual(
             response.status_code, 200,
             f"❌ API returned wrong status code: expected 200, actual {response.status_code}"
@@ -167,7 +158,6 @@ class TestScoreWithoutDelimiter(CustomTestCase):
         scores = result["scores"]
         logger.info(f"📝 API returned scores: {scores}")
 
-        # Core logic assertions
         self.assertTrue(
             scores[0][0] > scores[0][1],
             "❌ Score logic error for correct item (It is 3): score[0] should be greater than score[1]"
