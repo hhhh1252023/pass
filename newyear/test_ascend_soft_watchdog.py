@@ -7,6 +7,7 @@ from contextlib import contextmanager
 
 from sglang.srt.environ import envs
 from sglang.srt.utils import kill_process_tree
+from sglang.test.ascend.test_ascend_utils import QWEN3_0_6B_WEIGHTS_PATH
 from sglang.test.ci.ci_register import register_npu_ci
 from sglang.test.test_utils import (
     DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
@@ -82,7 +83,7 @@ class BaseTestDetokenizerWatchdog:
             # Simulate detokenizer blocking
             with envs.SGLANG_TEST_STUCK_DETOKENIZER.override(cls.stuck_seconds):
                 cls.process = popen_launch_server(
-                    "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/Qwen/Qwen3-0.6B/",
+                    QWEN3_0_6B_WEIGHTS_PATH,
                     DEFAULT_URL_FOR_TEST,
                     timeout=timeout,
                     other_args=other_args,
