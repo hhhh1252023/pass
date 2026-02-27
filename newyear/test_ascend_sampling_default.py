@@ -1,6 +1,7 @@
 import json
 import os
 import time
+import logging
 import requests
 import unittest
 from pathlib import Path
@@ -12,13 +13,19 @@ from sglang.test.test_utils import (
     popen_launch_server,
 )
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler()]
+)
+logger = logging.getLogger(__name__)
 
-# 通用配置（基于实际日志调整）
+# Common configuration (adjusted based on actual logs)
 COMMON_CONFIG = {
     "model": "/root/.cache/modelscope/hub/models/Qwen/Qwen3-30B-A3B",
     "base_url": DEFAULT_URL_FOR_TEST,
     "metrics_dir": os.path.abspath("."),
-    # SGLang内置默认（匹配日志）
+    # SGLang built-in defaults (matched with logs)
     "SGLANG_BUILTIN_DEFAULTS": {
         "temperature": 1.0,
         "top_p": 1.0,
@@ -26,7 +33,6 @@ COMMON_CONFIG = {
         "min_p": 0.0,
         "repetition_penalty": 1.0,
     },
-    # 模型generation_config默认（匹配日志）
     "MODEL_GEN_DEFAULTS": {
         "temperature": 0.6,
         "top_p": 0.95,
@@ -47,125 +53,128 @@ COMMON_CONFIG = {
 
 
 class BaseSamplingTest(CustomTestCase):
-    """基础测试类：适配实际日志格式"""
+    """Testcase: Verify the sampling defaults is set correctly based on different --sampling-defaults.
+
+    [Test Category] Parameter
+    [Test Target] --sampling-defaults, --export-metrics-to-file, --export-metrics-to-file-dir
+    """
     server_process = None
 
     @classmethod
     def setUpClass(cls):
-        """类级别初始化：仅执行一次"""
-        # 确认当前目录可写
+        """Class-level initialization: Execute only once"""
+        # Verify current directory is writable
         metrics_dir = Path(COMMON_CONFIG["metrics_dir"])
         test_file = metrics_dir / "test_write_perm.txt"
         try:
             test_file.write_text("test")
             test_file.unlink()
-            print(f"✅ 当前目录可写：{metrics_dir}")
+            logger.info(f"✅ Current directory is writable: {metrics_dir}")
         except PermissionError:
-            raise RuntimeError(f"❌ 当前目录无写入权限：{metrics_dir}")
+            raise RuntimeError(f"❌ No write permission for current directory: {metrics_dir}")
         
-        # 启动服务
+        # Launch server
         cls._launch_server()
         
-        print(f"\n=== {cls.__name__} 初始化完成 ===")
-        print(f"模型默认参数：{COMMON_CONFIG['MODEL_GEN_DEFAULTS']}")
-        print(f"SGLang内置默认参数：{COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']}")
-        print(f"📂 当前目录初始文件：{[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
+        logger.info(f"\n=== {cls.__name__} initialization completed ===")
+        logger.info(f"Model default parameters: {COMMON_CONFIG['MODEL_GEN_DEFAULTS']}")
+        logger.info(f"SGLang built-in default parameters: {COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']}")
+        logger.info(f"📂 Initial files in current directory: {[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
 
     @classmethod
     def tearDownClass(cls):
-        """类级别清理：仅关闭一次服务"""
         if cls.server_process:
             kill_process_tree(cls.server_process.pid)
             time.sleep(1)
-            print(f"\n=== {cls.__name__} 服务已关闭 ===")
+            logger.info(f"\n=== {cls.__name__} server has been shut down ===")
             metrics_dir = Path(COMMON_CONFIG["metrics_dir"])
-            print(f"📂 测试完成后当前目录文件：{[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
+            logger.info(f"📂 Files in current directory after test completion: {[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
 
     def setUp(self):
-        """每个测试方法前：不删除日志文件，仅打印当前文件列表"""
+        """Before each test method: Do not delete log files, only print current file list"""
         metrics_dir = Path(COMMON_CONFIG["metrics_dir"])
         time.sleep(0.5)
-        print(f"\n📂 测试方法执行前目录文件：{[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
+        logger.info(f"\n📂 Files in directory before test method execution: {[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
 
     @classmethod
     def _launch_server(cls):
-        """启动服务（子类实现具体逻辑）"""
-        raise NotImplementedError("子类必须实现_launch_server方法")
+        """Launch server (subclasses must implement this method)"""
+        raise NotImplementedError("Subclasses must implement _launch_server method")
 
     def _call_chat(self, custom_params: dict = None):
-        """调用接口（仅调整超时时间，无重试）"""
+        """Call API (only adjust timeout, no retry)"""
         req_body = {
             "model": COMMON_CONFIG["model"],
-            "messages": [{"role": "user", "content": "测试采样参数：1+1=？"}]
+            "messages": [{"role": "user", "content": "Test sampling parameters: 1+1=？"}]
         }
         if custom_params:
             req_body.update(custom_params)
         
-        # 调用接口
+        # Call API
         response = requests.post(
             f"{COMMON_CONFIG['base_url']}/v1/chat/completions",
             json=req_body,
             timeout=COMMON_CONFIG["request_timeout"]
         )
-        self.assertEqual(response.status_code, 200, f"接口调用失败：{response.text}")
+        self.assertEqual(response.status_code, 200, f"API call failed: {response.text}")
         
-        # 延长日志写入等待时间
+        # Extend waiting time for log writing
         time.sleep(3)
         return self._get_sampling_params_from_metrics()
 
     def _get_sampling_params_from_metrics(self):
-        """提取metrics中的采样参数（适配实际日志格式）"""
+        """Extract sampling parameters from metrics (adapt to actual log format)"""
         metrics_dir = Path(COMMON_CONFIG["metrics_dir"])
-        # 匹配实际的metrics文件命名：sglang-request-metrics-*
+        # Match actual metrics file naming: sglang-request-metrics-*
         metrics_files = list(metrics_dir.glob("sglang-request-metrics-*.log"))
-        print(f"\n🔍 匹配到的metrics文件：{[f.name for f in metrics_files]}")
+        logger.info(f"\n🔍 Matched metrics files: {[f.name for f in metrics_files]}")
         
         if not metrics_files:
-            self.fail(f"❌ 未找到sglang-request-metrics-*.log文件！当前目录文件：{[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
+            self.fail(f"❌ No sglang-request-metrics-*.log files found! Current directory files: {[f.name for f in metrics_dir.glob('*') if f.is_file()]}")
         
-        # 取最新的metrics文件
+        # Get latest metrics file
         latest_file = max(metrics_files, key=lambda f: f.stat().st_mtime)
-        print(f"🔍 读取最新metrics文件：{latest_file.name}")
+        logger.info(f"🔍 Reading latest metrics file: {latest_file.name}")
         
-        # 读取并清理日志内容（解决换行/空格问题）
+        # Read and clean log content (fix line break/space issues)
         with open(latest_file, "r", encoding="utf-8") as f:
             log_content = f.read()
-            # 按行分割（日志可能有多条JSON）
+            # Split by line (log may contain multiple JSON entries)
             log_lines = [line.strip() for line in log_content.split("\n") if line.strip()]
-            # 取最后一条有效日志（最新请求）
+            # Get last valid log entry (latest request)
             last_log = log_lines[-1] if log_lines else ""
-            # 清理换行和多余空格
+            # Clean line breaks and extra spaces
             clean_content = last_log.replace("\n", "").replace("  ", " ").strip()
-            print(f"\n📝 清理后的最新日志内容：\n{clean_content[:800]}...")
+            logger.info(f"\n📝 Cleaned latest log content:\n{clean_content[:800]}...")
         
-        # 解析JSON（核心适配：request_parameters里嵌套sampling_params）
+        # Parse JSON (core adaptation: sampling_params nested in request_parameters)
         try:
-            # 解析外层JSON
+            # Parse outer JSON
             log_data = json.loads(clean_content)
-            # 解析request_parameters字段（字符串转JSON）
+            # Parse request_parameters field (string to JSON)
             req_params = json.loads(log_data["request_parameters"])
-            # 提取sampling_params
+            # Extract sampling_params
             sampling_params = req_params.get("sampling_params", {})
-            print(f"🔍 解析出的sampling_params：{sampling_params}")
+            logger.info(f"🔍 Parsed sampling_params: {sampling_params}")
         except json.JSONDecodeError as e:
-            self.fail(f"❌ JSON解析失败：{e}，原始内容：{clean_content[:500]}")
+            self.fail(f"❌ JSON parsing failed: {e}, Original content: {clean_content[:500]}")
         
-        # 提取核心采样参数（补全缺失的参数为默认值）
+        # Extract core sampling parameters (fill missing parameters with default values)
         core_params = {}
         for key in COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"].keys():
             core_params[key] = sampling_params.get(key, COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"][key])
-        print(f"🔍 最终提取的核心采样参数：{core_params}")
+        logger.info(f"🔍 Final extracted core sampling parameters: {core_params}")
         return core_params
 
 
 class TestSamplingDefaultsModel(BaseSamplingTest):
-    """测试 --sampling-defaults=model 模式"""
+    """Test --sampling-defaults=model mode"""
     @classmethod
     def _launch_server(cls):
-        """启动model模式服务"""
+        """Launch server in model mode"""
         server_args = COMMON_CONFIG["base_server_args"] + ["--sampling-defaults", "model"]
-        print(f"\n=== 启动model模式服务 ===")
-        print(f"启动参数：{server_args}")
+        logger.info(f"\n=== Launching server in model mode ===")
+        logger.info(f"Launch parameters: {server_args}")
         
         cls.server_process = popen_launch_server(
             COMMON_CONFIG["model"],
@@ -175,37 +184,37 @@ class TestSamplingDefaultsModel(BaseSamplingTest):
         )
 
     def test_default_params(self):
-        """model模式 - 默认参数（无手工配置）"""
-        print("\n=== 测试model模式默认参数 ===")
+        """Model mode - Default parameters (no manual configuration)"""
+        logger.info("\n=== Testing model mode default parameters ===")
         sampling_params = self._call_chat()
         
-        # 精准断言：匹配日志中的model默认参数
+        # Precise assertion: match model default parameters in logs
         self.assertEqual(
             sampling_params["temperature"], COMMON_CONFIG["MODEL_GEN_DEFAULTS"]["temperature"],
-            f"temperature不匹配：预期={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['temperature']}, 实际={sampling_params['temperature']}"
+            f"temperature mismatch: expected={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['temperature']}, actual={sampling_params['temperature']}"
         )
         self.assertEqual(
             sampling_params["top_p"], COMMON_CONFIG["MODEL_GEN_DEFAULTS"]["top_p"],
-            f"top_p不匹配：预期={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['top_p']}, 实际={sampling_params['top_p']}"
+            f"top_p mismatch: expected={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['top_p']}, actual={sampling_params['top_p']}"
         )
         self.assertEqual(
             sampling_params["top_k"], COMMON_CONFIG["MODEL_GEN_DEFAULTS"]["top_k"],
-            f"top_k不匹配：预期={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['top_k']}, 实际={sampling_params['top_k']}"
+            f"top_k mismatch: expected={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['top_k']}, actual={sampling_params['top_k']}"
         )
         self.assertEqual(
             sampling_params["min_p"], COMMON_CONFIG["MODEL_GEN_DEFAULTS"]["min_p"],
-            f"min_p不匹配：预期={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['min_p']}, 实际={sampling_params['min_p']}"
+            f"min_p mismatch: expected={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['min_p']}, actual={sampling_params['min_p']}"
         )
         self.assertEqual(
             sampling_params["repetition_penalty"], COMMON_CONFIG["MODEL_GEN_DEFAULTS"]["repetition_penalty"],
-            f"repetition_penalty不匹配：预期={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['repetition_penalty']}, 实际={sampling_params['repetition_penalty']}"
+            f"repetition_penalty mismatch: expected={COMMON_CONFIG['MODEL_GEN_DEFAULTS']['repetition_penalty']}, actual={sampling_params['repetition_penalty']}"
         )
-        print("✅ model模式默认参数断言通过！")
+        logger.info("✅ Model mode default parameters assertion passed!")
 
     def test_custom_params(self):
-        """model模式 - 手工自定义参数"""
-        print("\n=== 测试model模式手工参数 ===")
-        # 手工配置的参数（匹配日志中的实际值）
+        """Model mode - Manually customized parameters"""
+        logger.info("\n=== Testing model mode manual parameters ===")
+        # Manually configured parameters (matched with actual values in logs)
         custom_params = {
             "temperature": 0.6,
             "top_p": 0.75,
@@ -213,26 +222,26 @@ class TestSamplingDefaultsModel(BaseSamplingTest):
             "min_p": 0.2,
             "repetition_penalty": 1.1
         }
-        print(f"手工配置参数：{custom_params}")
+        logger.info(f"Manually configured parameters: {custom_params}")
         sampling_params = self._call_chat(custom_params)
         
-        # 精准断言：手工参数完全生效
+        # Precise assertion: manual parameters take full effect
         for key, expected_value in custom_params.items():
             self.assertEqual(
                 sampling_params[key], expected_value,
-                f"手工参数{key}不生效：预期={expected_value}, 实际={sampling_params[key]}"
+                f"Manual parameter {key} not effective: expected={expected_value}, actual={sampling_params[key]}"
             )
-        print("✅ model模式手工参数断言通过！")
+        logger.info("✅ Model mode manual parameters assertion passed!")
 
 
 class TestSamplingDefaultsOpenAI(BaseSamplingTest):
-    """测试 --sampling-defaults=openai 模式"""
+    """Test --sampling-defaults=openai mode"""
     @classmethod
     def _launch_server(cls):
-        """启动openai模式服务"""
+        """Launch server in openai mode"""
         server_args = COMMON_CONFIG["base_server_args"] + ["--sampling-defaults", "openai"]
-        print(f"\n=== 启动openai模式服务 ===")
-        print(f"启动参数：{server_args}")
+        logger.info(f"\n=== Launching server in openai mode ===")
+        logger.info(f"Launch parameters: {server_args}")
         
         cls.server_process = popen_launch_server(
             COMMON_CONFIG["model"],
@@ -242,37 +251,37 @@ class TestSamplingDefaultsOpenAI(BaseSamplingTest):
         )
 
     def test_default_params(self):
-        """openai模式 - 默认参数（无手工配置）"""
-        print("\n=== 测试openai模式默认参数 ===")
+        """openai mode - Default parameters (no manual configuration)"""
+        logger.info("\n=== Testing openai mode default parameters ===")
         sampling_params = self._call_chat()
         
-        # 精准断言：匹配日志中的openai默认参数（与SGLang内置一致）
+        # Precise assertion: match openai default parameters in logs (consistent with SGLang built-in)
         self.assertEqual(
             sampling_params["temperature"], COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"]["temperature"],
-            f"temperature不匹配：预期={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['temperature']}, 实际={sampling_params['temperature']}"
+            f"temperature mismatch: expected={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['temperature']}, actual={sampling_params['temperature']}"
         )
         self.assertEqual(
             sampling_params["top_p"], COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"]["top_p"],
-            f"top_p不匹配：预期={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['top_p']}, 实际={sampling_params['top_p']}"
+            f"top_p mismatch: expected={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['top_p']}, actual={sampling_params['top_p']}"
         )
         self.assertEqual(
             sampling_params["top_k"], COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"]["top_k"],
-            f"top_k不匹配：预期={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['top_k']}, 实际={sampling_params['top_k']}"
+            f"top_k mismatch: expected={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['top_k']}, actual={sampling_params['top_k']}"
         )
         self.assertEqual(
             sampling_params["min_p"], COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"]["min_p"],
-            f"min_p不匹配：预期={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['min_p']}, 实际={sampling_params['min_p']}"
+            f"min_p mismatch: expected={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['min_p']}, actual={sampling_params['min_p']}"
         )
         self.assertEqual(
             sampling_params["repetition_penalty"], COMMON_CONFIG["SGLANG_BUILTIN_DEFAULTS"]["repetition_penalty"],
-            f"repetition_penalty不匹配：预期={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['repetition_penalty']}, 实际={sampling_params['repetition_penalty']}"
+            f"repetition_penalty mismatch: expected={COMMON_CONFIG['SGLANG_BUILTIN_DEFAULTS']['repetition_penalty']}, actual={sampling_params['repetition_penalty']}"
         )
-        print("✅ openai模式默认参数断言通过！")
+        logger.info("✅ openai mode default parameters assertion passed!")
 
     def test_custom_params(self):
-        """openai模式 - 手工自定义参数"""
-        print("\n=== 测试openai模式手工参数 ===")
-        # 手工配置的参数（匹配日志中的实际值）
+        """openai mode - Manually customized parameters"""
+        logger.info("\n=== Testing openai mode manual parameters ===")
+        # Manually configured parameters (matched with actual values in logs)
         custom_params = {
             "temperature": 0.3,
             "top_p": 0.9,
@@ -280,18 +289,18 @@ class TestSamplingDefaultsOpenAI(BaseSamplingTest):
             "min_p": 0.1,
             "repetition_penalty": 1.3
         }
-        print(f"手工配置参数：{custom_params}")
+        logger.info(f"Manually configured parameters: {custom_params}")
         sampling_params = self._call_chat(custom_params)
         
-        # 精准断言：手工参数完全生效
+        # Precise assertion: manual parameters take full effect
         for key, expected_value in custom_params.items():
             self.assertEqual(
                 sampling_params[key], expected_value,
-                f"手工参数{key}不生效：预期={expected_value}, 实际={sampling_params[key]}"
+                f"Manual parameter {key} not effective: expected={expected_value}, actual={sampling_params[key]}"
             )
-        print("✅ openai模式手工参数断言通过！")
+        logger.info("✅ openai mode manual parameters assertion passed!")
 
 
 if __name__ == "__main__":
-    # 运行所有测试
+    # Run all tests
     unittest.main(verbosity=2)
