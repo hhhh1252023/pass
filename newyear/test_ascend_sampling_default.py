@@ -5,6 +5,7 @@ import logging
 import requests
 import unittest
 from pathlib import Path
+from sglang.test.ascend.test_ascend_utils import QWEN3_30B_A3B_WEIGHTS_PATH
 from sglang.srt.utils import kill_process_tree
 from sglang.test.test_utils import (
     DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 # Common configuration (adjusted based on actual logs)
 COMMON_CONFIG = {
-    "model": "/root/.cache/modelscope/hub/models/Qwen/Qwen3-30B-A3B",
+    "model": QWEN3_30B_A3B_WEIGHTS_PATH,
     "base_url": DEFAULT_URL_FOR_TEST,
     "metrics_dir": os.path.abspath("."),
     # SGLang built-in defaults (matched with logs)
