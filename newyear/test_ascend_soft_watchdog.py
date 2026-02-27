@@ -49,13 +49,17 @@ def temporary_test_envs(ci_mode: bool = None, stuck_detokenizer: int = None):
             else:
                 os.environ[var_name] = original_val
 
-# ===================== Base Test Class (Focus on DetokenizerManager) =====================
 class BaseTestDetokenizerWatchdog:
-    ci_mode = None          # Whether it's CI environment
-    set_soft_watchdog = None# Whether to set soft-watchdog-timeout
-    soft_watchdog_value = 10# Default value when set (can be overridden by subclass)
-    stuck_seconds = 350     # Detokenizer blocking duration (can be overridden by subclass)
-    expected_log = None     # Expected log/error message
+    """Testcase: Ensure that soft-watchdog-timeout is set by default in the CI environment, and in non-CI environments it is not set by default and needs to be set manually.
+
+    [Test Category] Parameter
+    [Test Target] --soft-watchdog-timeout
+    """
+    ci_mode = None
+    set_soft_watchdog = None
+    soft_watchdog_value = 10
+    stuck_seconds = 350
+    expected_log = None
     expected_assert_error = "stuck tester can be enabled only if soft watchdog is enabled"
 
     @classmethod
