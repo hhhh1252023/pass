@@ -24,7 +24,7 @@ register_npu_ci(est_time=300, suite="nightly-1-npu-a3", nightly=True)
 
 # Common configuration extraction
 COMMON_CONFIG = {
-    "model": "/root/.cache/modelscope/hub/models/Qwen/Qwen3-32B",
+    "model": QWEN3_32B_WEIGHTS_PATH,
     "base_args": [
         "--trust-remote-code",
         "--mem-fraction-static", "0.8",
