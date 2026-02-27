@@ -13,10 +13,10 @@ register_npu_ci(
 
 
 class TestQwen332B(GSM8KAscendMixin, CustomTestCase):
-    """Testcase: Verify that the inference accuracy of the Qwen/Qwen3-32B model on the GSM8K dataset is no less than 0.86.
+    """Testcase: Verify that the inference accuracy of the Qwen/Qwen3-32B model on the GSM8K dataset is no less than 0.86 with fp32.
 
-    [Test Category] Model
-    [Test Target] Qwen/Qwen3-32B
+    [Test Category] Parameter
+    [Test Target] --enable-fp32-lm-head
     """
 
     model = QWEN3_32B_WEIGHTS_PATH
