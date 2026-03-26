@@ -41,9 +41,9 @@ LOCAL_HOST2=`hostname -I|awk -F " " '{print$2}'`
 
 echo "${LOCAL_HOST1}"
 echo "${LOCAL_HOST2}"
-MODEL_PATH=/mnt/share/weights/Qwen3-235B-A22B-W8A8
-EXPERTS_PATH=/mnt/share/chenxu/hot_map/235B_3_5k_bs26_decode.pt
-EAGLE3_PATH=/mnt/share/weights/Qwen3-235B-A22B-Eagle3
+MODEL_PATH/root/.cache/modelscope/hub/models/vllm-ascend/Qwen3-235B-A22B-W8A8
+EXPERTS_PATH=/root/.cache/modelscope/hub/models/hot_map/235B_3_5k_bs26_decode.pt
+EAGLE3_PATH=/root/.cache/modelscope/hub/models/Qwen/Qwen3-235B-A22B-Eagle3
 
 for i in "${!P_IP[@]}";
 do
