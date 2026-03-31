@@ -1,5 +1,4 @@
 from sglang.test.ci.ci_register import register_cuda_ci
-register_cuda_ci(est_time=195, suite="stage-b-test-1-gpu-small")
 
 import gc
 import torch
@@ -11,6 +10,7 @@ from sglang.test.test_utils import (
     CustomTestCase,
 )
 
+register_npu_ci(est_time=150, suite="nightly-2-npu-a3", nightly=True)
 
 def _check_param(engine, param_name, expect_values):
     """Check if the first 5 values of the specified parameter match the expected values."""
@@ -23,7 +23,7 @@ def _check_param(engine, param_name, expect_values):
 class TestUpdateWeightsFromTensor(CustomTestCase):
     """Testcase: Verify weight update functionality with custom weight loader on NPU .
 
-    [Test Category] Weight Update
+    [Test Category] Parameter
     [Test Target] update_weights_from_tensor with custom loader
     """
 
