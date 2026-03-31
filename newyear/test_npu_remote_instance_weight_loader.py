@@ -25,6 +25,7 @@ from sglang.utils import terminate_process
 # Force NPU multiprocessing start method
 mp.set_start_method("spawn", force=True)
 
+register_npu_ci(est_time=300, suite="nightly-2-npu-a3", nightly=True)
 
 def verify_params_close(params1, params2, error_msg):
     """Verify if two parameter arrays are close enough. """
@@ -111,7 +112,7 @@ def init_process_seed(
             "--device",
             "npu",
             "--base-gpu-id",
-            12,
+            str(rank),
             "--tp-size",
             str(tp_size),
         ),
@@ -181,7 +182,7 @@ def init_process_dst(
             "--device",
             "npu",
             "--base-gpu-id",
-            14,
+            str(base_gpu_id),
             "--tp-size",
             str(tp_size),
             "--cuda-graph-max-bs",
@@ -198,6 +199,7 @@ def init_process_dst(
             "remote_instance",
             "--remote-instance-weight-loader-backend",
             remote_instance_loader_backend,
+            "--weight-loader-disable-mmap",
         ),
     )
     torch.npu.synchronize()
