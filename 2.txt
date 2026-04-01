@@ -1,0 +1,57 @@
+PR Modifications
+This PR adds unit tests for two key weight management features of SGLang: dynamic weight update and remote instance weight loading, ensuring their correctness and stability in NPU environment.
+1. New Test Files Added
+
+- Added test file for dynamic weight update (single-GPU scenario with custom weight loader):
+        
+
+  - Verifies the functionality of `engine.update_weights_from_tensor()` API with custom weight loader.
+
+  - Covers weight verification before/after update, resource release (GPU memory, garbage collection).
+
+  - Binds to CUDA CI via `register_cuda_ci()` for automated GPU testing.
+
+- Added test file for remote instance weight loading (NPU environment, transfer_engine/nccl backends):
+        
+
+  - Tests weight transfer from seed instance to destination instances without local weight file loading.
+
+  - Covers two backends: `transfer_engine` and `nccl`, verifies weight consistency between seed and destination instances.
+
+  - Adapts to NPU environment (Ascend backend, multi-process spawn mode, NPU device configuration).
+
+2. Test Logic & Configuration Adjustments
+
+- For dynamic weight update test:
+        
+
+  - Uses `_model_load_weights_direct` custom loader to support in-memory tensor weight update.
+
+  - Adds weight check function `_check_param()` to verify the first 5 values of weights (lightweight and efficient).
+
+  - Ensures proper resource release (engine shutdown, tensor deletion, CUDA cache cleaning) to avoid memory leaks.
+
+- For remote instance weight loading test:
+        
+
+  - Configures test suits to cover `tp_size=1, dp_size=1` with two backends (`transfer_engine` and `nccl`).
+
+  - Adds multi-process logic (1 seed instance + multiple destination instances) with synchronization via `mp.Event()`.
+
+  - Implements `verify_params_close()` function to check weight consistency between seed and destination instances.
+
+  - Sets NPU-specific environment variables (`NCCL_CUMEM_ENABLE=0`, `NCCL_NVLS_ENABLE=0`) for compatibility.
+
+  - Configures default model path, test URL, and port to align with SGLang test standards.
+
+3. Compatibility & CI Adaptation
+
+- Dynamic weight update test: Registers CUDA CI with `register_cuda_ci(est_time=195, suite="stage-b-test-1-gpu-small")` to integrate into automated GPU test pipeline.
+
+- Remote instance test: Forces NPU multi-process spawn mode (`mp.set_start_method("spawn", force=True)`) and checks NPU device count (≥2) to ensure test validity.
+
+- Both tests inherit from `CustomTestCase` to align with SGLang test framework standards.
+
+4. No Breaking Changes
+
+All modifications are additive (new test files only), no changes to existing code, APIs, or configurations. No impact on current functionality.
