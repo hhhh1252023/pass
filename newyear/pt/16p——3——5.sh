@@ -26,9 +26,9 @@ MODEL_PATH=/mnt/share/weights/Qwen3-235B-A22B-W8A8
 # pd传输, IP设置为p节点首节点
 export ASCEND_MF_STORE_URL="tcp://141.61.105.141:24667"
 # p节点IP
-P_IP=('141.61.105.141')
+P_IP=('172.22.3.209')
 # D节点IP
-D_IP=('141.61.105.143')
+D_IP=('172.22.3.181')
 #export SGLANG_ENABLE_TORCH_COMPILE=1
 export SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT=600
 export SGLANG_ENABLE_OVERLAP_PLAN_STREAM=1
@@ -143,7 +143,7 @@ python -m sglang.bench_serving --dataset-name random --backend sglang --host 141
 1、正常压测
 python -m sglang.bench_serving --dataset-name random --backend sglang --host 145.61.105.145 --port 6688 --max-concurrency 768 --random-input-len 3500 --random-output-len 1500 --num-prompts 3072 --random-range-ratio 1
 2、curl热度表，会生成一个pt文件
-curl --location 'http://141.61.105.145:8000/dump_expert_distribution_record'
+curl --location 'http://172.22.3.209:8000/dump_expert_distribution_record'
 3、重启服务
 修改--expert-distribution-recorder-buffer-size -1 --expert-distribution-recorder-mode stat --ep-dispatch-algorithm static --enable-expert-distribution-metrics \ 为
 --ep-dispatch-algorithm static --init-expert-location /mnt/share/chenxu/hot_map/expert_distribution_recorder_1760671625.6899254.pt \

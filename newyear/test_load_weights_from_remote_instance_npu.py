@@ -35,7 +35,7 @@ from sglang.test.test_utils import (
     popen_launch_server,
 )
 from sglang.utils import terminate_process
-
+DEFAULT_SMALL_MODEL_NAME_FOR_TEST = "/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/LLM-Research/Llama-3.2-1B-Instruct"
 mp.set_start_method("spawn", force=True)
 
 register_npu_ci(
@@ -133,7 +133,8 @@ def init_process_seed(
             "--device",
             "npu",
             "--base-gpu-id",
-            str(rank),
+            #str(rank),
+            12,
             "--tp-size",
             str(tp_size),
         ),
@@ -216,10 +217,12 @@ def init_process_dst(
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=(
                 "--attention-backend",
+                "ascend",
                 "--device",
                 "npu",
                 "--base-gpu-id",
-                str(base_gpu_id),
+                #str(base_gpu_id),
+                14,
                 "--tp-size",
                 str(tp_size),
                 "--cuda-graph-max-bs",

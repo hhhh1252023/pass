@@ -10,7 +10,7 @@ from sglang.test.test_utils import (
     DEFAULT_SMALL_MODEL_NAME_FOR_TEST,
     CustomTestCase,
 )
-
+DEFAULT_SMALL_MODEL_NAME_FOR_TEST="/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/LLM-Research/Llama-3.2-1B-Instruct/"
 
 def _check_param(engine, param_name, expect_values):
     """校验权重前5个值是否符合预期"""

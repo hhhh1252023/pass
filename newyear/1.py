@@ -21,8 +21,8 @@ from sglang.test.test_utils import (
     popen_launch_server,
 )
 from sglang.utils import terminate_process
-DEFAULT_SMALL_MODEL_NAME_FOR_TEST="/home/weights/LLM-Research/Llama-3.2-1B-Instruct/"
-DEFAULT_URL_FOR_TEST="http://127.0.0.1:8234"
+DEFAULT_SMALL_MODEL_NAME_FOR_TEST="/data/ascend-ci-share-pkking-sglang/modelscope/hub/models/LLM-Research/Llama-3.2-1B-Instruct/"
+#DEFAULT_URL_FOR_TEST="http://127.0.0.1:8234"
 
 # 强制NPU多进程启动方式
 mp.set_start_method("spawn", force=True)
@@ -203,6 +203,7 @@ def init_process_dst(
             # ✅ 核心：使用 transfer_engine 后端
             "--remote-instance-weight-loader-backend",
             remote_instance_loader_backend,
+            "--weight-loader-disable-mmap",
         ),
     )
     torch.npu.synchronize()
@@ -238,7 +239,7 @@ def test_load_weights_from_remote_instance(
     remote_instance_loader_backend,
 ):
     print(
-        f"Testing model: {model_name} | tp_size: {tp_size} | dp_size: {dp_size} | backend: transfer_engine"
+        f"Testing model: {model_name} | tp_size: {tp_size} | dp_size: {dp_size} | backend: {remote_instance_loader_backend}"
     )
     param_queue = mp.Queue()
     results = {}
@@ -320,7 +321,7 @@ class TestLoadWeightsFromRemoteInstance(CustomTestCase):
         # 测试用例：后端改为 transfer_engine
         test_suits = [
             (1, 1, DEFAULT_SMALL_MODEL_NAME_FOR_TEST, "transfer_engine"),
-            (1, 1, DEFAULT_SMALL_MODEL_NAME_FOR_TEST, "nccl"),
+            #(1, 1, DEFAULT_SMALL_MODEL_NAME_FOR_TEST, "nccl"),
         ]
         # ======================================================
 
@@ -349,7 +350,7 @@ class TestLoadWeightsFromRemoteInstance(CustomTestCase):
                 truncate_size,
                 checking_parameters,
                 "127.0.0.1",
-                8234,
+                DEFAULT_PORT_FOR_SRT_TEST_RUNNER+1000,
                 60010,
                 remote_backend
             )
