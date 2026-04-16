@@ -33,7 +33,7 @@ export SGLANG_ENABLE_OVERLAP_PLAN_STREAM=1
 export SGLANG_ENABLE_SPEC_V2=1
 
 python -m sglang.launch_server --model-path $MODEL_PATH \
-    --host 127.0.0.1 --port 7239 --trust-remote-code --nnodes 1 --node-rank 0  \
+    --host 127.0.0.1 --port 8239 --trust-remote-code --nnodes 1 --node-rank 0  \
     --attention-backend ascend --device npu  --quantization modelslim  \
     --max-running-requests 78 \
     --disable-radix-cache --speculative-draft-model-quantization unquant \
@@ -42,4 +42,4 @@ python -m sglang.launch_server --model-path $MODEL_PATH \
     --speculative-num-steps 3 --speculative-eagle-topk 1 --speculative-num-draft-tokens 4 \
     --tp-size 4  --mem-fraction-static 0.72 --cuda-graph-bs 16 32 64 68 72 78 --dtype bfloat16 \
     --disaggregation-mode decode --disaggregation-transfer-backend ascend \
-	  --base-gpu-id 4
+	--base-gpu-id 4
