@@ -1,0 +1,1 @@
+wget -O aisbench_auto_tools_prefix-master.rar "https://sglang-ascend.obs.cn-east-3.myhuaweicloud.com:443/aisbench/aisbench_auto_tools_prefix-master.rar?AccessKeyId=HPUAXT4YM0U8JNTERLST&Expires=1780024077&Signature=78/QoyD5GJTsyK/8/g61KXj7BiI%3D"
