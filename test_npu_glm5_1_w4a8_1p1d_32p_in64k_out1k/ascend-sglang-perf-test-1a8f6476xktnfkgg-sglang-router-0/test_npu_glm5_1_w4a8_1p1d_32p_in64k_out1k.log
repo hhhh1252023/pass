@@ -1,0 +1,1101 @@
+2026-05-12 02:22:21,274 - INFO - The nic name matched is enp23s0f3
+2026-05-12 02:22:21,284 - INFO - PYTHON_FOR_TEST_TOOL: python3
+2026-05-12 02:22:21,289 - INFO - Init 172.22.3.154 cls.role='router'!
+2026-05-12 02:22:21,289 - INFO - The current node is router, skip this function start_pd_server.
+2026-05-12 02:22:21,289 - INFO - Starting router in thread...
+2026-05-12 02:22:21,289 - INFO - launch_router start ......
+2026-05-12 02:22:21,289 - INFO - Waiting for router to be ready at http://172.22.3.154:6677/health
+2026-05-12 02:22:21,289 - INFO - Waiting for the server to start at http://172.22.3.154:6677/health...
+2026-05-12 02:22:21,585 - INFO - Discovered 4 worker nodes (prefill: 2, decode: 2)
+2026-05-12 02:22:21,616 - INFO - Successfully queried ConfigMap sglang-configmap-1a8f6476xktnfkgg in namespace sgl-project
+2026-05-12 02:22:21,618 - INFO - ConfigMap data is not available yet, waiting for 15s...
+2026-05-12 02:22:36,650 - INFO - Successfully queried ConfigMap sglang-configmap-1a8f6476xktnfkgg in namespace sgl-project
+2026-05-12 02:22:36,652 - INFO - Retrieved ConfigMap data: {'ascend-sglang-perf-test-1a8f6476xktnfkgg-sglang-decode-0': '172.22.3.71', 'ascend-sglang-perf-test-1a8f6476xktnfkgg-sglang-decode-1': '172.22.3.160', 'ascend-sglang-perf-test-1a8f6476xktnfkgg-sglang-prefill-0': '172.22.3.181', 'ascend-sglang-perf-test-1a8f6476xktnfkgg-sglang-prefill-1': '172.22.3.77', 'ascend-sglang-perf-test-1a8f6476xktnfkgg-sglang-router-0': '172.22.3.154'}
+2026-05-12 02:22:36,652 - INFO - ConfigMap monitoring complete: prefill_url=['172.22.3.181:8000'], decode_url=['172.22.3.71:8000'], bootstrap_ports=['8995'], node_ip_list=['172.22.3.71', '172.22.3.181']
+2026-05-12 02:26:51,668 - INFO - Node 172.22.3.181:8000 is ready
+2026-05-12 02:26:51,668 - INFO - Waiting for 1 more nodes to be ready...
+2026-05-12 02:28:36,674 - INFO - Node 172.22.3.71:8000 is ready
+2026-05-12 02:28:36,674 - INFO - All 2 nodes' ports are ready!
+2026-05-12 02:28:36,674 - INFO - Starting router with command: python3 -u -m sglang_router.launch_router --host 0.0.0.0 --port 6677 --pd-disaggregation --policy cache_aware --policy round_robin --prefill http://172.22.3.181:8000 8995 --decode http://172.22.3.71:8000
+2026-05-12 02:28:36,675 - INFO - Router process started with PID: 362
+/usr/local/python3.11.14/lib/python3.11/subprocess.py:1127: ResourceWarning: subprocess 362 is still running
+  _warn("subprocess %s is still running" % self.pid,
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::server[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/server.rs[0m[2m:[0m[2m794:[0m Starting router on 0.0.0.0:6677 | mode: PrefillDecode { prefill_urls: [("http://172.22.3.181:8000", Some(8995))], decode_urls: ["http://172.22.3.71:8000"], prefill_policy: None, decode_policy: None } | policy: RoundRobin | max_payload: 512MB
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::app_context[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/app_context.rs[0m[2m:[0m[2m412:[0m Tokenizer path is not provided, will load from worker on the fly
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::data_connector::factory[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/data_connector/factory.rs[0m[2m:[0m[2m51:[0m Initializing data connector: Memory
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::mcp::manager[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/mcp/manager.rs[0m[2m:[0m[2m90:[0m No static MCP servers connected
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::server[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/server.rs[0m[2m:[0m[2m833:[0m Initializing workers for routing mode: PrefillDecode { prefill_urls: [("http://172.22.3.181:8000", Some(8995))], decode_urls: ["http://172.22.3.71:8000"], prefill_policy: None, decode_policy: None }
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::server[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/server.rs[0m[2m:[0m[2m851:[0m Worker initialization job submitted (will complete in background)
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::server[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/server.rs[0m[2m:[0m[2m863:[0m No MCP config provided, skipping MCP server initialization
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::server[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/server.rs[0m[2m:[0m[2m875:[0m Workers initialized: 0 total, 0 healthy
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::routers::router_manager[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/routers/router_manager.rs[0m[2m:[0m[2m169:[0m Initializing RouterManager in single-router mode
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::routers::router_manager[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/routers/router_manager.rs[0m[2m:[0m[2m177:[0m Created single router with ID: http-pd
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::routers::router_manager[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/routers/router_manager.rs[0m[2m:[0m[2m216:[0m Set default router to http-pd
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::core::worker_manager[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/core/worker_manager.rs[0m[2m:[0m[2m350:[0m Starting load monitoring with interval: 30s
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::server[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/server.rs[0m[2m:[0m[2m907:[0m Rate limiting is disabled (max_concurrent_requests = -1)
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::server[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/server.rs[0m[2m:[0m[2m985:[0m Router ready | workers: []
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m197:[0m Workflow started [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mdefinition_id[0m[2m=[0mlocal_worker_registration
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m197:[0m Workflow started [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mdefinition_id[0m[2m=[0mlocal_worker_registration
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mdetect_connection_mode [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mdetect_connection_mode [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:44[0m [32m INFO[0m [2msmg::server[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/server.rs[0m[2m:[0m[2m1018:[0m Starting server on 0.0.0.0:6677
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mdiscover_metadata [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mdetect_connection_mode [3mduration_ms[0m[2m=[0m1002
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mdiscover_metadata [3mduration_ms[0m[2m=[0m64
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mdiscover_dp_info [3mduration_ms[0m[2m=[0m0
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mdiscover_dp_info [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mcreate_worker [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mregister_workers [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mcreate_worker [3mduration_ms[0m[2m=[0m0
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mregister_workers [3mduration_ms[0m[2m=[0m0
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::tokenizer::registry[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/tokenizer/registry.rs[0m[2m:[0m[2m121:[0m Loading tokenizer 'glm-5' from source: /root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::core::steps::worker::shared::activate[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/core/steps/worker/shared/activate.rs[0m[2m:[0m[2m31:[0m Activated 1 worker(s) (marked as healthy)
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::policies::registry[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/policies/registry.rs[0m[2m:[0m[2m89:[0m Assigning policy round_robin to new model glm-5
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mactivate_workers [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mactivate_workers [3mduration_ms[0m[2m=[0m0
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mupdate_policies [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mupdate_policies [3mduration_ms[0m[2m=[0m0
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::tokenizer::registry[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/tokenizer/registry.rs[0m[2m:[0m[2m141:[0m Successfully registered tokenizer 'glm-5' with id: e99ba144-910c-431e-9fe9-5f063ff628d8
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mregister_tokenizer [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m259:[0m Workflow completed [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mduration_ms[0m[2m=[0m1751
+[2m2026-05-11 18:28:45[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m98f7bfba-0510-4ddd-8315-3411fb235687 [3mstep_id[0m[2m=[0mregister_tokenizer [3mduration_ms[0m[2m=[0m683
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mdetect_connection_mode [3mduration_ms[0m[2m=[0m4003
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mdiscover_metadata [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mdiscover_metadata [3mduration_ms[0m[2m=[0m10
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mdiscover_dp_info [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mdiscover_dp_info [3mduration_ms[0m[2m=[0m0
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mcreate_worker [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mregister_workers [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mcreate_worker [3mduration_ms[0m[2m=[0m0
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mregister_workers [3mduration_ms[0m[2m=[0m0
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::core::steps::worker::shared::activate[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/core/steps/worker/shared/activate.rs[0m[2m:[0m[2m31:[0m Activated 1 worker(s) (marked as healthy)
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mregister_tokenizer [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mregister_tokenizer [3mduration_ms[0m[2m=[0m0
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mactivate_workers [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mactivate_workers [3mduration_ms[0m[2m=[0m0
+[2m2026-05-11 18:28:48[0m [33m WARN[0m [2msmg::core::steps::worker::shared::update_policies[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/core/steps/worker/shared/update_policies.rs[0m[2m:[0m[2m62:[0m Model glm-5 has conflicting tp_size: prefill=Some("4"), decode=Some("32")
+[2m2026-05-11 18:28:48[0m [33m WARN[0m [2msmg::core::steps::worker::shared::update_policies[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/core/steps/worker/shared/update_policies.rs[0m[2m:[0m[2m62:[0m Model glm-5 has conflicting dp_size: prefill=Some("1"), decode=Some("32")
+[2m2026-05-11 18:28:48[0m [33m WARN[0m [2msmg::core::steps::worker::shared::update_policies[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/core/steps/worker/shared/update_policies.rs[0m[2m:[0m[2m62:[0m Model glm-5 has conflicting load_balance_method: prefill=Some("follow_bootstrap_room"), decode=Some("round_robin")
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m208:[0m Step started [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mupdate_policies [3mattempt[0m[2m=[0m1
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m220:[0m Step succeeded [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mstep_id[0m[2m=[0mupdate_policies [3mduration_ms[0m[2m=[0m0
+[2m2026-05-11 18:28:48[0m [32m INFO[0m [2msmg::workflow::event[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/workflow/event.rs[0m[2m:[0m[2m259:[0m Workflow completed [3minstance_id[0m[2m=[0m3c5a417a-4609-437b-9e8a-fb97e1e602af [3mduration_ms[0m[2m=[0m4014
+[2m2026-05-11 18:28:51[0m [32m INFO[0m [1mhttp_request[0m[1m{[0m[3mmethod[0m[2m=[0mGET [3muri[0m[2m=[0m/health [3mversion[0m[2m=[0mHTTP/1.1 [3mmodule[0m[2m=[0m"smg" [3mrequest_id[0m[2m=[0m"req-zOGpgh1VVbWGA6VQXqXMLxcU"[1m}[0m[2m:[0m [2msmg::request[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/middleware.rs[0m[2m:[0m[2m310:[0m started processing request
+[2m2026-05-11 18:28:51[0m [32m INFO[0m [1mhttp_request[0m[1m{[0m[3mmethod[0m[2m=[0mGET [3muri[0m[2m=[0m/health [3mversion[0m[2m=[0mHTTP/1.1 [3mmodule[0m[2m=[0m"smg" [3mrequest_id[0m[2m=[0m"req-zOGpgh1VVbWGA6VQXqXMLxcU" [3mstatus_code[0m[2m=[0m200 [3mlatency[0m[2m=[0m104[1m}[0m[2m:[0m [2msmg::response[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/middleware.rs[0m[2m:[0m[2m359:[0m finished processing request
+2026-05-12 02:28:51,356 - INFO - Server http://172.22.3.154:6677/health is ready!
+2026-05-12 02:28:51,356 - INFO - Waiting 120 seconds for the server to fully initialize...
+[CI Test Method] TestNPUGLM5_1_W4A8_PD_SEP_In3k5_Out1k5.test_npu_glm5_1_w4a8_pd_sep_in3k5_out1k5
+2026-05-12 02:30:51,356 - INFO - Executing test attempt 1/2
+2026-05-12 02:30:51,357 - INFO - Generating gsm8k dataset: /tmp/datasets/test.jsonl, model_path=/root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8, batch_size=1, input_len=65536
+2026-05-12 02:31:17,681 - INFO - Dataset generated: /tmp/datasets/test.jsonl
+2026-05-12 02:31:17,681 - INFO - The metrics result file: /root/.cache/tests/output/perf/20260511/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k
+2026-05-12 02:31:17,681 - INFO - Command: /bin/bash /root/sglang/python/sglang/test/ascend/e2e/run_aisbench.sh --mode perf --ip 172.22.3.154 --port 6677 --model GLM-5.1-w4a8 --model-path /root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8 --dataset-type gsm8k --dataset-path /tmp/datasets/test.jsonl --input-len 65536 --output-len 1024 --batch-size 1 --num-prompts 1 --output-path /root/.cache/tests/output/perf/20260511/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k
+===== Install aisbench in virtual env - Begin =====
+Install aisbench locally.
+Looking in links: /root/.cache/.cache/aisbench-packages
+Requirement already satisfied: pip in ./test_env_aisbench/lib/python3.11/site-packages (24.0)
+Processing /root/.cache/.cache/aisbench-packages/pip-26.0.1-py3-none-any.whl
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed pip-26.0.1
+Looking in links: /root/.cache/.cache/aisbench-packages
+Obtaining file:///root/.cache/.cache/benchmark
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Installing backend dependencies: started
+  Installing backend dependencies: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Processing /root/.cache/.cache/aisbench-packages/absl_py-2.4.0-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/accelerate-1.13.0-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/cpm_kernels-1.0.11-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/datasets-3.6.0-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/einops-0.8.2-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/evaluate-0.4.6-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Collecting func_timeout (from ais_bench_benchmark==3.1.20260330)
+  Using cached func_timeout-4.3.5-py3-none-any.whl
+Processing /root/.cache/.cache/aisbench-packages/fuzzywuzzy-0.18.0-py2.py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/gradio_client-2.4.1-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/h5py-3.16.0-cp311-cp311-manylinux_2_28_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/httpx-0.28.1-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/immutabledict-4.3.1-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/importlib_metadata-9.0.0-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Collecting jieba (from ais_bench_benchmark==3.1.20260330)
+  Using cached jieba-0.42.1-py3-none-any.whl
+Processing /root/.cache/.cache/aisbench-packages/json5-0.14.0-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/jsonlines-4.0.0-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/mmengine_lite-0.10.7-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nltk-3.9.4-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/numpy-1.26.4-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/openai-2.32.0-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/opencv_python_headless-4.11.0.86-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/orjson-3.11.8-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/pandas-3.0.2-cp311-cp311-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/plotly-6.7.0-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/prettytable-3.17.0-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/protobuf-7.34.1-cp310-abi3-manylinux2014_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Collecting pyext==0.5 (from ais_bench_benchmark==3.1.20260330)
+  Using cached pyext-0.5-py3-none-any.whl
+Processing /root/.cache/.cache/aisbench-packages/python_levenshtein-0.27.3-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/rank_bm25-0.2.2-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/rapidfuzz-3.14.5-cp311-cp311-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/requests-2.33.1-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/retrying-1.4.2-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/rich-15.0.0-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/rouge-1.0.1-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/rouge_chinese-1.0.3-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Collecting rouge_score (from ais_bench_benchmark==3.1.20260330)
+  Using cached rouge_score-0.1.2-py3-none-any.whl
+Processing /root/.cache/.cache/aisbench-packages/sacrebleu-2.6.0-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/scikit_learn-1.5.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/scipy-1.17.1-cp311-cp311-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/seaborn-0.13.2-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/tabulate-0.10.0-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/tiktoken-0.12.0-cp311-cp311-manylinux_2_28_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Collecting timeout_decorator (from ais_bench_benchmark==3.1.20260330)
+  Using cached timeout_decorator-0.5.0-py3-none-any.whl
+Processing /root/.cache/.cache/aisbench-packages/tokenizers-0.22.2-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/torch-2.11.0-cp311-cp311-manylinux_2_28_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/tqdm-4.67.3-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/transformers-4.57.6-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/tree_sitter-0.21.3-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/tree_sitter_languages-1.10.2-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/typer-0.24.2-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/pillow-11.2.1-cp311-cp311-manylinux_2_28_aarch64.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/janus-2.0.0-py3-none-any.whl (from ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/joblib-1.5.3-py3-none-any.whl (from scikit_learn==1.5.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/threadpoolctl-3.6.0-py3-none-any.whl (from scikit_learn==1.5.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/filelock-3.25.2-py3-none-any.whl (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/pyarrow-23.0.1-cp311-cp311-manylinux_2_28_aarch64.whl (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/dill-0.3.8-py3-none-any.whl (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/xxhash-3.6.0-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/multiprocess-0.70.16-py311-none-any.whl (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/fsspec-2025.3.0-py3-none-any.whl (from fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/huggingface_hub-0.36.2-py3-none-any.whl (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/packaging-26.0-py3-none-any.whl (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/pyyaml-6.0.3-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/aiohttp-3.13.5-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (from fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/regex-2026.4.4-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (from transformers<=4.57.6->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/safetensors-0.7.0-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (from transformers<=4.57.6->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/hf_xet-1.4.3-cp37-abi3-manylinux_2_28_aarch64.whl (from huggingface-hub>=0.24.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/typing_extensions-4.15.0-py3-none-any.whl (from huggingface-hub>=0.24.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/psutil-7.2.2-cp36-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (from accelerate>=0.19.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/aiohappyeyeballs-2.6.1-py3-none-any.whl (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/aiosignal-1.4.0-py3-none-any.whl (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/attrs-26.1.0-py3-none-any.whl (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/frozenlist-1.8.0-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/multidict-6.7.1-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/propcache-0.4.1-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/yarl-1.23.0-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/idna-3.11-py3-none-any.whl (from yarl<2.0,>=1.17.0->aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/click-8.3.2-py3-none-any.whl (from nltk>=3.7->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/charset_normalizer-3.4.7-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (from requests>=2.31.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/urllib3-2.6.3-py3-none-any.whl (from requests>=2.31.0->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/certifi-2026.2.25-py3-none-any.whl (from requests>=2.31.0->ais_bench_benchmark==3.1.20260330)
+Requirement already satisfied: setuptools<82 in ./test_env_aisbench/lib/python3.11/site-packages (from torch->ais_bench_benchmark==3.1.20260330) (79.0.1)
+Processing /root/.cache/.cache/aisbench-packages/sympy-1.14.0-py3-none-any.whl (from torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/networkx-3.6.1-py3-none-any.whl (from torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/jinja2-3.1.6-py3-none-any.whl (from torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/cuda_toolkit-13.0.2-py2.py3-none-any.whl (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/cuda_bindings-13.2.0-cp311-cp311-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl (from torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_cudnn_cu13-9.19.0.56-py3-none-manylinux_2_27_aarch64.whl (from torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_cusparselt_cu13-0.8.0-py3-none-manylinux2014_aarch64.whl (from torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_nccl_cu13-2.28.9-py3-none-manylinux_2_18_aarch64.whl (from torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_nvshmem_cu13-3.4.5-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl (from torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/triton-3.6.0-cp311-cp311-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (from torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_cublas-13.1.0.3-py3-none-manylinux_2_27_aarch64.whl (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_cuda_runtime-13.0.96-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_cufft-12.0.0.61-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_cufile-1.15.1.6-py3-none-manylinux_2_27_aarch64.whl (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_cuda_cupti-13.0.85-py3-none-manylinux_2_25_aarch64.whl (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_curand-10.4.0.35-py3-none-manylinux_2_27_aarch64.whl (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_cusolver-12.0.4.66-py3-none-manylinux_2_27_aarch64.whl (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_cusparse-12.6.3.3-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_nvjitlink-13.0.88-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_cuda_nvrtc-13.0.88-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/nvidia_nvtx-13.0.85-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/cuda_pathfinder-1.5.2-py3-none-any.whl (from cuda-bindings<14,>=13.0.3->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/mpmath-1.3.0-py3-none-any.whl (from sympy>=1.13.3->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/anyio-4.13.0-py3-none-any.whl (from httpx->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/httpcore-1.0.9-py3-none-any.whl (from httpx->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/h11-0.16.0-py3-none-any.whl (from httpcore==1.*->httpx->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/zipp-3.23.0-py3-none-any.whl (from importlib-metadata->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/markupsafe-3.0.3-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (from jinja2->torch->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/addict-2.4.0-py3-none-any.whl (from mmengine-lite->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/termcolor-3.3.0-py3-none-any.whl (from mmengine-lite->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/yapf-0.43.0-py3-none-any.whl (from mmengine-lite->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/distro-1.9.0-py3-none-any.whl (from openai->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/jiter-0.14.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (from openai->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/pydantic-2.12.5-py3-none-any.whl (from openai->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/sniffio-1.3.1-py3-none-any.whl (from openai->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/annotated_types-0.7.0-py3-none-any.whl (from pydantic<3,>=1.9.0->openai->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/pydantic_core-2.41.5-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (from pydantic<3,>=1.9.0->openai->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/typing_inspection-0.4.2-py3-none-any.whl (from pydantic<3,>=1.9.0->openai->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/python_dateutil-2.9.0.post0-py2.py3-none-any.whl (from pandas->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/six-1.17.0-py2.py3-none-any.whl (from python-dateutil>=2.8.2->pandas->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/narwhals-2.19.0-py3-none-any.whl (from plotly->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/wcwidth-0.6.0-py3-none-any.whl (from prettytable->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/levenshtein-0.27.3-cp311-cp311-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl (from python-Levenshtein->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/markdown_it_py-4.0.0-py3-none-any.whl (from rich->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/pygments-2.20.0-py3-none-any.whl (from rich->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/mdurl-0.1.2-py3-none-any.whl (from markdown-it-py>=2.2.0->rich->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/portalocker-3.2.0-py3-none-any.whl (from sacrebleu->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/colorama-0.4.6-py2.py3-none-any.whl (from sacrebleu->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/lxml-6.0.3-cp311-cp311-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl (from sacrebleu->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/matplotlib-3.10.8-cp311-cp311-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (from seaborn->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/contourpy-1.3.3-cp311-cp311-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl (from matplotlib!=3.6.1,>=3.4->seaborn->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/cycler-0.12.1-py3-none-any.whl (from matplotlib!=3.6.1,>=3.4->seaborn->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/fonttools-4.62.1-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (from matplotlib!=3.6.1,>=3.4->seaborn->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/kiwisolver-1.5.0-cp311-cp311-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl (from matplotlib!=3.6.1,>=3.4->seaborn->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/pyparsing-3.3.2-py3-none-any.whl (from matplotlib!=3.6.1,>=3.4->seaborn->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/shellingham-1.5.4-py2.py3-none-any.whl (from typer->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/annotated_doc-0.0.4-py3-none-any.whl (from typer->ais_bench_benchmark==3.1.20260330)
+Processing /root/.cache/.cache/aisbench-packages/platformdirs-4.9.6-py3-none-any.whl (from yapf->mmengine-lite->ais_bench_benchmark==3.1.20260330)
+Building wheels for collected packages: ais_bench_benchmark
+  Building editable for ais_bench_benchmark (pyproject.toml): started
+  Building editable for ais_bench_benchmark (pyproject.toml): finished with status 'done'
+  Created wheel for ais_bench_benchmark: filename=ais_bench_benchmark-3.1.20260330-0.editable-py3-none-any.whl size=17396 sha256=581aeaafadd573d339903310b31a3b1da99d04c140778b8936c428bbd12907b2
+  Stored in directory: /tmp/pip-ephem-wheel-cache-h5vzi4f1/wheels/47/0f/59/d259510685b55908e633a854fa5e33fea73febc59477a513b2
+Successfully built ais_bench_benchmark
+Installing collected packages: timeout_decorator, pyext, nvidia-cusparselt-cu13, mpmath, jieba, fuzzywuzzy, func_timeout, cuda-toolkit, cpm_kernels, addict, zipp, xxhash, wcwidth, urllib3, typing-extensions, triton, tree-sitter, tqdm, threadpoolctl, termcolor, tabulate, sympy, sniffio, six, shellingham, safetensors, retrying, regex, rapidfuzz, pyyaml, pyparsing, pygments, pyarrow, psutil, protobuf, propcache, portalocker, platformdirs, Pillow, packaging, orjson, nvidia-nvtx, nvidia-nvshmem-cu13, nvidia-nvjitlink, nvidia-nccl-cu13, nvidia-curand, nvidia-cufile, nvidia-cuda-runtime, nvidia-cuda-nvrtc, nvidia-cuda-cupti, nvidia-cublas, numpy, networkx, narwhals, multidict, mdurl, MarkupSafe, lxml, kiwisolver, json5, joblib, jiter, janus, immutabledict, idna, hf-xet, h11, fsspec, frozenlist, fonttools, filelock, einops, distro, dill, cycler, cuda-pathfinder, colorama, click, charset_normalizer, certifi, attrs, annotated-types, annotated-doc, aiohappyeyeballs, absl-py, yarl, yapf, typing-inspection, tree_sitter_languages, scipy, sacrebleu, rouge_chinese, rouge, requests, rank_bm25, python-dateutil, pydantic-core, prettytable, plotly, opencv-python-headless, nvidia-cusparse, nvidia-cufft, nvidia-cudnn-cu13, nltk, multiprocess, markdown-it-py, Levenshtein, jsonlines, jinja2, importlib-metadata, httpcore, h5py, cuda-bindings, contourpy, anyio, aiosignal, tiktoken, scikit_learn, rouge_score, rich, python-Levenshtein, pydantic, pandas, nvidia-cusolver, matplotlib, huggingface-hub, httpx, aiohttp, typer, tokenizers, seaborn, openai, mmengine-lite, gradio-client, transformers, torch, datasets, evaluate, accelerate, ais_bench_benchmark
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+asc-op-compile-base 0.1.0 requires decorator, which is not installed.
+te 0.4.0 requires cloudpickle, which is not installed.
+te 0.4.0 requires decorator, which is not installed.
+te 0.4.0 requires ml-dtypes, which is not installed.
+te 0.4.0 requires tornado, which is not installed.
+auto-tune 0.1.0 requires decorator, which is not installed.
+asc-opc-tool 0.1.0 requires decorator, which is not installed.
+op-compile-tool 0.1.0 requires getopt, which is not installed.
+op-compile-tool 0.1.0 requires inspect, which is not installed.
+op-compile-tool 0.1.0 requires multiprocessing, which is not installed.
+superkernel 0.1.0 requires decorator>=5.1.0, which is not installed.
+schedule-search 0.0.1 requires decorator, which is not installed.
+opc-tool 0.1.0 requires decorator, which is not installed.
+Successfully installed Levenshtein-0.27.3 MarkupSafe-3.0.3 Pillow-11.2.1 absl-py-2.4.0 accelerate-1.13.0 addict-2.4.0 aiohappyeyeballs-2.6.1 aiohttp-3.13.5 aiosignal-1.4.0 ais_bench_benchmark-3.1.20260330 annotated-doc-0.0.4 annotated-types-0.7.0 anyio-4.13.0 attrs-26.1.0 certifi-2026.2.25 charset_normalizer-3.4.7 click-8.3.2 colorama-0.4.6 contourpy-1.3.3 cpm_kernels-1.0.11 cuda-bindings-13.2.0 cuda-pathfinder-1.5.2 cuda-toolkit-13.0.2 cycler-0.12.1 datasets-3.6.0 dill-0.3.8 distro-1.9.0 einops-0.8.2 evaluate-0.4.6 filelock-3.25.2 fonttools-4.62.1 frozenlist-1.8.0 fsspec-2025.3.0 func_timeout-4.3.5 fuzzywuzzy-0.18.0 gradio-client-2.4.1 h11-0.16.0 h5py-3.16.0 hf-xet-1.4.3 httpcore-1.0.9 httpx-0.28.1 huggingface-hub-0.36.2 idna-3.11 immutabledict-4.3.1 importlib-metadata-9.0.0 janus-2.0.0 jieba-0.42.1 jinja2-3.1.6 jiter-0.14.0 joblib-1.5.3 json5-0.14.0 jsonlines-4.0.0 kiwisolver-1.5.0 lxml-6.0.3 markdown-it-py-4.0.0 matplotlib-3.10.8 mdurl-0.1.2 mmengine-lite-0.10.7 mpmath-1.3.0 multidict-6.7.1 multiprocess-0.70.16 narwhals-2.19.0 networkx-3.6.1 nltk-3.9.4 numpy-1.26.4 nvidia-cublas-13.1.0.3 nvidia-cuda-cupti-13.0.85 nvidia-cuda-nvrtc-13.0.88 nvidia-cuda-runtime-13.0.96 nvidia-cudnn-cu13-9.19.0.56 nvidia-cufft-12.0.0.61 nvidia-cufile-1.15.1.6 nvidia-curand-10.4.0.35 nvidia-cusolver-12.0.4.66 nvidia-cusparse-12.6.3.3 nvidia-cusparselt-cu13-0.8.0 nvidia-nccl-cu13-2.28.9 nvidia-nvjitlink-13.0.88 nvidia-nvshmem-cu13-3.4.5 nvidia-nvtx-13.0.85 openai-2.32.0 opencv-python-headless-4.11.0.86 orjson-3.11.8 packaging-26.0 pandas-3.0.2 platformdirs-4.9.6 plotly-6.7.0 portalocker-3.2.0 prettytable-3.17.0 propcache-0.4.1 protobuf-7.34.1 psutil-7.2.2 pyarrow-23.0.1 pydantic-2.12.5 pydantic-core-2.41.5 pyext-0.5 pygments-2.20.0 pyparsing-3.3.2 python-Levenshtein-0.27.3 python-dateutil-2.9.0.post0 pyyaml-6.0.3 rank_bm25-0.2.2 rapidfuzz-3.14.5 regex-2026.4.4 requests-2.33.1 retrying-1.4.2 rich-15.0.0 rouge-1.0.1 rouge_chinese-1.0.3 rouge_score-0.1.2 sacrebleu-2.6.0 safetensors-0.7.0 scikit_learn-1.5.0 scipy-1.17.1 seaborn-0.13.2 shellingham-1.5.4 six-1.17.0 sniffio-1.3.1 sympy-1.14.0 tabulate-0.10.0 termcolor-3.3.0 threadpoolctl-3.6.0 tiktoken-0.12.0 timeout_decorator-0.5.0 tokenizers-0.22.2 torch-2.11.0 tqdm-4.67.3 transformers-4.57.6 tree-sitter-0.21.3 tree_sitter_languages-1.10.2 triton-3.6.0 typer-0.24.2 typing-extensions-4.15.0 typing-inspection-0.4.2 urllib3-2.6.3 wcwidth-0.6.0 xxhash-3.6.0 yapf-0.43.0 yarl-1.23.0 zipp-3.23.0
+Looking in links: /root/.cache/.cache/aisbench-packages
+Requirement already satisfied: openai in ./test_env_aisbench/lib/python3.11/site-packages (from -r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (2.32.0)
+Requirement already satisfied: anyio<5,>=3.5.0 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (4.13.0)
+Requirement already satisfied: distro<2,>=1.7.0 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (1.9.0)
+Requirement already satisfied: httpx<1,>=0.23.0 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (0.28.1)
+Requirement already satisfied: jiter<1,>=0.10.0 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (0.14.0)
+Requirement already satisfied: pydantic<3,>=1.9.0 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (2.12.5)
+Requirement already satisfied: sniffio in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (1.3.1)
+Requirement already satisfied: tqdm>4 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (4.67.3)
+Requirement already satisfied: typing-extensions<5,>=4.11 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (4.15.0)
+Requirement already satisfied: idna>=2.8 in ./test_env_aisbench/lib/python3.11/site-packages (from anyio<5,>=3.5.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (3.11)
+Requirement already satisfied: certifi in ./test_env_aisbench/lib/python3.11/site-packages (from httpx<1,>=0.23.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (2026.2.25)
+Requirement already satisfied: httpcore==1.* in ./test_env_aisbench/lib/python3.11/site-packages (from httpx<1,>=0.23.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (1.0.9)
+Requirement already satisfied: h11>=0.16 in ./test_env_aisbench/lib/python3.11/site-packages (from httpcore==1.*->httpx<1,>=0.23.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (0.16.0)
+Requirement already satisfied: annotated-types>=0.6.0 in ./test_env_aisbench/lib/python3.11/site-packages (from pydantic<3,>=1.9.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in ./test_env_aisbench/lib/python3.11/site-packages (from pydantic<3,>=1.9.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (2.41.5)
+Requirement already satisfied: typing-inspection>=0.4.2 in ./test_env_aisbench/lib/python3.11/site-packages (from pydantic<3,>=1.9.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (0.4.2)
+Looking in links: /root/.cache/.cache/aisbench-packages
+Processing /root/.cache/.cache/aisbench-packages/human_eval-1.0.3-py3-none-any.whl (from -r /root/.cache/.cache/benchmark/requirements/extra.txt (line 2))
+Processing /root/.cache/.cache/aisbench-packages/math_verify-0.5.2-py3-none-any.whl (from -r /root/.cache/.cache/benchmark/requirements/extra.txt (line 5))
+Collecting langdetect (from -r /root/.cache/.cache/benchmark/requirements/extra.txt (line 8))
+  Using cached langdetect-1.0.9-py3-none-any.whl
+Processing /root/.cache/.cache/aisbench-packages/latex2sympy2_extended-1.0.6-py3-none-any.whl (from math-verify==0.5.2->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 5))
+Processing /root/.cache/.cache/aisbench-packages/antlr4_python3_runtime-4.13.2-py3-none-any.whl (from latex2sympy2_extended==1.0.6->math-verify==0.5.2->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 5))
+Requirement already satisfied: sympy in ./test_env_aisbench/lib/python3.11/site-packages (from latex2sympy2_extended==1.0.6->math-verify==0.5.2->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 5)) (1.14.0)
+Requirement already satisfied: tqdm in ./test_env_aisbench/lib/python3.11/site-packages (from human-eval->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 2)) (4.67.3)
+Processing /root/.cache/.cache/aisbench-packages/fire-0.7.1-py3-none-any.whl (from human-eval->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 2))
+Requirement already satisfied: numpy in ./test_env_aisbench/lib/python3.11/site-packages (from human-eval->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 2)) (1.26.4)
+Requirement already satisfied: six in ./test_env_aisbench/lib/python3.11/site-packages (from langdetect->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 8)) (1.17.0)
+Requirement already satisfied: termcolor in ./test_env_aisbench/lib/python3.11/site-packages (from fire->human-eval->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 2)) (3.3.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./test_env_aisbench/lib/python3.11/site-packages (from sympy->latex2sympy2_extended==1.0.6->math-verify==0.5.2->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 5)) (1.3.0)
+Installing collected packages: antlr4-python3-runtime, langdetect, fire, latex2sympy2_extended, human-eval, math-verify
+Successfully installed antlr4-python3-runtime-4.13.2 fire-0.7.1 human-eval-1.0.3 langdetect-1.0.9 latex2sympy2_extended-1.0.6 math-verify-0.5.2
+===== Install aisbench in virtual env - End =====
+===== [Step 1/4] Copying entire toolkit directory =====
+Successfully copied to: /tmp/copy_aisbench_20260512_023259
+Writing gsm8k config info into file: /tmp/ais_configs/datasets/gsm8k_custom_GLM-5.1-w4a8.py
+============== /tmp/ais_configs/datasets/gsm8k_custom_GLM-5.1-w4a8.py - Begin ==============
+from ais_bench.benchmark.openicl.icl_prompt_template import PromptTemplate
+from ais_bench.benchmark.openicl.icl_retriever import ZeroRetriever
+from ais_bench.benchmark.openicl.icl_inferencer import GenInferencer
+from ais_bench.benchmark.openicl.icl_evaluator import AccEvaluator
+from ais_bench.benchmark.datasets import GSM8KDataset, gsm8k_postprocess, gsm8k_dataset_postprocess, Gsm8kEvaluator
+gsm8k_reader_cfg = dict(input_columns=['question'], output_column='answer')
+gsm8k_infer_cfg = dict(
+    prompt_template=dict(
+        type=PromptTemplate,
+        template="{question}"),
+    retriever=dict(type=ZeroRetriever),
+    inferencer=dict(type=GenInferencer))
+gsm8k_eval_cfg = dict(evaluator=dict(type=Gsm8kEvaluator),
+                      pred_role='BOT',
+                      pred_postprocessor=dict(type=gsm8k_postprocess),
+                      dataset_postprocessor=dict(type=gsm8k_dataset_postprocess))
+gsm8k_datasets = [
+    dict(
+        abbr='gsm8k',
+        type=GSM8KDataset,
+        path="/tmp/datasets",
+        reader_cfg=gsm8k_reader_cfg,
+        infer_cfg=gsm8k_infer_cfg,
+        eval_cfg=gsm8k_eval_cfg)
+]
+============== /tmp/ais_configs/datasets/gsm8k_custom_GLM-5.1-w4a8.py - End ================
+Writing model config info into file: /tmp/ais_configs/models/vllm_api_GLM-5.1-w4a8.py
+============== /tmp/ais_configs/models/vllm_api_GLM-5.1-w4a8.py - Begin ==============
+from ais_bench.benchmark.models import VLLMCustomAPIChatStream
+from ais_bench.benchmark.utils.postprocess.model_postprocessors import extract_non_reasoning_content
+models = [
+    dict(
+        attr="service",
+        type=VLLMCustomAPIChatStream,
+        abbr='vllm-api-stream-chat',
+        path="/root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8",
+        model="GLM-5.1-w4a8",
+        stream=True,
+        request_rate=0,
+        use_timestamp=False,
+        retry=2,
+        api_key="",
+        host_ip="172.22.3.154",
+        host_port=6677,
+        url="",
+        max_out_len=1024,
+        batch_size=1,
+        trust_remote_code=True,
+        generation_kwargs=dict(temperature=0,ignore_eos=True),
+        pred_postprocessor=dict(type=extract_non_reasoning_content),
+    )
+]
+============== /tmp/ais_configs/models/vllm_api_GLM-5.1-w4a8.py - End ================
+/root/sglang/python/sglang/test/ascend/e2e/run_aisbench.sh: line 505: bc: command not found
+===== [Mode] Standard AISBench Performance Test =====
+Use dataset: gsm8k_custom_GLM-5.1-w4a8, dataset_file: /tmp/datasets/test.jsonl
+IP: 172.22.3.154 | Port: 6677 | Model: GLM-5.1-w4a8 | Model Path: /root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8
+Input tokens: 65536 | Output tokens: 1024 | Batch size: 1 | Prompts num: 1
+Run command: ais_bench  --config-dir /tmp/ais_configs --models vllm_api_GLM-5.1-w4a8 --datasets gsm8k_custom_GLM-5.1-w4a8 --debug --summarizer default_perf --mode perf --num-prompts 1 --work-dir /root/.cache/tests/output/perf/20260511/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k 
+[2026-05-12 02:33:06,163] [ais_bench] [[32mINFO[0m] Loading vllm_api_GLM-5.1-w4a8: /tmp/ais_configs/models/vllm_api_GLM-5.1-w4a8.py
+[2026-05-12 02:33:06,236] [ais_bench] [[32mINFO[0m] Loading gsm8k_custom_GLM-5.1-w4a8: /tmp/ais_configs/datasets/gsm8k_custom_GLM-5.1-w4a8.py
+[2026-05-12 02:33:06,240] [ais_bench] [[32mINFO[0m] Loading default_perf: /root/.cache/.cache/benchmark/ais_bench/benchmark/configs/./summarizers/perf/default_perf.py
+[2026-05-12 02:33:06,244] [ais_bench] [[32mINFO[0m] Current exp folder: /root/.cache/tests/output/perf/20260511/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k/20260512_023259
+[2026-05-12 02:33:06,252] [ais_bench] [[32mINFO[0m] Keeping the first 1 prompts for dataset [gsm8k]
+[2026-05-12 02:33:06,272] [ais_bench] [[32mINFO[0m] Starting inference tasks...
+[2026-05-12 02:33:06,273] [ais_bench] [[32mINFO[0m] Partitioned into 1 tasks.
+[2026-05-12 02:33:06,273] [ais_bench] [[32mINFO[0m] Merging datasets with the same model and inferencer...
+[2026-05-12 02:33:06,300] [ais_bench] [[32mINFO[0m] Launch TasksMonitor, PID: 817, Refresh interval: 0.5, Run in background: True
+[2026-05-12 02:33:13,184] [ais_bench] [[32mINFO[0m] Debug mode, print progress directly
+[2026-05-12 02:33:13,185] [ais_bench] [[32mINFO[0m] Task [vllm-api-stream-chat/gsm8k]
+[2026-05-12 02:33:13,462] [ais_bench] [[32mINFO[0m] Zero Retriever initialized, returning empty shot case for all queries
+[2026-05-12 02:33:13,463] [ais_bench] [[32mINFO[0m] Apply ice template finished
+[2026-05-12 02:33:13,464] [ais_bench] [[33mWARNING[0m] VLLMCustomAPIChatStream is deprecated, please use VLLMCustomAPIChat with stream=True instead.
+[2026-05-12 02:33:13,465] [ais_bench] [[32mINFO[0m] Start warmup, run with concurrency: 1
+[2m2026-05-11 18:33:13[0m [32m INFO[0m [1mhttp_request[0m[1m{[0m[3mmethod[0m[2m=[0mPOST [3muri[0m[2m=[0m/v1/chat/completions [3mversion[0m[2m=[0mHTTP/1.1 [3mmodule[0m[2m=[0m"smg" [3mrequest_id[0m[2m=[0m"chatcmpl-OGjUOssHgqNZSK1JmGGKMOl2"[1m}[0m[2m:[0m [2msmg::request[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/middleware.rs[0m[2m:[0m[2m310:[0m started processing request
+[2m2026-05-11 18:33:27[0m [32m INFO[0m [1mhttp_request[0m[1m{[0m[3mmethod[0m[2m=[0mPOST [3muri[0m[2m=[0m/v1/chat/completions [3mversion[0m[2m=[0mHTTP/1.1 [3mmodule[0m[2m=[0m"smg" [3mrequest_id[0m[2m=[0m"chatcmpl-OGjUOssHgqNZSK1JmGGKMOl2" [3mstatus_code[0m[2m=[0m200 [3mlatency[0m[2m=[0m14340072[1m}[0m[2m:[0m [2msmg::response[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/middleware.rs[0m[2m:[0m[2m359:[0m finished processing request
+Warmup:   0%|          | 0/1 [00:00<?, ?case/s]
+Warmup: 100%|██████████| 1/1 [01:12<00:00, 72.38s/case]
+Warmup: 100%|██████████| 1/1 [01:12<00:00, 72.38s/case]
+[2026-05-12 02:34:25,850] [ais_bench] [[32mINFO[0m] Warmup finished Total Count: 1 Success Count: 1 Failed Count: 0 
+[2026-05-12 02:34:25,851] [ais_bench] [[32mINFO[0m] Dataset needed memory size: 0.27548695 MB
+[2026-05-12 02:34:25,851] [ais_bench] [[32mINFO[0m] Memory usage check passed: 3.43% < 80% (Available: 1941.39 GB)
+[2026-05-12 02:34:25,852] [ais_bench] [[33mWARNING[0m] The request rate is below 0.1, resulting in an excessively long interval between two consecutive requests.
+[2026-05-12 02:34:25,852] [ais_bench] [[32mINFO[0m] Traffic request rate: 0 RPS with burstiness 1.0.
+[2026-05-12 02:34:25,853] [ais_bench] [[32mINFO[0m] Request rate (0.0) or ramp end rps (None) < 0.001, sending all requests simultaneously
+[2026-05-12 02:34:25,853] [ais_bench] [[32mINFO[0m] Debug mode, run with concurrency: 1
+[2026-05-12 02:34:25,953] [ais_bench] [[32mINFO[0m] All subprocesses have finished deserializing the first batch of data
+[2m2026-05-11 18:34:25[0m [32m INFO[0m [1mhttp_request[0m[1m{[0m[3mmethod[0m[2m=[0mPOST [3muri[0m[2m=[0m/v1/chat/completions [3mversion[0m[2m=[0mHTTP/1.1 [3mmodule[0m[2m=[0m"smg" [3mrequest_id[0m[2m=[0m"chatcmpl-ElqpovZyNtRUlG7BKMg7nZfQ"[1m}[0m[2m:[0m [2msmg::request[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/middleware.rs[0m[2m:[0m[2m310:[0m started processing request
+[2026-05-12 02:34:26,053] [ais_bench] [[32mINFO[0m] Starting progress bar Total data num: 1 Finished data num: 0 Left data num: 1
+Progress:   0%|          | 0/1 [00:00<?, ?case/s]
+[A
+POST=0 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+[2m2026-05-11 18:34:27[0m [32m INFO[0m [1mhttp_request[0m[1m{[0m[3mmethod[0m[2m=[0mPOST [3muri[0m[2m=[0m/v1/chat/completions [3mversion[0m[2m=[0mHTTP/1.1 [3mmodule[0m[2m=[0m"smg" [3mrequest_id[0m[2m=[0m"chatcmpl-ElqpovZyNtRUlG7BKMg7nZfQ" [3mstatus_code[0m[2m=[0m200 [3mlatency[0m[2m=[0m1049290[1m}[0m[2m:[0m [2msmg::response[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/middleware.rs[0m[2m:[0m[2m359:[0m finished processing request
+POST=0 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (1.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (1.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+Progress: 100%|██████████| 1/1 [00:59<00:00, 59.84s/case]
+POST=1 (0.0/s)  RECV=1 (1.0/s)  FAIL=0 (0.0/s)  FINISH=1 (1.0/s)   [A
+POST=1 (0.0/s)  RECV=1 (1.0/s)  FAIL=0 (0.0/s)  FINISH=1 (1.0/s)   [A
+Progress: 100%|██████████| 1/1 [01:00<00:00, 60.04s/case]
+POST=1 (0.0/s)  RECV=1 (1.0/s)  FAIL=0 (0.0/s)  FINISH=1 (1.0/s)   
+[2026-05-12 02:35:26,091] [ais_bench] [[32mINFO[0m] Api infer task time elapsed: 132.91s
+[2026-05-12 02:35:27,018] [ais_bench] [[32mINFO[0m] Inference tasks completed.
+[2026-05-12 02:35:27,019] [ais_bench] [[32mINFO[0m] Summarizing performance results...
+Traceback (most recent call last):
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/utils/file/load_tokenizer.py", line 36, in load_tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, trust_remote_code=trust_remote_code)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/test_env_aisbench/lib/python3.11/site-packages/transformers/models/auto/tokenization_auto.py", line 1153, in from_pretrained
+    raise ValueError(
+ValueError: Tokenizer class TokenizersBackend does not exist or is not currently imported.
+The above exception was the direct cause of the following exception:
+Traceback (most recent call last):
+  File "/workspace/test_env_aisbench/bin/ais_bench", line 6, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/cli/main.py", line 6, in main
+    task_manager.run()
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/cli/task_manager.py", line 39, in run
+    workflow_executor.execute()
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/cli/workers.py", line 453, in execute
+    worker.do_work(cfg)
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/cli/workers.py", line 430, in do_work
+    summarizer.summarize()
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/summarizers/default_perf.py", line 427, in summarize
+    details_perf_datas = self._load_details_perf_data(
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/summarizers/default_perf.py", line 259, in _load_details_perf_data
+    load_tokenizer(tokenizer_path=model_cfg.get("path"), trust_remote_code=model_cfg.get("trust_remote_code", False))
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/utils/file/load_tokenizer.py", line 40, in load_tokenizer
+    raise FileOperationError(
+ais_bench.benchmark.utils.logging.exceptions.FileOperationError: [[1m[41m[33mUTILS-FILE-003[0m][1m[31mtokenizer load failed[0m. Failed to load tokenizer from /root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8: ValueError: Tokenizer class TokenizersBackend does not exist or is not currently imported. | Visit [4m[35mhttps://ais-bench-benchmark.readthedocs.io/zh-cn/latest/faqs/error_codes.html#utils-file-003[0m for further help.
+2026-05-12 02:35:28,102 - ERROR - Command failed with return code: 1
+2026-05-12 02:35:28,103 - ERROR - Error executing command: Command '/bin/bash /root/sglang/python/sglang/test/ascend/e2e/run_aisbench.sh --mode perf --ip 172.22.3.154 --port 6677 --model GLM-5.1-w4a8 --model-path /root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8 --dataset-type gsm8k --dataset-path /tmp/datasets/test.jsonl --input-len 65536 --output-len 1024 --batch-size 1 --num-prompts 1 --output-path /root/.cache/tests/output/perf/20260511/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k' returned non-zero exit status 1.
+2026-05-12 02:35:28,103 - INFO - Test failed on attempt 1
+2026-05-12 02:35:28,103 - INFO - Executing test attempt 2/2
+2026-05-12 02:35:28,103 - INFO - Dataset generated: /tmp/datasets/test.jsonl
+2026-05-12 02:35:28,103 - INFO - The metrics result file: /root/.cache/tests/output/perf/20260511/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k
+2026-05-12 02:35:28,103 - INFO - Command: /bin/bash /root/sglang/python/sglang/test/ascend/e2e/run_aisbench.sh --mode perf --ip 172.22.3.154 --port 6677 --model GLM-5.1-w4a8 --model-path /root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8 --dataset-type gsm8k --dataset-path /tmp/datasets/test.jsonl --input-len 65536 --output-len 1024 --batch-size 1 --num-prompts 1 --output-path /root/.cache/tests/output/perf/20260511/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k
+===== Install aisbench in virtual env - Begin =====
+Install aisbench locally.
+Looking in links: /root/.cache/.cache/aisbench-packages
+Requirement already satisfied: pip in ./test_env_aisbench/lib/python3.11/site-packages (26.0.1)
+Looking in links: /root/.cache/.cache/aisbench-packages
+Obtaining file:///root/.cache/.cache/benchmark
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Installing backend dependencies: started
+  Installing backend dependencies: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: absl-py in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (2.4.0)
+Requirement already satisfied: accelerate>=0.19.0 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (1.13.0)
+Requirement already satisfied: cpm_kernels in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (1.0.11)
+Requirement already satisfied: datasets<=3.6.0,>=2.12.0 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (3.6.0)
+Requirement already satisfied: einops>=0.5.0 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.8.2)
+Requirement already satisfied: evaluate>=0.3.0 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.4.6)
+Requirement already satisfied: func_timeout in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (4.3.5)
+Requirement already satisfied: fuzzywuzzy in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.18.0)
+Requirement already satisfied: gradio-client in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (2.4.1)
+Requirement already satisfied: h5py in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (3.16.0)
+Requirement already satisfied: httpx in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.28.1)
+Requirement already satisfied: immutabledict in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (4.3.1)
+Requirement already satisfied: importlib-metadata in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (9.0.0)
+Requirement already satisfied: jieba in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.42.1)
+Requirement already satisfied: json5 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.14.0)
+Requirement already satisfied: jsonlines in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (4.0.0)
+Requirement already satisfied: mmengine-lite in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.10.7)
+Requirement already satisfied: nltk>=3.7 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (3.9.4)
+Requirement already satisfied: numpy<2.0.0,>=1.23.4 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (1.26.4)
+Requirement already satisfied: openai in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (2.32.0)
+Requirement already satisfied: opencv-python-headless in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (4.11.0.86)
+Requirement already satisfied: orjson in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (3.11.8)
+Requirement already satisfied: pandas in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (3.0.2)
+Requirement already satisfied: plotly in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (6.7.0)
+Requirement already satisfied: prettytable in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (3.17.0)
+Requirement already satisfied: protobuf in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (7.34.1)
+Requirement already satisfied: pyext==0.5 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.5)
+Requirement already satisfied: python-Levenshtein in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.27.3)
+Requirement already satisfied: rank_bm25==0.2.2 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.2.2)
+Requirement already satisfied: rapidfuzz in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (3.14.5)
+Requirement already satisfied: requests>=2.31.0 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (2.33.1)
+Requirement already satisfied: retrying in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (1.4.2)
+Requirement already satisfied: rich in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (15.0.0)
+Requirement already satisfied: rouge in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (1.0.1)
+Requirement already satisfied: rouge_chinese in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (1.0.3)
+Requirement already satisfied: rouge_score in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.1.2)
+Requirement already satisfied: sacrebleu in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (2.6.0)
+Requirement already satisfied: scikit_learn==1.5.0 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (1.5.0)
+Requirement already satisfied: scipy in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (1.17.1)
+Requirement already satisfied: seaborn in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.13.2)
+Requirement already satisfied: tabulate in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.10.0)
+Requirement already satisfied: tiktoken in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.12.0)
+Requirement already satisfied: timeout_decorator in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.5.0)
+Requirement already satisfied: tokenizers in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.22.2)
+Requirement already satisfied: torch in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (2.11.0)
+Requirement already satisfied: tqdm>=4.64.1 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (4.67.3)
+Requirement already satisfied: transformers<=4.57.6 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (4.57.6)
+Requirement already satisfied: tree-sitter==0.21.3 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.21.3)
+Requirement already satisfied: tree_sitter_languages>=1.10.2 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (1.10.2)
+Requirement already satisfied: typer in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (0.24.2)
+Requirement already satisfied: Pillow==11.2.1 in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (11.2.1)
+Requirement already satisfied: janus in ./test_env_aisbench/lib/python3.11/site-packages (from ais_bench_benchmark==3.1.20260330) (2.0.0)
+Requirement already satisfied: joblib>=1.2.0 in ./test_env_aisbench/lib/python3.11/site-packages (from scikit_learn==1.5.0->ais_bench_benchmark==3.1.20260330) (1.5.3)
+Requirement already satisfied: threadpoolctl>=3.1.0 in ./test_env_aisbench/lib/python3.11/site-packages (from scikit_learn==1.5.0->ais_bench_benchmark==3.1.20260330) (3.6.0)
+Requirement already satisfied: filelock in ./test_env_aisbench/lib/python3.11/site-packages (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (3.25.2)
+Requirement already satisfied: pyarrow>=15.0.0 in ./test_env_aisbench/lib/python3.11/site-packages (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (23.0.1)
+Requirement already satisfied: dill<0.3.9,>=0.3.0 in ./test_env_aisbench/lib/python3.11/site-packages (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (0.3.8)
+Requirement already satisfied: xxhash in ./test_env_aisbench/lib/python3.11/site-packages (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (3.6.0)
+Requirement already satisfied: multiprocess<0.70.17 in ./test_env_aisbench/lib/python3.11/site-packages (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (0.70.16)
+Requirement already satisfied: fsspec<=2025.3.0,>=2023.1.0 in ./test_env_aisbench/lib/python3.11/site-packages (from fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (2025.3.0)
+Requirement already satisfied: huggingface-hub>=0.24.0 in ./test_env_aisbench/lib/python3.11/site-packages (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (0.36.2)
+Requirement already satisfied: packaging in ./test_env_aisbench/lib/python3.11/site-packages (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (26.0)
+Requirement already satisfied: pyyaml>=5.1 in ./test_env_aisbench/lib/python3.11/site-packages (from datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (6.0.3)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in ./test_env_aisbench/lib/python3.11/site-packages (from fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (3.13.5)
+Requirement already satisfied: regex!=2019.12.17 in ./test_env_aisbench/lib/python3.11/site-packages (from transformers<=4.57.6->ais_bench_benchmark==3.1.20260330) (2026.4.4)
+Requirement already satisfied: safetensors>=0.4.3 in ./test_env_aisbench/lib/python3.11/site-packages (from transformers<=4.57.6->ais_bench_benchmark==3.1.20260330) (0.7.0)
+Requirement already satisfied: hf-xet<2.0.0,>=1.1.3 in ./test_env_aisbench/lib/python3.11/site-packages (from huggingface-hub>=0.24.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (1.4.3)
+Requirement already satisfied: typing-extensions>=3.7.4.3 in ./test_env_aisbench/lib/python3.11/site-packages (from huggingface-hub>=0.24.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (4.15.0)
+Requirement already satisfied: psutil in ./test_env_aisbench/lib/python3.11/site-packages (from accelerate>=0.19.0->ais_bench_benchmark==3.1.20260330) (7.2.2)
+Requirement already satisfied: aiohappyeyeballs>=2.5.0 in ./test_env_aisbench/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (2.6.1)
+Requirement already satisfied: aiosignal>=1.4.0 in ./test_env_aisbench/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (1.4.0)
+Requirement already satisfied: attrs>=17.3.0 in ./test_env_aisbench/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (26.1.0)
+Requirement already satisfied: frozenlist>=1.1.1 in ./test_env_aisbench/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (1.8.0)
+Requirement already satisfied: multidict<7.0,>=4.5 in ./test_env_aisbench/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (6.7.1)
+Requirement already satisfied: propcache>=0.2.0 in ./test_env_aisbench/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (0.4.1)
+Requirement already satisfied: yarl<2.0,>=1.17.0 in ./test_env_aisbench/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (1.23.0)
+Requirement already satisfied: idna>=2.0 in ./test_env_aisbench/lib/python3.11/site-packages (from yarl<2.0,>=1.17.0->aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2025.3.0,>=2023.1.0->datasets<=3.6.0,>=2.12.0->ais_bench_benchmark==3.1.20260330) (3.11)
+Requirement already satisfied: click in ./test_env_aisbench/lib/python3.11/site-packages (from nltk>=3.7->ais_bench_benchmark==3.1.20260330) (8.3.2)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./test_env_aisbench/lib/python3.11/site-packages (from requests>=2.31.0->ais_bench_benchmark==3.1.20260330) (3.4.7)
+Requirement already satisfied: urllib3<3,>=1.26 in ./test_env_aisbench/lib/python3.11/site-packages (from requests>=2.31.0->ais_bench_benchmark==3.1.20260330) (2.6.3)
+Requirement already satisfied: certifi>=2023.5.7 in ./test_env_aisbench/lib/python3.11/site-packages (from requests>=2.31.0->ais_bench_benchmark==3.1.20260330) (2026.2.25)
+Requirement already satisfied: setuptools<82 in ./test_env_aisbench/lib/python3.11/site-packages (from torch->ais_bench_benchmark==3.1.20260330) (79.0.1)
+Requirement already satisfied: sympy>=1.13.3 in ./test_env_aisbench/lib/python3.11/site-packages (from torch->ais_bench_benchmark==3.1.20260330) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./test_env_aisbench/lib/python3.11/site-packages (from torch->ais_bench_benchmark==3.1.20260330) (3.6.1)
+Requirement already satisfied: jinja2 in ./test_env_aisbench/lib/python3.11/site-packages (from torch->ais_bench_benchmark==3.1.20260330) (3.1.6)
+Requirement already satisfied: cuda-toolkit==13.0.2 in ./test_env_aisbench/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330) (13.0.2)
+Requirement already satisfied: cuda-bindings<14,>=13.0.3 in ./test_env_aisbench/lib/python3.11/site-packages (from torch->ais_bench_benchmark==3.1.20260330) (13.2.0)
+Requirement already satisfied: nvidia-cudnn-cu13==9.19.0.56 in ./test_env_aisbench/lib/python3.11/site-packages (from torch->ais_bench_benchmark==3.1.20260330) (9.19.0.56)
+Requirement already satisfied: nvidia-cusparselt-cu13==0.8.0 in ./test_env_aisbench/lib/python3.11/site-packages (from torch->ais_bench_benchmark==3.1.20260330) (0.8.0)
+Requirement already satisfied: nvidia-nccl-cu13==2.28.9 in ./test_env_aisbench/lib/python3.11/site-packages (from torch->ais_bench_benchmark==3.1.20260330) (2.28.9)
+Requirement already satisfied: nvidia-nvshmem-cu13==3.4.5 in ./test_env_aisbench/lib/python3.11/site-packages (from torch->ais_bench_benchmark==3.1.20260330) (3.4.5)
+Requirement already satisfied: triton==3.6.0 in ./test_env_aisbench/lib/python3.11/site-packages (from torch->ais_bench_benchmark==3.1.20260330) (3.6.0)
+Requirement already satisfied: nvidia-cublas==13.1.0.3.* in ./test_env_aisbench/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330) (13.1.0.3)
+Requirement already satisfied: nvidia-cuda-runtime==13.0.96.* in ./test_env_aisbench/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330) (13.0.96)
+Requirement already satisfied: nvidia-cufft==12.0.0.61.* in ./test_env_aisbench/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330) (12.0.0.61)
+Requirement already satisfied: nvidia-cufile==1.15.1.6.* in ./test_env_aisbench/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330) (1.15.1.6)
+Requirement already satisfied: nvidia-cuda-cupti==13.0.85.* in ./test_env_aisbench/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330) (13.0.85)
+Requirement already satisfied: nvidia-curand==10.4.0.35.* in ./test_env_aisbench/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330) (10.4.0.35)
+Requirement already satisfied: nvidia-cusolver==12.0.4.66.* in ./test_env_aisbench/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330) (12.0.4.66)
+Requirement already satisfied: nvidia-cusparse==12.6.3.3.* in ./test_env_aisbench/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330) (12.6.3.3)
+Requirement already satisfied: nvidia-nvjitlink==13.0.88.* in ./test_env_aisbench/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330) (13.0.88)
+Requirement already satisfied: nvidia-cuda-nvrtc==13.0.88.* in ./test_env_aisbench/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330) (13.0.88)
+Requirement already satisfied: nvidia-nvtx==13.0.85.* in ./test_env_aisbench/lib/python3.11/site-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch->ais_bench_benchmark==3.1.20260330) (13.0.85)
+Requirement already satisfied: cuda-pathfinder~=1.1 in ./test_env_aisbench/lib/python3.11/site-packages (from cuda-bindings<14,>=13.0.3->torch->ais_bench_benchmark==3.1.20260330) (1.5.2)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./test_env_aisbench/lib/python3.11/site-packages (from sympy>=1.13.3->torch->ais_bench_benchmark==3.1.20260330) (1.3.0)
+Requirement already satisfied: anyio in ./test_env_aisbench/lib/python3.11/site-packages (from httpx->ais_bench_benchmark==3.1.20260330) (4.13.0)
+Requirement already satisfied: httpcore==1.* in ./test_env_aisbench/lib/python3.11/site-packages (from httpx->ais_bench_benchmark==3.1.20260330) (1.0.9)
+Requirement already satisfied: h11>=0.16 in ./test_env_aisbench/lib/python3.11/site-packages (from httpcore==1.*->httpx->ais_bench_benchmark==3.1.20260330) (0.16.0)
+Requirement already satisfied: zipp>=3.20 in ./test_env_aisbench/lib/python3.11/site-packages (from importlib-metadata->ais_bench_benchmark==3.1.20260330) (3.23.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./test_env_aisbench/lib/python3.11/site-packages (from jinja2->torch->ais_bench_benchmark==3.1.20260330) (3.0.3)
+Requirement already satisfied: addict in ./test_env_aisbench/lib/python3.11/site-packages (from mmengine-lite->ais_bench_benchmark==3.1.20260330) (2.4.0)
+Requirement already satisfied: termcolor in ./test_env_aisbench/lib/python3.11/site-packages (from mmengine-lite->ais_bench_benchmark==3.1.20260330) (3.3.0)
+Requirement already satisfied: yapf in ./test_env_aisbench/lib/python3.11/site-packages (from mmengine-lite->ais_bench_benchmark==3.1.20260330) (0.43.0)
+Requirement already satisfied: distro<2,>=1.7.0 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->ais_bench_benchmark==3.1.20260330) (1.9.0)
+Requirement already satisfied: jiter<1,>=0.10.0 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->ais_bench_benchmark==3.1.20260330) (0.14.0)
+Requirement already satisfied: pydantic<3,>=1.9.0 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->ais_bench_benchmark==3.1.20260330) (2.12.5)
+Requirement already satisfied: sniffio in ./test_env_aisbench/lib/python3.11/site-packages (from openai->ais_bench_benchmark==3.1.20260330) (1.3.1)
+Requirement already satisfied: annotated-types>=0.6.0 in ./test_env_aisbench/lib/python3.11/site-packages (from pydantic<3,>=1.9.0->openai->ais_bench_benchmark==3.1.20260330) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in ./test_env_aisbench/lib/python3.11/site-packages (from pydantic<3,>=1.9.0->openai->ais_bench_benchmark==3.1.20260330) (2.41.5)
+Requirement already satisfied: typing-inspection>=0.4.2 in ./test_env_aisbench/lib/python3.11/site-packages (from pydantic<3,>=1.9.0->openai->ais_bench_benchmark==3.1.20260330) (0.4.2)
+Requirement already satisfied: python-dateutil>=2.8.2 in ./test_env_aisbench/lib/python3.11/site-packages (from pandas->ais_bench_benchmark==3.1.20260330) (2.9.0.post0)
+Requirement already satisfied: six>=1.5 in ./test_env_aisbench/lib/python3.11/site-packages (from python-dateutil>=2.8.2->pandas->ais_bench_benchmark==3.1.20260330) (1.17.0)
+Requirement already satisfied: narwhals>=1.15.1 in ./test_env_aisbench/lib/python3.11/site-packages (from plotly->ais_bench_benchmark==3.1.20260330) (2.19.0)
+Requirement already satisfied: wcwidth in ./test_env_aisbench/lib/python3.11/site-packages (from prettytable->ais_bench_benchmark==3.1.20260330) (0.6.0)
+Requirement already satisfied: Levenshtein==0.27.3 in ./test_env_aisbench/lib/python3.11/site-packages (from python-Levenshtein->ais_bench_benchmark==3.1.20260330) (0.27.3)
+Requirement already satisfied: markdown-it-py>=2.2.0 in ./test_env_aisbench/lib/python3.11/site-packages (from rich->ais_bench_benchmark==3.1.20260330) (4.0.0)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in ./test_env_aisbench/lib/python3.11/site-packages (from rich->ais_bench_benchmark==3.1.20260330) (2.20.0)
+Requirement already satisfied: mdurl~=0.1 in ./test_env_aisbench/lib/python3.11/site-packages (from markdown-it-py>=2.2.0->rich->ais_bench_benchmark==3.1.20260330) (0.1.2)
+Requirement already satisfied: portalocker in ./test_env_aisbench/lib/python3.11/site-packages (from sacrebleu->ais_bench_benchmark==3.1.20260330) (3.2.0)
+Requirement already satisfied: colorama in ./test_env_aisbench/lib/python3.11/site-packages (from sacrebleu->ais_bench_benchmark==3.1.20260330) (0.4.6)
+Requirement already satisfied: lxml in ./test_env_aisbench/lib/python3.11/site-packages (from sacrebleu->ais_bench_benchmark==3.1.20260330) (6.0.3)
+Requirement already satisfied: matplotlib!=3.6.1,>=3.4 in ./test_env_aisbench/lib/python3.11/site-packages (from seaborn->ais_bench_benchmark==3.1.20260330) (3.10.8)
+Requirement already satisfied: contourpy>=1.0.1 in ./test_env_aisbench/lib/python3.11/site-packages (from matplotlib!=3.6.1,>=3.4->seaborn->ais_bench_benchmark==3.1.20260330) (1.3.3)
+Requirement already satisfied: cycler>=0.10 in ./test_env_aisbench/lib/python3.11/site-packages (from matplotlib!=3.6.1,>=3.4->seaborn->ais_bench_benchmark==3.1.20260330) (0.12.1)
+Requirement already satisfied: fonttools>=4.22.0 in ./test_env_aisbench/lib/python3.11/site-packages (from matplotlib!=3.6.1,>=3.4->seaborn->ais_bench_benchmark==3.1.20260330) (4.62.1)
+Requirement already satisfied: kiwisolver>=1.3.1 in ./test_env_aisbench/lib/python3.11/site-packages (from matplotlib!=3.6.1,>=3.4->seaborn->ais_bench_benchmark==3.1.20260330) (1.5.0)
+Requirement already satisfied: pyparsing>=3 in ./test_env_aisbench/lib/python3.11/site-packages (from matplotlib!=3.6.1,>=3.4->seaborn->ais_bench_benchmark==3.1.20260330) (3.3.2)
+Requirement already satisfied: shellingham>=1.3.0 in ./test_env_aisbench/lib/python3.11/site-packages (from typer->ais_bench_benchmark==3.1.20260330) (1.5.4)
+Requirement already satisfied: annotated-doc>=0.0.2 in ./test_env_aisbench/lib/python3.11/site-packages (from typer->ais_bench_benchmark==3.1.20260330) (0.0.4)
+Requirement already satisfied: platformdirs>=3.5.1 in ./test_env_aisbench/lib/python3.11/site-packages (from yapf->mmengine-lite->ais_bench_benchmark==3.1.20260330) (4.9.6)
+Building wheels for collected packages: ais_bench_benchmark
+  Building editable for ais_bench_benchmark (pyproject.toml): started
+  Building editable for ais_bench_benchmark (pyproject.toml): finished with status 'done'
+  Created wheel for ais_bench_benchmark: filename=ais_bench_benchmark-3.1.20260330-0.editable-py3-none-any.whl size=17396 sha256=9b3459c97c4797d6fec3f14931e741fa172d1e7175473132be88843fdaed3f98
+  Stored in directory: /tmp/pip-ephem-wheel-cache-59f33113/wheels/47/0f/59/d259510685b55908e633a854fa5e33fea73febc59477a513b2
+Successfully built ais_bench_benchmark
+Installing collected packages: ais_bench_benchmark
+  Attempting uninstall: ais_bench_benchmark
+    Found existing installation: ais_bench_benchmark 3.1.20260330
+    Uninstalling ais_bench_benchmark-3.1.20260330:
+      Successfully uninstalled ais_bench_benchmark-3.1.20260330
+Successfully installed ais_bench_benchmark-3.1.20260330
+Looking in links: /root/.cache/.cache/aisbench-packages
+Requirement already satisfied: openai in ./test_env_aisbench/lib/python3.11/site-packages (from -r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (2.32.0)
+Requirement already satisfied: anyio<5,>=3.5.0 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (4.13.0)
+Requirement already satisfied: distro<2,>=1.7.0 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (1.9.0)
+Requirement already satisfied: httpx<1,>=0.23.0 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (0.28.1)
+Requirement already satisfied: jiter<1,>=0.10.0 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (0.14.0)
+Requirement already satisfied: pydantic<3,>=1.9.0 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (2.12.5)
+Requirement already satisfied: sniffio in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (1.3.1)
+Requirement already satisfied: tqdm>4 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (4.67.3)
+Requirement already satisfied: typing-extensions<5,>=4.11 in ./test_env_aisbench/lib/python3.11/site-packages (from openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (4.15.0)
+Requirement already satisfied: idna>=2.8 in ./test_env_aisbench/lib/python3.11/site-packages (from anyio<5,>=3.5.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (3.11)
+Requirement already satisfied: certifi in ./test_env_aisbench/lib/python3.11/site-packages (from httpx<1,>=0.23.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (2026.2.25)
+Requirement already satisfied: httpcore==1.* in ./test_env_aisbench/lib/python3.11/site-packages (from httpx<1,>=0.23.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (1.0.9)
+Requirement already satisfied: h11>=0.16 in ./test_env_aisbench/lib/python3.11/site-packages (from httpcore==1.*->httpx<1,>=0.23.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (0.16.0)
+Requirement already satisfied: annotated-types>=0.6.0 in ./test_env_aisbench/lib/python3.11/site-packages (from pydantic<3,>=1.9.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in ./test_env_aisbench/lib/python3.11/site-packages (from pydantic<3,>=1.9.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (2.41.5)
+Requirement already satisfied: typing-inspection>=0.4.2 in ./test_env_aisbench/lib/python3.11/site-packages (from pydantic<3,>=1.9.0->openai->-r /root/.cache/.cache/benchmark/requirements/api.txt (line 2)) (0.4.2)
+Looking in links: /root/.cache/.cache/aisbench-packages
+Requirement already satisfied: human-eval in ./test_env_aisbench/lib/python3.11/site-packages (from -r /root/.cache/.cache/benchmark/requirements/extra.txt (line 2)) (1.0.3)
+Requirement already satisfied: math-verify==0.5.2 in ./test_env_aisbench/lib/python3.11/site-packages (from -r /root/.cache/.cache/benchmark/requirements/extra.txt (line 5)) (0.5.2)
+Requirement already satisfied: langdetect in ./test_env_aisbench/lib/python3.11/site-packages (from -r /root/.cache/.cache/benchmark/requirements/extra.txt (line 8)) (1.0.9)
+Requirement already satisfied: latex2sympy2_extended==1.0.6 in ./test_env_aisbench/lib/python3.11/site-packages (from math-verify==0.5.2->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 5)) (1.0.6)
+Requirement already satisfied: antlr4-python3-runtime==4.13.2 in ./test_env_aisbench/lib/python3.11/site-packages (from latex2sympy2_extended==1.0.6->math-verify==0.5.2->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 5)) (4.13.2)
+Requirement already satisfied: sympy in ./test_env_aisbench/lib/python3.11/site-packages (from latex2sympy2_extended==1.0.6->math-verify==0.5.2->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 5)) (1.14.0)
+Requirement already satisfied: tqdm in ./test_env_aisbench/lib/python3.11/site-packages (from human-eval->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 2)) (4.67.3)
+Requirement already satisfied: fire in ./test_env_aisbench/lib/python3.11/site-packages (from human-eval->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 2)) (0.7.1)
+Requirement already satisfied: numpy in ./test_env_aisbench/lib/python3.11/site-packages (from human-eval->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 2)) (1.26.4)
+Requirement already satisfied: six in ./test_env_aisbench/lib/python3.11/site-packages (from langdetect->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 8)) (1.17.0)
+Requirement already satisfied: termcolor in ./test_env_aisbench/lib/python3.11/site-packages (from fire->human-eval->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 2)) (3.3.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./test_env_aisbench/lib/python3.11/site-packages (from sympy->latex2sympy2_extended==1.0.6->math-verify==0.5.2->-r /root/.cache/.cache/benchmark/requirements/extra.txt (line 5)) (1.3.0)
+===== Install aisbench in virtual env - End =====
+===== [Step 1/4] Copying entire toolkit directory =====
+Successfully copied to: /tmp/copy_aisbench_20260512_023543
+Writing gsm8k config info into file: /tmp/ais_configs/datasets/gsm8k_custom_GLM-5.1-w4a8.py
+============== /tmp/ais_configs/datasets/gsm8k_custom_GLM-5.1-w4a8.py - Begin ==============
+from ais_bench.benchmark.openicl.icl_prompt_template import PromptTemplate
+from ais_bench.benchmark.openicl.icl_retriever import ZeroRetriever
+from ais_bench.benchmark.openicl.icl_inferencer import GenInferencer
+from ais_bench.benchmark.openicl.icl_evaluator import AccEvaluator
+from ais_bench.benchmark.datasets import GSM8KDataset, gsm8k_postprocess, gsm8k_dataset_postprocess, Gsm8kEvaluator
+gsm8k_reader_cfg = dict(input_columns=['question'], output_column='answer')
+gsm8k_infer_cfg = dict(
+    prompt_template=dict(
+        type=PromptTemplate,
+        template="{question}"),
+    retriever=dict(type=ZeroRetriever),
+    inferencer=dict(type=GenInferencer))
+gsm8k_eval_cfg = dict(evaluator=dict(type=Gsm8kEvaluator),
+                      pred_role='BOT',
+                      pred_postprocessor=dict(type=gsm8k_postprocess),
+                      dataset_postprocessor=dict(type=gsm8k_dataset_postprocess))
+gsm8k_datasets = [
+    dict(
+        abbr='gsm8k',
+        type=GSM8KDataset,
+        path="/tmp/datasets",
+        reader_cfg=gsm8k_reader_cfg,
+        infer_cfg=gsm8k_infer_cfg,
+        eval_cfg=gsm8k_eval_cfg)
+]
+============== /tmp/ais_configs/datasets/gsm8k_custom_GLM-5.1-w4a8.py - End ================
+Writing model config info into file: /tmp/ais_configs/models/vllm_api_GLM-5.1-w4a8.py
+============== /tmp/ais_configs/models/vllm_api_GLM-5.1-w4a8.py - Begin ==============
+from ais_bench.benchmark.models import VLLMCustomAPIChatStream
+from ais_bench.benchmark.utils.postprocess.model_postprocessors import extract_non_reasoning_content
+models = [
+    dict(
+        attr="service",
+        type=VLLMCustomAPIChatStream,
+        abbr='vllm-api-stream-chat',
+        path="/root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8",
+        model="GLM-5.1-w4a8",
+        stream=True,
+        request_rate=0,
+        use_timestamp=False,
+        retry=2,
+        api_key="",
+        host_ip="172.22.3.154",
+        host_port=6677,
+        url="",
+        max_out_len=1024,
+        batch_size=1,
+        trust_remote_code=True,
+        generation_kwargs=dict(temperature=0,ignore_eos=True),
+        pred_postprocessor=dict(type=extract_non_reasoning_content),
+    )
+]
+============== /tmp/ais_configs/models/vllm_api_GLM-5.1-w4a8.py - End ================
+/root/sglang/python/sglang/test/ascend/e2e/run_aisbench.sh: line 505: bc: command not found
+===== [Mode] Standard AISBench Performance Test =====
+Use dataset: gsm8k_custom_GLM-5.1-w4a8, dataset_file: /tmp/datasets/test.jsonl
+IP: 172.22.3.154 | Port: 6677 | Model: GLM-5.1-w4a8 | Model Path: /root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8
+Input tokens: 65536 | Output tokens: 1024 | Batch size: 1 | Prompts num: 1
+Run command: ais_bench  --config-dir /tmp/ais_configs --models vllm_api_GLM-5.1-w4a8 --datasets gsm8k_custom_GLM-5.1-w4a8 --debug --summarizer default_perf --mode perf --num-prompts 1 --work-dir /root/.cache/tests/output/perf/20260511/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k 
+[2026-05-12 02:35:50,044] [ais_bench] [[32mINFO[0m] Loading vllm_api_GLM-5.1-w4a8: /tmp/ais_configs/models/vllm_api_GLM-5.1-w4a8.py
+[2026-05-12 02:35:50,094] [ais_bench] [[32mINFO[0m] Loading gsm8k_custom_GLM-5.1-w4a8: /tmp/ais_configs/datasets/gsm8k_custom_GLM-5.1-w4a8.py
+[2026-05-12 02:35:50,098] [ais_bench] [[32mINFO[0m] Loading default_perf: /root/.cache/.cache/benchmark/ais_bench/benchmark/configs/./summarizers/perf/default_perf.py
+[2026-05-12 02:35:50,099] [ais_bench] [[32mINFO[0m] Current exp folder: /root/.cache/tests/output/perf/20260511/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k/20260512_023543
+[2026-05-12 02:35:50,104] [ais_bench] [[32mINFO[0m] Keeping the first 1 prompts for dataset [gsm8k]
+[2026-05-12 02:35:50,138] [ais_bench] [[32mINFO[0m] Starting inference tasks...
+[2026-05-12 02:35:50,140] [ais_bench] [[32mINFO[0m] Partitioned into 1 tasks.
+[2026-05-12 02:35:50,140] [ais_bench] [[32mINFO[0m] Merging datasets with the same model and inferencer...
+[2026-05-12 02:35:50,163] [ais_bench] [[32mINFO[0m] Launch TasksMonitor, PID: 1140, Refresh interval: 0.5, Run in background: True
+[2026-05-12 02:35:57,246] [ais_bench] [[32mINFO[0m] Debug mode, print progress directly
+[2026-05-12 02:35:57,247] [ais_bench] [[32mINFO[0m] Task [vllm-api-stream-chat/gsm8k]
+[2026-05-12 02:35:57,524] [ais_bench] [[32mINFO[0m] Zero Retriever initialized, returning empty shot case for all queries
+[2026-05-12 02:35:57,525] [ais_bench] [[32mINFO[0m] Apply ice template finished
+[2026-05-12 02:35:57,526] [ais_bench] [[33mWARNING[0m] VLLMCustomAPIChatStream is deprecated, please use VLLMCustomAPIChat with stream=True instead.
+[2026-05-12 02:35:57,527] [ais_bench] [[32mINFO[0m] Start warmup, run with concurrency: 1
+[2m2026-05-11 18:35:57[0m [32m INFO[0m [1mhttp_request[0m[1m{[0m[3mmethod[0m[2m=[0mPOST [3muri[0m[2m=[0m/v1/chat/completions [3mversion[0m[2m=[0mHTTP/1.1 [3mmodule[0m[2m=[0m"smg" [3mrequest_id[0m[2m=[0m"chatcmpl-2VAqdQdnsnKO114xMhX0INAk"[1m}[0m[2m:[0m [2msmg::request[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/middleware.rs[0m[2m:[0m[2m310:[0m started processing request
+[2m2026-05-11 18:36:00[0m [32m INFO[0m [1mhttp_request[0m[1m{[0m[3mmethod[0m[2m=[0mPOST [3muri[0m[2m=[0m/v1/chat/completions [3mversion[0m[2m=[0mHTTP/1.1 [3mmodule[0m[2m=[0m"smg" [3mrequest_id[0m[2m=[0m"chatcmpl-2VAqdQdnsnKO114xMhX0INAk" [3mstatus_code[0m[2m=[0m200 [3mlatency[0m[2m=[0m3288554[1m}[0m[2m:[0m [2msmg::response[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/middleware.rs[0m[2m:[0m[2m359:[0m finished processing request
+Warmup:   0%|          | 0/1 [00:00<?, ?case/s]
+Warmup: 100%|██████████| 1/1 [01:02<00:00, 62.20s/case]
+Warmup: 100%|██████████| 1/1 [01:02<00:00, 62.20s/case]
+[2026-05-12 02:36:59,724] [ais_bench] [[32mINFO[0m] Warmup finished Total Count: 1 Success Count: 1 Failed Count: 0 
+[2026-05-12 02:36:59,725] [ais_bench] [[32mINFO[0m] Dataset needed memory size: 0.27548695 MB
+[2026-05-12 02:36:59,725] [ais_bench] [[32mINFO[0m] Memory usage check passed: 3.84% < 80% (Available: 1933.19 GB)
+[2026-05-12 02:36:59,726] [ais_bench] [[33mWARNING[0m] The request rate is below 0.1, resulting in an excessively long interval between two consecutive requests.
+[2026-05-12 02:36:59,726] [ais_bench] [[32mINFO[0m] Traffic request rate: 0 RPS with burstiness 1.0.
+[2026-05-12 02:36:59,726] [ais_bench] [[32mINFO[0m] Request rate (0.0) or ramp end rps (None) < 0.001, sending all requests simultaneously
+[2026-05-12 02:36:59,727] [ais_bench] [[32mINFO[0m] Debug mode, run with concurrency: 1
+[2026-05-12 02:36:59,827] [ais_bench] [[32mINFO[0m] All subprocesses have finished deserializing the first batch of data
+[2m2026-05-11 18:36:59[0m [32m INFO[0m [1mhttp_request[0m[1m{[0m[3mmethod[0m[2m=[0mPOST [3muri[0m[2m=[0m/v1/chat/completions [3mversion[0m[2m=[0mHTTP/1.1 [3mmodule[0m[2m=[0m"smg" [3mrequest_id[0m[2m=[0m"chatcmpl-J6VS8Tk1FNUe797axFsa5zjX"[1m}[0m[2m:[0m [2msmg::request[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/middleware.rs[0m[2m:[0m[2m310:[0m started processing request
+[2026-05-12 02:36:59,927] [ais_bench] [[32mINFO[0m] Starting progress bar Total data num: 1 Finished data num: 0 Left data num: 1
+Progress:   0%|          | 0/1 [00:00<?, ?case/s]
+[A
+POST=0 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+[2m2026-05-11 18:37:00[0m [32m INFO[0m [1mhttp_request[0m[1m{[0m[3mmethod[0m[2m=[0mPOST [3muri[0m[2m=[0m/v1/chat/completions [3mversion[0m[2m=[0mHTTP/1.1 [3mmodule[0m[2m=[0m"smg" [3mrequest_id[0m[2m=[0m"chatcmpl-J6VS8Tk1FNUe797axFsa5zjX" [3mstatus_code[0m[2m=[0m200 [3mlatency[0m[2m=[0m1013503[1m}[0m[2m:[0m [2msmg::response[0m[2m:[0m [2m/home/runner/work/sglang/sglang/src/middleware.rs[0m[2m:[0m[2m359:[0m finished processing request
+POST=0 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (1.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (1.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+POST=1 (0.0/s)  RECV=0 (0.0/s)  FAIL=0 (0.0/s)  FIN=0 (0.0/s)   [A
+Progress: 100%|██████████| 1/1 [00:59<00:00, 59.84s/case]
+POST=1 (0.0/s)  RECV=1 (1.0/s)  FAIL=0 (0.0/s)  FINISH=1 (1.0/s)   [A
+POST=1 (0.0/s)  RECV=1 (1.0/s)  FAIL=0 (0.0/s)  FINISH=1 (1.0/s)   [A
+Progress: 100%|██████████| 1/1 [01:00<00:00, 60.04s/case]
+POST=1 (0.0/s)  RECV=1 (1.0/s)  FAIL=0 (0.0/s)  FINISH=1 (1.0/s)   
+[2026-05-12 02:37:59,966] [ais_bench] [[32mINFO[0m] Api infer task time elapsed: 122.72s
+[2026-05-12 02:38:00,969] [ais_bench] [[32mINFO[0m] Inference tasks completed.
+[2026-05-12 02:38:00,970] [ais_bench] [[32mINFO[0m] Summarizing performance results...
+Traceback (most recent call last):
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/utils/file/load_tokenizer.py", line 36, in load_tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, trust_remote_code=trust_remote_code)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/test_env_aisbench/lib/python3.11/site-packages/transformers/models/auto/tokenization_auto.py", line 1153, in from_pretrained
+    raise ValueError(
+ValueError: Tokenizer class TokenizersBackend does not exist or is not currently imported.
+The above exception was the direct cause of the following exception:
+Traceback (most recent call last):
+  File "/workspace/test_env_aisbench/bin/ais_bench", line 6, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/cli/main.py", line 6, in main
+    task_manager.run()
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/cli/task_manager.py", line 39, in run
+    workflow_executor.execute()
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/cli/workers.py", line 453, in execute
+    worker.do_work(cfg)
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/cli/workers.py", line 430, in do_work
+    summarizer.summarize()
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/summarizers/default_perf.py", line 427, in summarize
+    details_perf_datas = self._load_details_perf_data(
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/summarizers/default_perf.py", line 259, in _load_details_perf_data
+    load_tokenizer(tokenizer_path=model_cfg.get("path"), trust_remote_code=model_cfg.get("trust_remote_code", False))
+  File "/root/.cache/.cache/benchmark/ais_bench/benchmark/utils/file/load_tokenizer.py", line 40, in load_tokenizer
+    raise FileOperationError(
+ais_bench.benchmark.utils.logging.exceptions.FileOperationError: [[1m[41m[33mUTILS-FILE-003[0m][1m[31mtokenizer load failed[0m. Failed to load tokenizer from /root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8: ValueError: Tokenizer class TokenizersBackend does not exist or is not currently imported. | Visit [4m[35mhttps://ais-bench-benchmark.readthedocs.io/zh-cn/latest/faqs/error_codes.html#utils-file-003[0m for further help.
+2026-05-12 02:38:02,141 - ERROR - Command failed with return code: 1
+2026-05-12 02:38:02,141 - ERROR - Error executing command: Command '/bin/bash /root/sglang/python/sglang/test/ascend/e2e/run_aisbench.sh --mode perf --ip 172.22.3.154 --port 6677 --model GLM-5.1-w4a8 --model-path /root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8 --dataset-type gsm8k --dataset-path /tmp/datasets/test.jsonl --input-len 65536 --output-len 1024 --batch-size 1 --num-prompts 1 --output-path /root/.cache/tests/output/perf/20260511/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k' returned non-zero exit status 1.
+/sgl-workspace/sglang/python/sglang/test/ascend/e2e/test_npu_performance_utils.py:217: ResourceWarning: unclosed file <_io.TextIOWrapper name=11 encoding='UTF-8'>
+  last_exception = e
+2026-05-12 02:38:02,142 - INFO - Test failed on attempt 2
+Traceback (most recent call last):
+  File "/sgl-workspace/sglang/python/sglang/srt/utils/common.py", line 2696, in retry
+    return fn()
+           ^^^^
+  File "/sgl-workspace/sglang/python/sglang/test/test_utils.py", line 2157, in <lambda>
+    lambda: super(CustomTestCase, self)._callTestMethod(method),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.14/lib/python3.11/unittest/case.py", line 579, in _callTestMethod
+    if method() is not None:
+       ^^^^^^^^
+  File "/root/sglang/test/registered/ascend/performance/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k.py", line 177, in test_npu_glm5_1_w4a8_pd_sep_in3k5_out1k5
+    self.run_throughput()
+  File "/sgl-workspace/sglang/python/sglang/test/ascend/e2e/test_npu_performance_utils.py", line 221, in wrapper
+    raise last_exception
+  File "/sgl-workspace/sglang/python/sglang/test/ascend/e2e/test_npu_performance_utils.py", line 213, in wrapper
+    return func(
+           ^^^^^
+  File "/sgl-workspace/sglang/python/sglang/test/ascend/e2e/test_npu_multi_node_utils.py", line 338, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/test/ascend/e2e/test_npu_performance_utils.py", line 1064, in run_throughput
+    metrics = run_aisbench(
+              ^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/test/ascend/e2e/test_npu_performance_utils.py", line 542, in run_aisbench
+    raise subprocess.CalledProcessError(process.returncode, cmd)
+subprocess.CalledProcessError: Command '/bin/bash /root/sglang/python/sglang/test/ascend/e2e/run_aisbench.sh --mode perf --ip 172.22.3.154 --port 6677 --model GLM-5.1-w4a8 --model-path /root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8 --dataset-type gsm8k --dataset-path /tmp/datasets/test.jsonl --input-len 65536 --output-len 1024 --batch-size 1 --num-prompts 1 --output-path /root/.cache/tests/output/perf/20260511/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k' returned non-zero exit status 1.
+E
+======================================================================
+ERROR: test_npu_glm5_1_w4a8_pd_sep_in3k5_out1k5 (__main__.TestNPUGLM5_1_W4A8_PD_SEP_In3k5_Out1k5.test_npu_glm5_1_w4a8_pd_sep_in3k5_out1k5)
+Run NPU performance test for GLM-5.1-w4a8 PD separation
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/sgl-workspace/sglang/python/sglang/srt/utils/common.py", line 2696, in retry
+    return fn()
+           ^^^^
+  File "/sgl-workspace/sglang/python/sglang/test/test_utils.py", line 2157, in <lambda>
+    lambda: super(CustomTestCase, self)._callTestMethod(method),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.14/lib/python3.11/unittest/case.py", line 579, in _callTestMethod
+    if method() is not None:
+       ^^^^^^^^
+  File "/root/sglang/test/registered/ascend/performance/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k.py", line 177, in test_npu_glm5_1_w4a8_pd_sep_in3k5_out1k5
+    self.run_throughput()
+  File "/sgl-workspace/sglang/python/sglang/test/ascend/e2e/test_npu_performance_utils.py", line 221, in wrapper
+    raise last_exception
+  File "/sgl-workspace/sglang/python/sglang/test/ascend/e2e/test_npu_performance_utils.py", line 213, in wrapper
+    return func(
+           ^^^^^
+  File "/sgl-workspace/sglang/python/sglang/test/ascend/e2e/test_npu_multi_node_utils.py", line 338, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/test/ascend/e2e/test_npu_performance_utils.py", line 1064, in run_throughput
+    metrics = run_aisbench(
+              ^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/test/ascend/e2e/test_npu_performance_utils.py", line 542, in run_aisbench
+    raise subprocess.CalledProcessError(process.returncode, cmd)
+subprocess.CalledProcessError: Command '/bin/bash /root/sglang/python/sglang/test/ascend/e2e/run_aisbench.sh --mode perf --ip 172.22.3.154 --port 6677 --model GLM-5.1-w4a8 --model-path /root/.cache/modelscope/hub/models/Eco-Tech/GLM-5.1-w4a8 --dataset-type gsm8k --dataset-path /tmp/datasets/test.jsonl --input-len 65536 --output-len 1024 --batch-size 1 --num-prompts 1 --output-path /root/.cache/tests/output/perf/20260511/test_npu_glm5_1_w4a8_1p1d_32p_in64k_out1k' returned non-zero exit status 1.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/sgl-workspace/sglang/python/sglang/test/test_utils.py", line 2156, in _callTestMethod
+    retry(
+  File "/sgl-workspace/sglang/python/sglang/srt/utils/common.py", line 2704, in retry
+    raise Exception(f"retry() exceed maximum number of retries.")
+Exception: retry() exceed maximum number of retries.
+
+----------------------------------------------------------------------
+Ran 1 test in 940.858s
+
+FAILED (errors=1)
