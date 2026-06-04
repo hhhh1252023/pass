@@ -1,0 +1,55 @@
+can not use command: npu-smi info
+2026-06-04 03:38:24,859 - INFO - get env NAMESPACE = sgl-project
+2026-06-04 03:38:24,859 - INFO - get env KUBE_CONFIG_MAP = sglang-configmap-f550c4b0gidgqj7j
+2026-06-04 03:38:24,860 - INFO - The nic name matched is enp23s0f3
+2026-06-04 03:38:24,860 - INFO - PYTHON_FOR_TEST_TOOL: python3
+2026-06-04 03:38:24,869 - INFO - PYTHON_FOR_TEST_TOOL: python3
+2026-06-04 03:38:24,875 - INFO - get env POD_IP = 172.22.3.166
+2026-06-04 03:38:24,875 - INFO - get env HOSTNAME = ascend-sglang-perf-test-f550c4b0gidgqj7j-sglang-router-0
+2026-06-04 03:38:24,875 - INFO - Init 172.22.3.166 cls.role='router'!
+2026-06-04 03:38:24,875 - INFO - The current node is router, skip this function start_pd_server.
+2026-06-04 03:38:24,875 - INFO - Starting router in thread...
+2026-06-04 03:38:24,875 - INFO - launch_router start ......
+2026-06-04 03:38:24,875 - INFO - Waiting for router to be ready at http://172.22.3.166:6677/health
+2026-06-04 03:38:24,875 - INFO - Waiting for the server to start at http://172.22.3.166:6677/health...
+2026-06-04 03:38:25,238 - INFO - get env KUBECONFIG = /root/.cache/.cache/kb.yaml
+2026-06-04 03:38:25,371 - INFO - Discovered 4 worker nodes (prefill: 2, decode: 2)
+2026-06-04 03:38:25,402 - INFO - Successfully queried ConfigMap sglang-configmap-f550c4b0gidgqj7j in namespace sgl-project
+2026-06-04 03:38:25,403 - INFO - ConfigMap data is not available yet, waiting for 15s...
+2026-06-04 03:38:40,435 - INFO - Successfully queried ConfigMap sglang-configmap-f550c4b0gidgqj7j in namespace sgl-project
+2026-06-04 03:38:40,437 - INFO - ConfigMap data is not available yet, waiting for 15s...
+2026-06-04 03:38:55,479 - INFO - Successfully queried ConfigMap sglang-configmap-f550c4b0gidgqj7j in namespace sgl-project
+2026-06-04 03:38:55,480 - INFO - ConfigMap data is not available yet, waiting for 15s...
+2026-06-04 03:39:10,512 - INFO - Successfully queried ConfigMap sglang-configmap-f550c4b0gidgqj7j in namespace sgl-project
+2026-06-04 03:39:10,514 - INFO - ConfigMap data is not available yet, waiting for 15s...
+2026-06-04 03:39:25,543 - INFO - Successfully queried ConfigMap sglang-configmap-f550c4b0gidgqj7j in namespace sgl-project
+2026-06-04 03:39:25,545 - INFO - ConfigMap data is not available yet, waiting for 15s...
+2026-06-04 03:39:40,585 - INFO - Successfully queried ConfigMap sglang-configmap-f550c4b0gidgqj7j in namespace sgl-project
+2026-06-04 03:39:40,587 - INFO - ConfigMap data is not available yet, waiting for 15s...
+2026-06-04 03:39:55,618 - INFO - Successfully queried ConfigMap sglang-configmap-f550c4b0gidgqj7j in namespace sgl-project
+2026-06-04 03:39:55,620 - INFO - Retrieved ConfigMap data: {'ascend-sglang-perf-test-f550c4b0gidgqj7j-sglang-decode-0': '172.22.3.95', 'ascend-sglang-perf-test-f550c4b0gidgqj7j-sglang-decode-1': '172.22.3.154', 'ascend-sglang-perf-test-f550c4b0gidgqj7j-sglang-prefill-0': '172.22.3.77', 'ascend-sglang-perf-test-f550c4b0gidgqj7j-sglang-prefill-1': '172.22.3.138', 'ascend-sglang-perf-test-f550c4b0gidgqj7j-sglang-router-0': '172.22.3.166'}
+2026-06-04 03:39:55,620 - INFO - ConfigMap monitoring complete: prefill_url=['172.22.3.77:8000', '172.22.3.138:8000'], decode_url=['172.22.3.95:8000'], bootstrap_ports=['8995', '8996'], node_ip_list=['172.22.3.95', '172.22.3.77', '172.22.3.138']
+2026-06-04 03:46:40,651 - INFO - Node 172.22.3.95:8000 is ready
+2026-06-04 03:46:40,652 - INFO - Waiting for 2 more nodes to be ready...
+E2026-06-04 04:38:25,521 - INFO - Init 172.22.3.166 cls.role='router'!
+2026-06-04 04:38:25,521 - INFO - The current node is router, skip this function start_pd_server.
+2026-06-04 04:38:25,521 - INFO - Starting router in thread...
+2026-06-04 04:38:25,522 - INFO - launch_router start ......
+2026-06-04 04:38:25,522 - INFO - Waiting for router to be ready at http://172.22.3.166:6677/health
+2026-06-04 04:38:25,522 - INFO - Waiting for the server to start at http://172.22.3.166:6677/health...
+2026-06-04 04:38:25,604 - INFO - Discovered 4 worker nodes (prefill: 2, decode: 2)
+2026-06-04 04:38:25,646 - INFO - Successfully queried ConfigMap sglang-configmap-f550c4b0gidgqj7j in namespace sgl-project
+2026-06-04 04:38:25,648 - INFO - Retrieved ConfigMap data: {'ascend-sglang-perf-test-f550c4b0gidgqj7j-sglang-decode-0': '172.22.3.95', 'ascend-sglang-perf-test-f550c4b0gidgqj7j-sglang-decode-1': '172.22.3.154', 'ascend-sglang-perf-test-f550c4b0gidgqj7j-sglang-prefill-0': '172.22.3.77', 'ascend-sglang-perf-test-f550c4b0gidgqj7j-sglang-prefill-1': '172.22.3.138', 'ascend-sglang-perf-test-f550c4b0gidgqj7j-sglang-router-0': '172.22.3.166'}
+2026-06-04 04:38:25,648 - INFO - ConfigMap monitoring complete: prefill_url=['172.22.3.77:8000', '172.22.3.138:8000'], decode_url=['172.22.3.95:8000'], bootstrap_ports=['8995', '8996'], node_ip_list=['172.22.3.95', '172.22.3.77', '172.22.3.138']
+2026-06-04 04:38:25,648 - INFO - Node 172.22.3.95:8000 is ready
+2026-06-04 04:38:25,649 - INFO - Waiting for 2 more nodes to be ready...
+2026-06-04 04:39:55,922 - INFO - Timeout: Not all nodes are ready after 3600 seconds
+Exception in thread Thread-1 (launch_router):
+Traceback (most recent call last):
+  File "/usr/local/python3.11.15/lib/python3.11/threading.py", line 1045, in _bootstrap_inner
+    self.run()
+  File "/usr/local/python3.11.15/lib/python3.11/threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "/sgl-workspace/sglang/python/sglang/test/ascend/e2e/test_npu_multi_node_utils.py", line 620, in launch_router
+    raise RuntimeError("Failed to wait for all nodes to be ready")
+RuntimeError: Failed to wait for all nodes to be ready
