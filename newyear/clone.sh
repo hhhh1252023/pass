@@ -10,3 +10,5 @@ huggingface-cli download TanXS/Qwen3-4B-LoRA-ZH-WebNovelty-v0.0 --resume-downloa
 mkdir -p ~/.cache/datasets
 wget -O ~/.cache/datasets/hellaswag_val.jsonl \
   https://raw.githubusercontent.com/rowanz/hellaswag/master/data/hellaswag_val.jsonl
+
+wget https://raw.githubusercontent.com/sgl-project/sgl-test-files/refs/heads/main/audios/Trump_WEF_2018_10s.mp3
