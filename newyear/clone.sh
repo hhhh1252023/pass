@@ -13,3 +13,5 @@ wget -O ~/.cache/datasets/hellaswag_val.jsonl \
 
 wget https://raw.githubusercontent.com/sgl-project/sgl-test-files/refs/heads/main/audios/Trump_WEF_2018_10s.mp3
 https://upload.wikimedia.org/wikipedia/commons/c/ca/1x1.png
+
+hf download Styxxxx/llama2_7b_lora-trivia_qa --local-dir /data/models/llama2_7b_lora-trivia_qa --local-dir-use-symlinks False
