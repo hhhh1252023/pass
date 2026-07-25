@@ -37,3 +37,4 @@ env -i PATH=${PATH} bash --login -c "
 "
 
 # 5. 产物在 output/ 目录，退出容器后自动消失（因为用了 --rm）
+/root/.cache/torch_memory_saver-0.0.8-cp311-cp311-linux_aarch64.whl
