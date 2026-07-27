@@ -38,3 +38,8 @@ env -i PATH=${PATH} bash --login -c "
 
 # 5. 产物在 output/ 目录，退出容器后自动消失（因为用了 --rm）
 /root/.cache/torch_memory_saver-0.0.8-cp311-cp311-linux_aarch64.whl
+
+https://raw.githubusercontent.com/sgl-project/sgl-test-files/refs/heads/main/images/man_ironing_on_back_of_suv.png
+https://raw.githubusercontent.com/sgl-project/sgl-test-files/refs/heads/main/images/sgl_logo.png
+https://raw.githubusercontent.com/sgl-project/sgl-test-files/refs/heads/main/videos/jobs_presenting_ipod.mp4
+https://raw.githubusercontent.com/sgl-project/sgl-test-files/refs/heads/main/audios/bird_song.mp3
