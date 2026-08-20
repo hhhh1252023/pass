@@ -1,0 +1,94 @@
+# NPU PR 监控报告 (已合入)
+**生成时间**: 2026-08-20 08:13 UTC
+**本次检查已合入 PR 数**: 33
+**涉及 NPU**: 12 | **无关**: 21 | **不确定**: 0
+
+---
+
+## ⚠️ 涉及 NPU 的已合入 PR
+
+### [#35538](https://github.com/sgl-project/sglang/pull/35538) [diffusion] fix: stop reserving NCCL device buffers for single-rank groups
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 5
+
+### [#35626](https://github.com/sgl-project/sglang/pull/35626) [diffusion] fix: keep large vocab tables in host memory under layerwise offload
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 4
+
+### [#33730](https://github.com/sgl-project/sglang/pull/33730) Fix Grok-2 nightly: derive image-understanding capability from is_multimodal
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 1
+
+### [#34813](https://github.com/sgl-project/sglang/pull/34813) [CI] Surface AMD ROCm 7.2 state in the PR CI-states block
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 1
+
+### [#35593](https://github.com/sgl-project/sglang/pull/35593) [Fix] Support 128-aligned hidden sizes in the W4AFP8 DeepEP low-latency requant kernel
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 2
+
+### [#35618](https://github.com/sgl-project/sglang/pull/35618) [diffusion] UX: report where a component's weights are
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 4
+
+### [#34546](https://github.com/sgl-project/sglang/pull/34546) [XPU] Fix/kimi linear xpu
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 3
+
+### [#411](https://github.com/sgl-project/sglang/pull/411) Add Cohere Command R chat template
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 1
+
+### [#33370](https://github.com/sgl-project/sglang/pull/33370) [Feature] Add process-local in-memory KV indexer and Router integration
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 42
+
+### [#35597](https://github.com/sgl-project/sglang/pull/35597) [misc] Add a comment style rule to .claude/rules
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 2
+
+### [#35496](https://github.com/sgl-project/sglang/pull/35496) [Spec] Support quantized target lm_head in the DFlash2 selector
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 3
+
+### [#35372](https://github.com/sgl-project/sglang/pull/35372) [Kernel] Support wider rows in mega_moe_pre_dispatch
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 1
+
+## ✅ 与 NPU 无关的已合入 PR
+- [#35370](https://github.com/sgl-project/sglang/pull/35370) [diffusion] feat: load GGUF transformer checkpoints (MiniMax-H3)
+- [#34888](https://github.com/sgl-project/sglang/pull/34888) Split TRTLLM MHA decode batches by KV sequence length
+- [#35450](https://github.com/sgl-project/sglang/pull/35450) Update deepep for SBO feature
+- [#35361](https://github.com/sgl-project/sglang/pull/35361) [Fix]: exclude SM120 from attn-res TMA dispatch
+- [#35649](https://github.com/sgl-project/sglang/pull/35649) Remove unused MOONCAKE_COMPILE_ARG argument from Dockerfile
+- [#35543](https://github.com/sgl-project/sglang/pull/35543) [HiCache] Allow a retraction host pool smaller than the device pool
+- [#34802](https://github.com/sgl-project/sglang/pull/34802) update codeowner
+- [#35419](https://github.com/sgl-project/sglang/pull/35419) [Docs] Update contribution guide
+- [#35612](https://github.com/sgl-project/sglang/pull/35612) [diffusion] fix: keep Cosmos3 T=1 fusion on Blackwell
+- [#35615](https://github.com/sgl-project/sglang/pull/35615) [diffusion] ci: use canonical residency selector
+- [#35614](https://github.com/sgl-project/sglang/pull/35614) [diffusion] chore: reduce per-request log noise
+- [#30874](https://github.com/sgl-project/sglang/pull/30874) chore: bump tilelang to 0.1.12
+- [#35337](https://github.com/sgl-project/sglang/pull/35337) [XPU][CI] key persistent JIT kernel cache by image content ID
+- [#35598](https://github.com/sgl-project/sglang/pull/35598) [Diffusion] [sglang-miles] Mirror support MiniMax H3 t2va rollout from #34365 
+- [#35587](https://github.com/sgl-project/sglang/pull/35587) docker: fix CUDA-13 build — rename NCCL_VERSION ARG to avoid base image ENV collision
+- [#34452](https://github.com/sgl-project/sglang/pull/34452) [CI][AMD] Run the profiling suite without CUDA graphs on ROCm
+- [#35182](https://github.com/sgl-project/sglang/pull/35182) [diffusion] fix: reject unsupported modelopt checkpoint algorithms
+- [#34481](https://github.com/sgl-project/sglang/pull/34481) [AMD] Keep the PTX-inline-asm diffusion norm fusions off on ROCm (fix FLUX warmup crash)
+- [#35397](https://github.com/sgl-project/sglang/pull/35397) Support custom draft worker classes in DSpark
+- [#35571](https://github.com/sgl-project/sglang/pull/35571) [sampling] Fix int32 offset overflow in top-k renorm Triton kernels
+- [#35575](https://github.com/sgl-project/sglang/pull/35575) Make PR babysitter launcher fork-safe
+
+---
+*Auto-generated by npu_pr_monitor.py*
