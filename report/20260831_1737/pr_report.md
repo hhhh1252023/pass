@@ -1,0 +1,79 @@
+# NPU PR 监控报告 (已合入)
+**生成时间**: 2026-08-31 09:37 UTC
+**本次检查已合入 PR 数**: 34
+**涉及 NPU**: 8 | **无关**: 26 | **不确定**: 0
+
+---
+
+## ⚠️ 涉及 NPU 的已合入 PR
+
+### [#34613](https://github.com/sgl-project/sglang/pull/34613) feat(unified-memory): read unified pool from attention backends fa3/flashinfer/trtllm_mha/flashmla
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 31
+
+### [#35245](https://github.com/sgl-project/sglang/pull/35245) refactor(unified-memory): translate the KV write location once, at ForwardBatch construction
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 28
+
+### [#36248](https://github.com/sgl-project/sglang/pull/36248) [PP] Support prefill CUDA graph proxy tensors
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 12
+
+### [#37194](https://github.com/sgl-project/sglang/pull/37194) [Fix] Shut hicache test servers down gracefully before SIGKILL
+- **检测方式**: 关键词初筛 + AI确认
+- **理由**: 修改了test/registered/npu/路径下3个NPU测试文件，涉及NPU测试代码变更。
+- **文件数**: 13
+
+### [#37166](https://github.com/sgl-project/sglang/pull/37166) fix(staging): make empty staging rings reusable
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 3
+
+### [#27551](https://github.com/sgl-project/sglang/pull/27551) [dLLM] Make FDFO a framework capability for all dLLM algorithms
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 14
+
+### [#35805](https://github.com/sgl-project/sglang/pull/35805) [CPU] Fix weight missing issue in fused_input_proj_cpu for GPTQ INT4 for Qwen 3.5
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 1
+
+### [#37108](https://github.com/sgl-project/sglang/pull/37108) [mem_cache] Share one `ReqKvInfo` between a streaming session slot and its request
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 4
+
+## ✅ 与 NPU 无关的已合入 PR
+- [#33722](https://github.com/sgl-project/sglang/pull/33722) [KDA] Fused-accept state advance for FlashInfer KDA MTP verify
+- [#36101](https://github.com/sgl-project/sglang/pull/36101) weight cache: key daemon paths by GPU UUID
+- [#36871](https://github.com/sgl-project/sglang/pull/36871) [AMD] support gfx1250 on ROCM 10
+- [#37170](https://github.com/sgl-project/sglang/pull/37170) [unified-memory] Drop the vacated 'dense' qualifier and the restating comments
+- [#36985](https://github.com/sgl-project/sglang/pull/36985) test: re-enable FlashInfer per-token NVFP4 coverage
+- [#36897](https://github.com/sgl-project/sglang/pull/36897) Decouple speculative draft capacity from runtime state
+- [#36875](https://github.com/sgl-project/sglang/pull/36875) [diffusion] Preserve exact component identity during loading
+- [#37203](https://github.com/sgl-project/sglang/pull/37203) [CI] Speed up lint: cache pre-commit envs + mint, drop redundant work
+- [#37151](https://github.com/sgl-project/sglang/pull/37151) [Unified Cache Linker][3/N]: Add backend-independent linker core
+- [#36814](https://github.com/sgl-project/sglang/pull/36814) xpu: move prefill-only model tests to the nightly-xpu-1-gpu grid
+- [#36907](https://github.com/sgl-project/sglang/pull/36907) [Diffusion] Enforce component attention backend application
+- [#36422](https://github.com/sgl-project/sglang/pull/36422) add suffix for xpu kernel upload space
+- [#36916](https://github.com/sgl-project/sglang/pull/36916) [Diffusion] Detect quantized transformer replacements
+- [#37164](https://github.com/sgl-project/sglang/pull/37164) [mem_cache] Move mamba state and `retraction_backup` into `ReqKvInfo`
+- [#35588](https://github.com/sgl-project/sglang/pull/35588) [Bugfix] Fix full prefill CUDA graph padding and EAGLE capture
+- [#37132](https://github.com/sgl-project/sglang/pull/37132) [AMD] Fix the QuickReduce bf16 cast failing to build for CDNA
+- [#37182](https://github.com/sgl-project/sglang/pull/37182) [CI] Fix unreachable FakeReq field initialization
+- [#27877](https://github.com/sgl-project/sglang/pull/27877) [dLLM] Reuse block KV/req slots in place across FDFO rounds
+- [#36991](https://github.com/sgl-project/sglang/pull/36991) [Diffusion] Add exact component precision overrides
+- [#35244](https://github.com/sgl-project/sglang/pull/35244) [Fix] Transformers-fallback (GPT-NeoX) + KV pool config (DeepSeek-VL2)
+- [#35281](https://github.com/sgl-project/sglang/pull/35281) [PD] Align defensive protocol behavior across Mooncake, NIXL, and Mori
+- [#35877](https://github.com/sgl-project/sglang/pull/35877) [Intel GPU] Add rust support to XPU docker images
+- [#33318](https://github.com/sgl-project/sglang/pull/33318) [XPU] Use SYCL kernels for topk_transform on XPU
+- [#36954](https://github.com/sgl-project/sglang/pull/36954) [Deps] Bump FlashInfer to 0.6.18
+- [#37035](https://github.com/sgl-project/sglang/pull/37035) [MLX] Fix startup crash when reporting preloaded weights
+- [#37116](https://github.com/sgl-project/sglang/pull/37116) [diffusion] perf: absorb Qwen-Image output projection biases
+
+---
+*Auto-generated by npu_pr_monitor.py*
