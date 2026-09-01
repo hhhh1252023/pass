@@ -1,0 +1,82 @@
+# NPU PR 监控报告 (已合入)
+**生成时间**: 2026-09-01 23:28 UTC
+**本次检查已合入 PR 数**: 33
+**涉及 NPU**: 9 | **无关**: 24 | **不确定**: 0
+
+---
+
+## ⚠️ 涉及 NPU 的已合入 PR
+
+### [#36960](https://github.com/sgl-project/sglang/pull/36960) [ROCm][Bugfix] Cap the DSA MQA-logits budget at AITER's buffer_store limit
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 2
+
+### [#37463](https://github.com/sgl-project/sglang/pull/37463) [mem_cache] Drop the `torch.unique` sync from the SWA page expansion
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 1
+
+### [#36890](https://github.com/sgl-project/sglang/pull/36890) [Feature] Unified memory: support decode context parallelism for Kimi-Linear
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 20
+
+### [#37431](https://github.com/sgl-project/sglang/pull/37431) test(npu): add DSV4-Flash / GLM-5.2 / Kimi-K3 gpqa accuracy cases
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 8
+
+### [#36329](https://github.com/sgl-project/sglang/pull/36329) [NPU]Strip padding before FIA kernel for vision encoder padded sequences
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 1
+
+### [#37409](https://github.com/sgl-project/sglang/pull/37409) [AMD][CI] Add daily ROCm 10 PR/Nightly Test
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 4
+
+### [#35118](https://github.com/sgl-project/sglang/pull/35118) [DSV4] hc-prenorm: fuse the combine step into a Triton kernel
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 3
+
+### [#36813](https://github.com/sgl-project/sglang/pull/36813) [NPU] [bugfix] Fix NPU MLA HiCache backup accessing missing data_ptrs.
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 1
+
+### [#37392](https://github.com/sgl-project/sglang/pull/37392) [Cookbook] Add the DFlash2 speculative option to GLM-5.3
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 2
+
+## ✅ 与 NPU 无关的已合入 PR
+- [#37479](https://github.com/sgl-project/sglang/pull/37479) [Cookbook] DeepSeek-V4: add DGX Spark (2x GB10) Flash Official FP4 recipe
+- [#36220](https://github.com/sgl-project/sglang/pull/36220) add reindex_device_id to device OOT plugin
+- [#35491](https://github.com/sgl-project/sglang/pull/35491) Fix dummy initialization of inverse weight scales
+- [#32882](https://github.com/sgl-project/sglang/pull/32882) [Bugfix] Accept int64 top-k IDs in FlashInfer routed MoE packer
+- [#37468](https://github.com/sgl-project/sglang/pull/37468) [Cookbook] Verify DeepSeek-V4 Flash Vision balanced and high-throughput on B200
+- [#37412](https://github.com/sgl-project/sglang/pull/37412) [Docs] GLM-5.3-Flash cookbook: add NVFP4 FP8+TRT-LLM benchmark rows (follow-up to #37109)
+- [#37466](https://github.com/sgl-project/sglang/pull/37466) [LoRA] Restore GDN in_proj target-module choices lost in the rebase
+- [#37360](https://github.com/sgl-project/sglang/pull/37360) docs(cookbook): enable FlashInfer GDN for Qwen3.5 B200
+- [#37453](https://github.com/sgl-project/sglang/pull/37453) [CI][MLX] Restore the mamba_branching_seqlen attribute the MLX runner reads off a request
+- [#37290](https://github.com/sgl-project/sglang/pull/37290) [Rust] Rename mem-cache to sglang-radix-tree
+- [#36911](https://github.com/sgl-project/sglang/pull/36911) [Memory] Size the CUDA graph pool from warmup measurements and fix graph-pool borrowing
+- [#34362](https://github.com/sgl-project/sglang/pull/34362) fix(nixl): make FILE path-mode devId globally unique
+- [#37439](https://github.com/sgl-project/sglang/pull/37439) [AMD] Fix v4 topk issue
+- [#37438](https://github.com/sgl-project/sglang/pull/37438) [AMD] fix aiter cannot get heuristic kernel regression
+- [#34693](https://github.com/sgl-project/sglang/pull/34693) [Kernel] Replace dsv3_router_gemm with the unified tiny GEMM
+- [#37158](https://github.com/sgl-project/sglang/pull/37158) [Kernel] Add tuned LFM2.5 Triton MoE configs on B300
+- [#36831](https://github.com/sgl-project/sglang/pull/36831) [DSA] Drop the redundant 512 from the top-k transform entry-point names
+- [#37385](https://github.com/sgl-project/sglang/pull/37385) [Kernel] Register merged diffusion agent kernels with KDA backend
+- [#37435](https://github.com/sgl-project/sglang/pull/37435) [CI] Double JIT kernel unit test timeout
+- [#37406](https://github.com/sgl-project/sglang/pull/37406) [CI] Add entrypoint to hc_combine test for standalone execution
+- [#36216](https://github.com/sgl-project/sglang/pull/36216) [AMD] Fix nightly ROCm 7.0 image build: patch missing <optional> include in AITER topk kernel
+- [#36851](https://github.com/sgl-project/sglang/pull/36851) [AMD] Enable topk v2 GLM ROCm
+- [#37242](https://github.com/sgl-project/sglang/pull/37242) [AMD] Gate the aiter memory-reserve exemption behind an env var
+- [#35787](https://github.com/sgl-project/sglang/pull/35787) fix(test): deflake zmq load-snapshot round-trip tests
+
+---
+*Auto-generated by npu_pr_monitor.py*
