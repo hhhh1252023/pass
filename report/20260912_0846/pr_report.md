@@ -1,0 +1,88 @@
+# NPU PR 监控报告 (已合入)
+**生成时间**: 2026-09-12 00:46 UTC
+**本次检查已合入 PR 数**: 31
+**涉及 NPU**: 11 | **无关**: 20 | **不确定**: 0
+
+---
+
+## ⚠️ 涉及 NPU 的已合入 PR
+
+### [#38578](https://github.com/sgl-project/sglang/pull/38578) [LoRA] Support MoE in full and breakable prefill CUDA graphs
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 9
+
+### [#38944](https://github.com/sgl-project/sglang/pull/38944) [DSV4.1] Enable the two-level candidate indexer on DeepGEMM's paged sparse MQA logits
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 19
+
+### [#35503](https://github.com/sgl-project/sglang/pull/35503) [OpenAI] Propagate PD routing metadata through /v1/responses
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 4
+
+### [#38529](https://github.com/sgl-project/sglang/pull/38529) [Diffusion] Optimize SANA-WM convolution post-processing and streaming GDN
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 4
+
+### [#36612](https://github.com/sgl-project/sglang/pull/36612) [PD] Share the prefill->decode failure notification across backends
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 6
+
+### [#38533](https://github.com/sgl-project/sglang/pull/38533) [Diffusion] Preserve BF16 rounding in Hopper LTX QKNorm and RoPE fusion
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 2
+
+### [#38297](https://github.com/sgl-project/sglang/pull/38297) Auto-detect GLM-5.3 chat templates as glm45/glm47 parsers
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 2
+
+### [#39068](https://github.com/sgl-project/sglang/pull/39068) [DSV4.1] Fuse DSpark verify compression, indexer and projections
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 16
+
+### [#39034](https://github.com/sgl-project/sglang/pull/39034) [Diffusion] Recover IPC JIT initialization after interrupted builds
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 4
+
+### [#38827](https://github.com/sgl-project/sglang/pull/38827) [NPU][Hicache] Add Ascend Memcache Hicache L3 storage backend
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 15
+
+### [#38807](https://github.com/sgl-project/sglang/pull/38807) [NPU]glm5.2 fp8 memory opt
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 2
+
+## ✅ 与 NPU 无关的已合入 PR
+- [#34330](https://github.com/sgl-project/sglang/pull/34330) [AMD] Fix weight checking for AITER-shuffled block FP8 weights
+- [#38851](https://github.com/sgl-project/sglang/pull/38851) fix(qsa): make the paged sparse-decode gather memory-safe (zero-fill scratch, int64 offsets, dequant FP8 on gather)
+- [#39119](https://github.com/sgl-project/sglang/pull/39119) [sglang-miles] Remove obsolete PD retract guard after rebootstrap support (#25372); squash into 17c3be8e5d (#23672/#23887)
+- [#38936](https://github.com/sgl-project/sglang/pull/38936) [Fix] Disable NCCL graph buffer registration for the TP LM-head all-to-all (pure-DP decode hang under request bursts)
+- [#38585](https://github.com/sgl-project/sglang/pull/38585) [AMD][CI] Skip failing Wave test and relax multi-LoRA output check
+- [#38611](https://github.com/sgl-project/sglang/pull/38611) [docs] Add the NVIDIA NVFP4 export to the Qwen3.8-27B cookbook
+- [#39106](https://github.com/sgl-project/sglang/pull/39106) [AMD] Use the triton DSA backend for GLM-5.2 MXFP4 on MI355X
+- [#34432](https://github.com/sgl-project/sglang/pull/34432) [AMD][DCP 1/N] add dcp support for aiter backend
+- [#38756](https://github.com/sgl-project/sglang/pull/38756) [AMD] aiter: resolve SWA KV pool for draft workers + guard paged decode
+- [#23060](https://github.com/sgl-project/sglang/pull/23060) [fix] Fix dynamic chunking profiling crash on GLM-5 models
+- [#39101](https://github.com/sgl-project/sglang/pull/39101) Fix stale DSV4 indexer metadata names in the TopK v2 dispatch test
+- [#39100](https://github.com/sgl-project/sglang/pull/39100) [PD] Read nixl TransferInfo.is_dummy as a field in unit tests
+- [#38782](https://github.com/sgl-project/sglang/pull/38782) [Diffusion][CI] Expose nightly server telemetry coverage
+- [#38783](https://github.com/sgl-project/sglang/pull/38783) [Diffusion] Quiet request-path cache diagnostics
+- [#39098](https://github.com/sgl-project/sglang/pull/39098) [DSV4.1] Support raw-index output in TopK v2 (port of #33672)
+- [#38693](https://github.com/sgl-project/sglang/pull/38693) Add granite_thinking_parser reasoning parser for Granite 4.2
+- [#33672](https://github.com/sgl-project/sglang/pull/33672) [DSV4] Support raw-index output in TopK v2
+- [#39021](https://github.com/sgl-project/sglang/pull/39021) [Diffusion] Pin layerwise host stores in place at their exact size
+- [#39077](https://github.com/sgl-project/sglang/pull/39077) [CI] Add CI permissions for PP contributor stepinto
+- [#38814](https://github.com/sgl-project/sglang/pull/38814) [Router] Preserve global cache affinity with bucket routing
+
+---
+*Auto-generated by npu_pr_monitor.py*
