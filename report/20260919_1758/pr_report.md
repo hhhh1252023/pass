@@ -1,0 +1,97 @@
+# NPU PR 监控报告 (已合入)
+**生成时间**: 2026-09-19 09:58 UTC
+**本次检查已合入 PR 数**: 32
+**涉及 NPU**: 13 | **无关**: 19 | **不确定**: 0
+
+---
+
+## ⚠️ 涉及 NPU 的已合入 PR
+
+### [#40071](https://github.com/sgl-project/sglang/pull/40071) Record a process's placement at publish, not at group build
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 47
+
+### [#39088](https://github.com/sgl-project/sglang/pull/39088) Fix GLM-OCR MTP multimodal embeddings and positions
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 17
+
+### [#38792](https://github.com/sgl-project/sglang/pull/38792) [PP][DeepSeek V4] Overlap communication and optimize SM120 prefill
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 17
+
+### [#40068](https://github.com/sgl-project/sglang/pull/40068) Read process groups through the runtime context
+- **检测方式**: 关键词初筛 + AI确认
+- **理由**: 改动涉及 hardware_backend/npu/moe/fuseep.py 及 disaggregation/ascend 等 NPU/Ascend 专有路径代码。
+- **文件数**: 100
+
+### [#38750](https://github.com/sgl-project/sglang/pull/38750) [Multimodal] Avoid CUDA placement on non-CUDA platforms
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 3
+
+### [#40197](https://github.com/sgl-project/sglang/pull/40197) [Refactor] Deduplicate kernel helpers and remove unused code
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 28
+
+### [#40264](https://github.com/sgl-project/sglang/pull/40264) [Test] Drop dead and strictly-subsumed CI test registrations
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 19
+
+### [#40070](https://github.com/sgl-project/sglang/pull/40070) Name the two widths of the WORLD group
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 13
+
+### [#39477](https://github.com/sgl-project/sglang/pull/39477) Support unified memory page-envelope transfers in PD
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 27
+
+### [#40067](https://github.com/sgl-project/sglang/pull/40067) Give the attention-DP width and rank one home
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 11
+
+### [#39185](https://github.com/sgl-project/sglang/pull/39185) Fix Mistral3 retaining every vision-tower layer to read one
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 3
+
+### [#40010](https://github.com/sgl-project/sglang/pull/40010) [MM] Copy placeholder ids to CUDA asynchronously
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 1
+
+### [#40005](https://github.com/sgl-project/sglang/pull/40005) [MM] Skip VMM error gathers for text-only requests
+- **检测方式**: 关键词匹配(标题+文件双命中)
+- **理由**: 标题和文件均命中 NPU 关键词
+- **文件数**: 2
+
+## ✅ 与 NPU 无关的已合入 PR
+- [#40004](https://github.com/sgl-project/sglang/pull/40004) [Metrics] Propagate idle gaps across all scheduler loops
+- [#40308](https://github.com/sgl-project/sglang/pull/40308) Fix mxfp4 padding test stubbing an accessor the module no longer imports
+- [#40290](https://github.com/sgl-project/sglang/pull/40290) [Test] Fix fusion-group mocks after runtime context migration
+- [#40304](https://github.com/sgl-project/sglang/pull/40304) [HiCache] Size MHA host pools from device row width
+- [#40303](https://github.com/sgl-project/sglang/pull/40303) [Lint] Fix logits processor formatting on main
+- [#40222](https://github.com/sgl-project/sglang/pull/40222) [Runtime] Add decode CUDA graph hooks for eager logits processing
+- [#40262](https://github.com/sgl-project/sglang/pull/40262) Fix prefetch attempt cleanup on abort
+- [#40003](https://github.com/sgl-project/sglang/pull/40003) [PD] Skip singleton transfer-status all-reduces
+- [#40259](https://github.com/sgl-project/sglang/pull/40259) fix: restrict SafeUnpickler to explicit globals
+- [#38604](https://github.com/sgl-project/sglang/pull/38604) fix(openai): recover logprobs token bytes from token_id (UTF-8 fragments)
+- [#40104](https://github.com/sgl-project/sglang/pull/40104) [Diffusion] Cache-DiT 1.5.1: DMD Calibrator, SVDQuant DQ, etc.
+- [#40263](https://github.com/sgl-project/sglang/pull/40263) [PD] Allow decode radix cache and HiCache L1/L2 with DCP
+- [#40208](https://github.com/sgl-project/sglang/pull/40208) [Kernel] Fuse hc_combine_norm for mid-size verify batches (9-96 rows)
+- [#37547](https://github.com/sgl-project/sglang/pull/37547) [diffusion] feature: out of tree platform support
+- [#40069](https://github.com/sgl-project/sglang/pull/40069) One read path for every parallel name
+- [#39234](https://github.com/sgl-project/sglang/pull/39234) perf(sampling): avoid GPU syncs when applying custom logit processors
+- [#40257](https://github.com/sgl-project/sglang/pull/40257) [Test] Add a ci-test-audit skill cataloging CI and test audit patterns
+- [#39773](https://github.com/sgl-project/sglang/pull/39773) Fix corrupted chat prompts on mistral_common tokenizers (tool_choice auto never fires)
+- [#40043](https://github.com/sgl-project/sglang/pull/40043) [PD] Enable optimistic prefill with buffer-only L3 write-through HiCache
+
+---
+*Auto-generated by npu_pr_monitor.py*
